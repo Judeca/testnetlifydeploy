@@ -96,6 +96,7 @@ import {
 import { useVehicleSelection } from '../hooks/useVehicleSelection';
 import { useGarageSelection } from '../hooks/useGarageSelection';
 import { usePaymentCardSelection } from '../hooks/usePaymentCardSelection';
+import { useAllVehiclesSelection } from '../hooks/useAllVehiclesSelection';
 
 interface VehicleModule {
   id: string;
@@ -123,6 +124,7 @@ const Vehicles: React.FC = () => {
   const { vehicles, loading: vehiclesLoading, refetch: refetchVehicles } = useVehicleSelection();
   const { garages, loading: garagesLoading, refetch: refetchGarages } = useGarageSelection();
   const { paymentCards, loading: paymentCardsLoading, refetch: refetchPaymentCards } = usePaymentCardSelection();
+  const { allVehicles, loading: allVehiclesLoading, refetch: refetchAllVehicles } = useAllVehiclesSelection();
 
   // API endpoints map for all vehicle-related modules
   const endpointMap: Record<string, string> = {
@@ -369,6 +371,10 @@ const Vehicles: React.FC = () => {
         if (activeModule === 'vehicles') refetchVehicles();
         else if (activeModule === 'garages') refetchGarages();
         else if (activeModule === 'paymentcards') refetchPaymentCards();
+        else if (['interventions', 'pieces', 'expenses', 'reforms', 'fuelmanagements', 'authorizations', 'contentieux'].includes(activeModule)) {
+          refetchAllVehicles();
+          fetchModuleData(activeModule);
+        }
         else fetchModuleData(activeModule);
       }
     } catch (error) {
@@ -520,7 +526,7 @@ const Vehicles: React.FC = () => {
                 onSubmit: handleFormSubmit,
                 initialData: editingItem,
                 isEdit: !!editingItem,
-                vehicles,
+                vehicles: allVehicles,
                 garages,
                 paymentCards
               })}

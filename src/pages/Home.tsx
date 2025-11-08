@@ -27,17 +27,17 @@ export function Home() {
   const displayName = getDisplayName();
 
   const quickLinks = [
-    { icon: Users, label: 'Personnel', path: '/home/personnel', color: 'bg-blue-100 text-blue-600' },
-    { icon: Contact, label: 'Contacts', path: '/home/contacts', color: 'bg-green-100 text-green-600' },
-    { icon: Wrench, label: 'Équipements', path: '/home/equipements', color: 'bg-purple-100 text-purple-600' },
-    { icon: Package, label: 'Offres', path: '/home/offres', color: 'bg-orange-100 text-orange-600' },
-    { icon: Briefcase, label: 'Affaires', path: '/home/affaires', color: 'bg-indigo-100 text-indigo-600' },
-    { icon: AlertTriangle, label: 'Alertes', path: '/home/alertes', color: 'bg-red-100 text-red-600' },
-    { icon: Car, label: 'Parc Auto', path: '/home/parc-auto', color: 'bg-cyan-100 text-cyan-600' },
-    { icon: FileText, label: 'Factures', path: '/home/factures', color: 'bg-yellow-100 text-yellow-600' },
-    { icon: Banknote, label: 'Banques', path: '/home/banques', color: 'bg-emerald-100 text-emerald-600' },
-    { icon: Wallet, label: 'Caisses', path: '/home/registres', color: 'bg-pink-100 text-pink-600' },
-    { icon: Calculator, label: 'Impôts et Taxes', path: '/home/impots', color: 'bg-amber-100 text-amber-600' },
+    { icon: Users, label: 'Personnel', path: '/dashboard/personnel', color: 'bg-blue-100 text-blue-600' },
+    { icon: Contact, label: 'Contacts', path: '/dashboard/contacts', color: 'bg-green-100 text-green-600' },
+    { icon: Wrench, label: 'Équipements', path: '/dashboard/equipements', color: 'bg-purple-100 text-purple-600' },
+    { icon: Package, label: 'Offres', path: '/dashboard/offres', color: 'bg-orange-100 text-orange-600' },
+    { icon: Briefcase, label: 'Affaires', path: '/dashboard/affaires', color: 'bg-indigo-100 text-indigo-600' },
+    { icon: AlertTriangle, label: 'Alertes', path: '/dashboard/alertes', color: 'bg-red-100 text-red-600' },
+    { icon: Car, label: 'Parc Auto', path: '/dashboard/parc-auto', color: 'bg-cyan-100 text-cyan-600' },
+    { icon: FileText, label: 'Factures', path: '/dashboard/factures', color: 'bg-yellow-100 text-yellow-600' },
+    { icon: Banknote, label: 'Banques', path: '/dashboard/banques', color: 'bg-emerald-100 text-emerald-600' },
+    { icon: Wallet, label: 'Caisses', path: '/dashboard/registres', color: 'bg-pink-100 text-pink-600' },
+    { icon: Calculator, label: 'Impôts et Taxes', path: '/dashboard/impots', color: 'bg-amber-100 text-amber-600' },
   ];
 
   return (

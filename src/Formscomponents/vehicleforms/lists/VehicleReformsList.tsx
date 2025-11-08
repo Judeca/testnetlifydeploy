@@ -2,6 +2,7 @@ import React, { useState, useMemo } from 'react';
 import { Eye } from 'lucide-react';
 import DeleteConfirmationModal from './DeleteConfirmationModal';
 import ViewDetailsModal from './ViewDetailsModal';
+import ExportVehicleReformDropdown from './ExportVehicleReformDropdown';
 
 interface VehicleReform {
   reformId: number;
@@ -181,9 +182,13 @@ const VehicleReformsList: React.FC<VehicleReformsListProps> = ({
           >
             Réinitialiser les filtres
           </button>
-          <span className="text-sm text-gray-600">
-            {filteredReforms.length} réforme(s) trouvée(s)
-          </span>
+          <div className="flex items-center space-x-4">
+            <span className="text-sm text-gray-600">
+              {filteredReforms.length} réforme(s) trouvée(s)
+            </span>
+            {/* Export Dropdown */}
+            <ExportVehicleReformDropdown reforms={filteredReforms} />
+          </div>
         </div>
       </div>
 

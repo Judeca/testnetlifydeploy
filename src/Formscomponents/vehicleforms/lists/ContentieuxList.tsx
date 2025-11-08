@@ -2,16 +2,8 @@ import React, { useState, useMemo } from 'react';
 import { Eye } from 'lucide-react';
 import DeleteConfirmationModal from './DeleteConfirmationModal';
 import ViewDetailsModal from './ViewDetailsModal';
-
-interface Contentieux {
-  contentieuxId: number;
-  incidentDate: string;
-  description: string;
-  faultAttribution: string;
-  status: string;
-  resolutionDate?: string;
-  conclusion?: string;
-}
+import ExportContentieuxDropdown from './ExportContentieuxDropdown';
+import { Contentieux } from '../../../utils/exportVehicleUtils';
 
 interface ContentieuxListProps {
   contentieux: Contentieux[];
@@ -164,9 +156,15 @@ const ContentieuxList: React.FC<ContentieuxListProps> = ({
           </div>
         </div>
 
-        {/* Results count */}
-        <div className="mt-3 text-sm text-gray-600">
-          {filteredContentieux.length} contentieux trouvé(s)
+        {/* Results count and export */}
+        <div className="mt-4 flex justify-between items-center">
+          <div className="text-sm text-gray-600">
+            {filteredContentieux.length} contentieux trouvé(s)
+          </div>
+          <div className="flex items-center space-x-4">
+            {/* Export Dropdown */}
+            <ExportContentieuxDropdown contentieux={filteredContentieux} />
+          </div>
         </div>
       </div>
 
@@ -293,4 +291,3 @@ const ContentieuxList: React.FC<ContentieuxListProps> = ({
 };
 
 export default ContentieuxList;
-

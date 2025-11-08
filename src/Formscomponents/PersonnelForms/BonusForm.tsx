@@ -318,6 +318,8 @@ export function BonusForm({ initialData, isEdit = false, onSubmit, onCancel }: B
           label="Document justificatif"
           value={formData.supportingDocument}
           onChange={(url) => setFormData(prev => ({ ...prev, supportingDocument: url || '' }))}
+          accept=".pdf,.doc,.docx,.jpg,.jpeg,.png"
+          useSupabase={false}
         />
 
         {error && <p className="text-red-600 text-sm">{error}</p>}

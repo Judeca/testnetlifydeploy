@@ -2,6 +2,7 @@ import React, { useState, useMemo } from 'react';
 import { Eye, Edit2, Trash2 } from 'lucide-react';
 import DeleteConfirmationModal from './DeleteConfirmationModal';
 import ViewDetailsModal from './ViewDetailsModal';
+import ExportAssignmentDropdown from './ExportAssignmentDropdown';
 
 interface Assignment {
   assignmentId: number;
@@ -165,21 +166,6 @@ const AssignmentList: React.FC<AssignmentListProps> = ({ assignments, onEdit, on
               <option value="100">100</option>
             </select>
           </div>
-
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Actions
-            </label>
-            <button
-              onClick={() => {
-                setFilters({ status: '', search: '' });
-                setCurrentPage(1);
-              }}
-              className="w-full text-sm text-blue-600 hover:text-blue-800"
-            >
-              Réinitialiser les filtres
-            </button>
-          </div>
         </div>
 
         {/* Reset Filters */}
@@ -193,9 +179,13 @@ const AssignmentList: React.FC<AssignmentListProps> = ({ assignments, onEdit, on
           >
             Réinitialiser les filtres
           </button>
-          <span className="text-sm text-gray-600">
-            {filteredAssignments.length} affectation(s) trouvée(s)
-          </span>
+          <div className="flex items-center space-x-4">
+            <span className="text-sm text-gray-600">
+              {filteredAssignments.length} affectation(s) trouvée(s)
+            </span>
+            {/* Export Dropdown */}
+            <ExportAssignmentDropdown assignments={filteredAssignments} />
+          </div>
         </div>
       </div>
 

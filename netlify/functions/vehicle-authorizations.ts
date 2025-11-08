@@ -88,12 +88,41 @@ export const handler = async (event: any) => {
           }
         }
 
+        // Handle dates properly - validate required dates
+        let issueDate: Date;
+        const issueDateObj = new Date(postData.issueDate);
+        if (isNaN(issueDateObj.getTime())) {
+          return {
+            statusCode: 400,
+            headers: {
+              'Content-Type': 'application/json',
+              'Access-Control-Allow-Origin': '*',
+            },
+            body: JSON.stringify({ error: 'Invalid issueDate format' }),
+          };
+        }
+        issueDate = issueDateObj;
+
+        let expiryDate: Date;
+        const expiryDateObj = new Date(postData.expiryDate);
+        if (isNaN(expiryDateObj.getTime())) {
+          return {
+            statusCode: 400,
+            headers: {
+              'Content-Type': 'application/json',
+              'Access-Control-Allow-Origin': '*',
+            },
+            body: JSON.stringify({ error: 'Invalid expiryDate format' }),
+          };
+        }
+        expiryDate = expiryDateObj;
+
         const newAuthorization = await prisma.vehicleauthorizations.create({
           data: {
             vehicleId: parseInt(postData.vehicleId),
             authorizationNumber: postData.authorizationNumber,
-            issueDate: new Date(postData.issueDate),
-            expiryDate: new Date(postData.expiryDate),
+            issueDate: issueDate,
+            expiryDate: expiryDate,
             issuingAuthority: postData.issuingAuthority,
             autorisationtype: postData.autorisationtype,
             purpose: postData.purpose,
@@ -130,13 +159,71 @@ export const handler = async (event: any) => {
         if (updateData && updateData.Inserteridentity != null) {
           updateData.Inserteridentity = String(updateData.Inserteridentity);
         }
+        
+        // Handle dates properly for updates as well
+        let updateIssueDate: Date | undefined = undefined;
+        if (updateData.issueDate !== undefined) {
+          if (updateData.issueDate === null || updateData.issueDate === '') {
+            return {
+              statusCode: 400,
+              headers: {
+                'Content-Type': 'application/json',
+                'Access-Control-Allow-Origin': '*',
+              },
+              body: JSON.stringify({ error: 'issueDate is required' }),
+            };
+          } else {
+            const date = new Date(updateData.issueDate);
+            if (!isNaN(date.getTime())) {
+              updateIssueDate = date;
+            } else {
+              return {
+                statusCode: 400,
+                headers: {
+                  'Content-Type': 'application/json',
+                  'Access-Control-Allow-Origin': '*',
+                },
+                body: JSON.stringify({ error: 'Invalid issueDate format' }),
+              };
+            }
+          }
+        }
+
+        let updateExpiryDate: Date | undefined = undefined;
+        if (updateData.expiryDate !== undefined) {
+          if (updateData.expiryDate === null || updateData.expiryDate === '') {
+            return {
+              statusCode: 400,
+              headers: {
+                'Content-Type': 'application/json',
+                'Access-Control-Allow-Origin': '*',
+              },
+              body: JSON.stringify({ error: 'expiryDate is required' }),
+            };
+          } else {
+            const date = new Date(updateData.expiryDate);
+            if (!isNaN(date.getTime())) {
+              updateExpiryDate = date;
+            } else {
+              return {
+                statusCode: 400,
+                headers: {
+                  'Content-Type': 'application/json',
+                  'Access-Control-Allow-Origin': '*',
+                },
+                body: JSON.stringify({ error: 'Invalid expiryDate format' }),
+              };
+            }
+          }
+        }
+
         const updatedAuthorization = await prisma.vehicleauthorizations.update({
           where: { authorizationId: parseInt(updateId) },
           data: {
             ...updateData,
             vehicleId: updateData.vehicleId ? parseInt(updateData.vehicleId) : undefined,
-            issueDate: updateData.issueDate ? new Date(updateData.issueDate) : undefined,
-            expiryDate: updateData.expiryDate ? new Date(updateData.expiryDate) : undefined,
+            issueDate: updateIssueDate,
+            expiryDate: updateExpiryDate,
           },
         });
 

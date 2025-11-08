@@ -2,6 +2,7 @@ import React, { useState, useMemo } from 'react';
 import { Eye, Edit2, Trash2 } from 'lucide-react';
 import DeleteConfirmationModal from './DeleteConfirmationModal';
 import ViewDetailsModal from './ViewDetailsModal';
+import ExportPaymentCardDropdown from './ExportPaymentCardDropdown';
 
 interface PaymentCard {
   cardId: number;
@@ -184,22 +185,6 @@ const PaymentCardList: React.FC<PaymentCardListProps> = ({ paymentCards, onEdit,
               <option value="100">100</option>
             </select>
           </div>
-
-          {/* Reset filters */}
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Actions
-            </label>
-            <button
-              onClick={() => {
-                setFilters({ typeBadge: '', search: '' });
-                setCurrentPage(1);
-              }}
-              className="w-full text-sm text-blue-600 hover:text-blue-800"
-            >
-              Réinitialiser les filtres
-            </button>
-          </div>
         </div>
 
         {/* Reset Filters */}
@@ -213,9 +198,13 @@ const PaymentCardList: React.FC<PaymentCardListProps> = ({ paymentCards, onEdit,
           >
             Réinitialiser les filtres
           </button>
-          <span className="text-sm text-gray-600">
-            {filteredCards.length} carte(s) trouvée(s)
-          </span>
+          <div className="flex items-center space-x-4">
+            <span className="text-sm text-gray-600">
+              {filteredCards.length} carte(s) trouvée(s)
+            </span>
+            {/* Export Dropdown */}
+            <ExportPaymentCardDropdown paymentCards={filteredCards} />
+          </div>
         </div>
       </div>
 

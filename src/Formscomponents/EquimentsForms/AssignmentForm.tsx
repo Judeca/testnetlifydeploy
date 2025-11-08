@@ -209,7 +209,8 @@ const AssignmentForm: React.FC<AssignmentFormProps> = ({
               label="Document d'affectation"
               value={formData.attachmentFile}
               onChange={(url) => setFormData(prev => ({ ...prev, attachmentFile: url || '' }))}
-              folder="public"
+              accept=".pdf,.doc,.docx,.jpg,.jpeg,.png"
+              useSupabase={false}
             />
           </div>
         </div>

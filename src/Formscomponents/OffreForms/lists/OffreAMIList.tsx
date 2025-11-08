@@ -1,6 +1,7 @@
 import React, { useState, useMemo } from 'react';
 import DeleteConfirmationModal from './DeleteConfirmationModal';
 import { OffreDetailsModal } from '../../../components/Offres/OffreDetailsModal';
+import ExportOfferDropdown from './ExportOfferDropdown';
 
 interface OffreAMI {
   amiId: number;
@@ -147,9 +148,13 @@ const OffreAMIList: React.FC<OffreAMIListProps> = ({ offreAMI, onEdit, onDelete,
           </div>
         </div>
 
-        {/* Results count */}
-        <div className="mt-3 text-sm text-gray-600">
-          {filteredAMI.length} AMI trouvé(s)
+        {/* Results count and Export */}
+        <div className="mt-3 flex justify-between items-center">
+          <div className="text-sm text-gray-600">
+            {filteredAMI.length} AMI trouvé(s)
+          </div>
+          {/* Export Dropdown */}
+          <ExportOfferDropdown offers={filteredAMI} offerType="ami" />
         </div>
       </div>
 

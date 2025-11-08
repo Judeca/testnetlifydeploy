@@ -2,6 +2,7 @@ import React, { useState, useMemo } from 'react';
 import { Eye, Edit2, Trash2 } from 'lucide-react';
 import DeleteConfirmationModal from './DeleteConfirmationModal';
 import ViewDetailsModal from './ViewDetailsModal';
+import ExportAbsenceDropdown from './ExportAbsenceDropdown';
 
 interface Absence {
   absenceId: number;
@@ -148,6 +149,15 @@ const AbsenceList: React.FC<AbsenceListProps> = ({ absences, onEdit, onDelete, o
             </select>
           </div>
         </div>
+        
+        {/* Results count and Export */}
+        <div className="mt-4 flex justify-between items-center">
+          <div className="text-sm text-gray-600">
+            {filteredAbsences.length} absence(s) trouvée(s)
+          </div>
+          {/* Export Dropdown */}
+          <ExportAbsenceDropdown absences={filteredAbsences} />
+        </div>
       </div>
 
       {/* Table */}
@@ -288,11 +298,7 @@ const AbsenceList: React.FC<AbsenceListProps> = ({ absences, onEdit, onDelete, o
           { key: 'user', label: 'Employé', render: (user: any) => user ? `${user.firstName} ${user.lastName}` : '-' },
           { key: 'absenceType', label: 'Type d\'absence' },
           { key: 'description', label: 'Description' },
-          { key: 'supportingDocument', label: 'Document justificatif', render: (val: string) => val ? (
-            <a href={val} target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline">
-              Voir le document
-            </a>
-          ) : '-' },
+          { key: 'supportingDocument', label: 'Document justificatif' },
           { key: 'startDate', label: 'Date début', render: formatDate },
           { key: 'endDate', label: 'Date fin', render: formatDate },
           { key: 'daysCount', label: 'Nombre de jours' },

@@ -1,26 +1,71 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useMemo } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import {
   LayoutDashboard, Users, Contact, Wrench, Package, 
   Briefcase, AlertTriangle, Car, FileText, 
-  Banknote, Wallet, Calculator, Upload, Bell, X
+  Banknote, Wallet, Calculator, Bell, X
 } from 'lucide-react';
+import { useAuth } from '../../context/AuthContext';
 
-const menuItems = [
-  { icon: LayoutDashboard, label: 'Tableau de Bord', path: '/home' },
-  { icon: Users, label: 'Personnel', path: '/home/personnel' },
-  { icon: Contact, label: 'Contacts', path: '/home/contacts' },
-  { icon: Wrench, label: 'Équipements', path: '/home/equipements' },
-  { icon: Package, label: 'Offres', path: '/home/offres' },
-  { icon: Briefcase, label: 'Affaires', path: '/home/affaires' },
-  { icon: AlertTriangle, label: 'Alertes Échéances', path: '/home/alertes' },
-  { icon: Car, label: 'Parc Auto', path: '/home/parc-auto' },
-  { icon: FileText, label: 'Factures', path: '/home/factures' },
-  { icon: Banknote, label: 'Banques', path: '/home/banques' },
-  { icon: Wallet, label: 'Caisses', path: '/home/registres' },
-  { icon: Calculator, label: 'Impôts et Taxes', path: '/home/impots' },
- 
-];
+// Définition des items de menu par rôle
+const roleMenuItems: Record<string, Array<{ icon: any; label: string; path: string }>> = {
+  // Admin roles (SUPER_ADMIN, ADMIN, DIRECTEUR_TECHNIQUE, DIRECTEUR_ADMINISTRATIF) - tous les modules
+  ADMIN: [
+    { icon: LayoutDashboard, label: 'Tableau de Bord', path: '/dashboard' },
+    { icon: Users, label: 'Personnel', path: '/dashboard/personnel' },
+    { icon: Contact, label: 'Contacts', path: '/dashboard/contacts' },
+    { icon: Wrench, label: 'Équipements', path: '/dashboard/equipements' },
+    { icon: Package, label: 'Offres', path: '/dashboard/offres' },
+    { icon: Briefcase, label: 'Affaires', path: '/dashboard/affaires' },
+    { icon: AlertTriangle, label: 'Alertes Échéances', path: '/dashboard/alertes' },
+    { icon: Car, label: 'Parc Auto', path: '/dashboard/parc-auto' },
+    { icon: FileText, label: 'Factures', path: '/dashboard/factures' },
+    { icon: Banknote, label: 'Banques', path: '/dashboard/banques' },
+    { icon: Wallet, label: 'Caisses', path: '/dashboard/registres' },
+    { icon: Calculator, label: 'Impôts et Taxes', path: '/dashboard/impots' },
+  ],
+  
+  // Secretary
+  SECRETARY: [
+    { icon: LayoutDashboard, label: 'Tableau de Bord', path: '/dashboard' },
+    { icon: FileText, label: 'Factures', path: '/dashboard/factures' },
+    { icon: Wrench, label: 'Équipements', path: '/dashboard/equipements' },
+    { icon: Contact, label: 'Contacts', path: '/dashboard/contacts' },
+    { icon: Package, label: 'Offres', path: '/dashboard/offres' },
+    { icon: Briefcase, label: 'Affaires', path: '/dashboard/affaires' },
+    { icon: AlertTriangle, label: 'Alertes', path: '/dashboard/alertes' },
+    { icon: Car, label: 'Parc Auto', path: '/dashboard/parc-auto' },
+    { icon: Users, label: 'Personnel', path: '/dashboard/personnel' },
+  ],
+  
+  // Accountant
+  ACCOUNTANT: [
+    { icon: LayoutDashboard, label: 'Tableau de Bord', path: '/dashboard' },
+    { icon: Wallet, label: 'Caisses', path: '/dashboard/registres' },
+    { icon: Banknote, label: 'Banques', path: '/dashboard/banques' },
+    { icon: FileText, label: 'Factures', path: '/dashboard/factures' },
+    { icon: Car, label: 'Parc Auto', path: '/dashboard/parc-auto' },
+    { icon: AlertTriangle, label: 'Alertes', path: '/dashboard/alertes' },
+    { icon: Calculator, label: 'Impôts et Taxes', path: '/dashboard/impots' },
+    { icon: Users, label: 'Personnel', path: '/dashboard/personnel' },
+    { icon: Contact, label: 'Contacts', path: '/dashboard/contacts' },
+    { icon: Wrench, label: 'Équipements', path: '/dashboard/equipements' },
+    { icon: Package, label: 'Offres', path: '/dashboard/offres' },
+    { icon: Briefcase, label: 'Affaires', path: '/dashboard/affaires' },
+  ],
+  
+  // Employee
+  EMPLOYEE: [
+    { icon: LayoutDashboard, label: 'Tableau de Bord', path: '/dashboard' },
+    { icon: FileText, label: 'Factures', path: '/dashboard/factures' },
+    { icon: Wrench, label: 'Équipements', path: '/dashboard/equipements' },
+    { icon: Contact, label: 'Contacts', path: '/dashboard/contacts' },
+    { icon: Package, label: 'Offres', path: '/dashboard/offres' },
+    { icon: Briefcase, label: 'Affaires', path: '/dashboard/affaires' },
+    { icon: AlertTriangle, label: 'Alertes', path: '/dashboard/alertes' },
+    { icon: Car, label: 'Parc Auto', path: '/dashboard/parc-auto' },
+  ],
+};
 
 interface SidebarProps {
   country: string;
@@ -42,6 +87,7 @@ interface Alert {
 
 export function Sidebar({ country }: SidebarProps) {
   const location = useLocation();
+  const { role } = useAuth();
   const [logoPath, setLogoPath] = useState('https://images.pexels.com/photos/3184325/pexels-photo-3184325.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1');
   const [companyName, setCompanyName] = useState('SITINFRA');
   const [showLogo, setShowLogo] = useState(true);
@@ -50,6 +96,19 @@ export function Sidebar({ country }: SidebarProps) {
   const [overdueCount, setOverdueCount] = useState(0);
   const [showAlertsModal, setShowAlertsModal] = useState(false);
   const [loadingAlerts, setLoadingAlerts] = useState(false);
+
+  // Obtenir les items de menu selon le rôle
+  const menuItems = useMemo(() => {
+    if (!role) return [];
+    
+    // Pour les rôles admin (SUPER_ADMIN, ADMIN, DIRECTEUR_TECHNIQUE, DIRECTEUR_ADMINISTRATIF)
+    if (['SUPER_ADMIN', 'ADMIN', 'DIRECTEUR_TECHNIQUE', 'DIRECTEUR_ADMINISTRATIF'].includes(role)) {
+      return roleMenuItems.ADMIN;
+    }
+    
+    // Pour les autres rôles
+    return roleMenuItems[role] || [];
+  }, [role]);
 
   useEffect(() => {
     // Reset defaults
@@ -251,8 +310,8 @@ export function Sidebar({ country }: SidebarProps) {
           <ul className="space-y-2">
             {menuItems.map((item) => {
               const Icon = item.icon;
-              const isActive = location.pathname === item.path;
-              const isAlertsItem = item.path === '/home/alertes';
+              const isActive = location.pathname === item.path || location.pathname === '/dashboard' && item.path === '/dashboard';
+              const isAlertsItem = item.path === '/dashboard/alertes';
               
               return (
                 <li key={item.path}>
@@ -282,12 +341,12 @@ export function Sidebar({ country }: SidebarProps) {
                     <Link
                       to={item.path}
                       className={`flex items-center space-x-3 px-3 py-2 rounded-lg transition-all duration-200 ${
-                        isActive
+                        isActive || location.pathname.startsWith(item.path + '/')
                           ? 'bg-blue-50 text-blue-700 border-r-2 border-blue-700'
                           : 'text-gray-700 hover:bg-gray-50 hover:text-blue-600'
                       }`}
                     >
-                      <Icon className={`w-5 h-5 ${isActive ? 'text-blue-700' : 'text-gray-500'}`} />
+                      <Icon className={`w-5 h-5 ${isActive || location.pathname.startsWith(item.path + '/') ? 'text-blue-700' : 'text-gray-500'}`} />
                       <span className="font-medium">{item.label}</span>
                     </Link>
                   )}
@@ -423,7 +482,7 @@ export function Sidebar({ country }: SidebarProps) {
               {/* Footer */}
               <div className="bg-gray-50 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse">
                 <Link
-                  to="/home/alertes"
+                  to="/dashboard/alertes"
                   className="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-blue-600 text-base font-medium text-white hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 sm:ml-3 sm:w-auto sm:text-sm"
                   onClick={() => setShowAlertsModal(false)}
                 >

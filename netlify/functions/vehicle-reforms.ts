@@ -88,10 +88,25 @@ export const handler = async (event: any) => {
           }
         }
 
+        // Handle dates properly - validate required dates
+        let reformDate: Date;
+        const reformDateObj = new Date(postData.reformDate);
+        if (isNaN(reformDateObj.getTime())) {
+          return {
+            statusCode: 400,
+            headers: {
+              'Content-Type': 'application/json',
+              'Access-Control-Allow-Origin': '*',
+            },
+            body: JSON.stringify({ error: 'Invalid reformDate format' }),
+          };
+        }
+        reformDate = reformDateObj;
+
         const newReform = await prisma.vehiclereforms.create({
           data: {
             vehicleId: parseInt(postData.vehicleId),
-            reformDate: new Date(postData.reformDate),
+            reformDate: reformDate,
             reformReason: postData.reformReason,
             salePrice: postData.salePrice ? parseFloat(postData.salePrice) : null,
             buyer: postData.buyer || null,
@@ -133,12 +148,42 @@ export const handler = async (event: any) => {
         if (updateData && updateData.Inserteridentity != null) {
           updateData.Inserteridentity = String(updateData.Inserteridentity);
         }
+        
+        // Handle dates properly for updates as well
+        let updateReformDate: Date | undefined = undefined;
+        if (updateData.reformDate !== undefined) {
+          if (updateData.reformDate === null || updateData.reformDate === '') {
+            return {
+              statusCode: 400,
+              headers: {
+                'Content-Type': 'application/json',
+                'Access-Control-Allow-Origin': '*',
+              },
+              body: JSON.stringify({ error: 'reformDate is required' }),
+            };
+          } else {
+            const date = new Date(updateData.reformDate);
+            if (!isNaN(date.getTime())) {
+              updateReformDate = date;
+            } else {
+              return {
+                statusCode: 400,
+                headers: {
+                  'Content-Type': 'application/json',
+                  'Access-Control-Allow-Origin': '*',
+                },
+                body: JSON.stringify({ error: 'Invalid reformDate format' }),
+              };
+            }
+          }
+        }
+
         const updatedReform = await prisma.vehiclereforms.update({
           where: { reformId: parseInt(updateId) },
           data: {
             ...updateData,
             vehicleId: updateData.vehicleId ? parseInt(updateData.vehicleId) : undefined,
-            reformDate: updateData.reformDate ? new Date(updateData.reformDate) : undefined,
+            reformDate: updateReformDate,
             salePrice: updateData.salePrice ? parseFloat(updateData.salePrice) : undefined,
           },
         });

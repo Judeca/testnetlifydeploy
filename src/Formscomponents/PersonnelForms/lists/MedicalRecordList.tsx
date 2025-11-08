@@ -2,6 +2,7 @@ import React, { useState, useMemo } from 'react';
 import { Eye, Edit2, Trash2 } from 'lucide-react';
 import DeleteConfirmationModal from './DeleteConfirmationModal';
 import ViewDetailsModal from './ViewDetailsModal';
+import ExportMedicalRecordDropdown from './ExportMedicalRecordDropdown';
 
 interface MedicalRecord {
   medicalRecordsId: number;
@@ -130,6 +131,15 @@ const MedicalRecordList: React.FC<MedicalRecordListProps> = ({ medicalRecords, o
               <option value={100}>100</option>
             </select>
           </div>
+        </div>
+        
+        {/* Results count and Export */}
+        <div className="mt-4 flex justify-between items-center">
+          <div className="text-sm text-gray-600">
+            {filteredRecords.length} dossier(s) médical(aux) trouvé(s)
+          </div>
+          {/* Export Dropdown */}
+          <ExportMedicalRecordDropdown medicalRecords={filteredRecords} />
         </div>
       </div>
 
@@ -275,11 +285,7 @@ const MedicalRecordList: React.FC<MedicalRecordListProps> = ({ medicalRecords, o
           { key: 'prescribedAction', label: 'Action prescrite' },
           { key: 'notes', label: 'Notes' },
           { key: 'nextVisitDate', label: 'Prochaine visite', render: formatDate },
-          { key: 'medicalFile', label: 'Fichier médical', render: (val: string) => val ? (
-            <a href={val} target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline">
-              Voir le fichier
-            </a>
-          ) : '-' },
+          { key: 'medicalFile', label: 'Fichier médical' },
           { key: 'createdAt', label: 'Créé le', render: formatDate },
           { key: 'updatedAt', label: 'Mis à jour le', render: formatDate },
         ]}

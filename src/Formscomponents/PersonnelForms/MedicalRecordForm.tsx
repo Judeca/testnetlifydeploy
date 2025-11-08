@@ -310,6 +310,8 @@ export function MedicalRecordForm({ initialData, isEdit = false, onSubmit, onCan
           label="Fichier médical"
           value={formData.medicalFile}
           onChange={(url) => setFormData(prev => ({ ...prev, medicalFile: url || '' }))}
+          accept=".pdf,.doc,.docx,.jpg,.jpeg,.png"
+          useSupabase={false}
         />
 
         {error && <p className="text-red-600 text-sm">{error}</p>}

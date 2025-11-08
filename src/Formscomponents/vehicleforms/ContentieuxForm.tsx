@@ -25,8 +25,18 @@ const ContentieuxForm: React.FC<ContentieuxFormProps> = ({
 
   useEffect(() => {
     if (initialData) {
+      // Handle both regular vehicles and state vehicles
+      let vehicleId = '';
+      if (initialData.vehicleId) {
+        if (initialData.vehicleType === 'state') {
+          vehicleId = `state-${initialData.vehicleId}`;
+        } else {
+          vehicleId = `reg-${initialData.vehicleId}`;
+        }
+      }
+      
       setFormData({
-        vehicleId: initialData.vehicleId?.toString() || '',
+        vehicleId: vehicleId,
         incidentDate: initialData.incidentDate ? new Date(initialData.incidentDate).toISOString().split('T')[0] : '',
         description: initialData.description || '',
         faultAttribution: initialData.faultAttribution || 'UNDETERMINED',
@@ -47,7 +57,41 @@ const ContentieuxForm: React.FC<ContentieuxFormProps> = ({
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    onSubmit(formData);
+    
+    // Extract the actual ID and type from the combined vehicle ID
+    let vehicleId = formData.vehicleId;
+    let vehicleType = 'regular';
+    
+    if (formData.vehicleId.startsWith('state-')) {
+      vehicleId = formData.vehicleId.replace('state-', '');
+      vehicleType = 'state';
+    } else if (formData.vehicleId.startsWith('reg-')) {
+      vehicleId = formData.vehicleId.replace('reg-', '');
+    }
+    
+    onSubmit({
+      ...formData,
+      vehicleId: parseInt(vehicleId),
+      vehicleType: vehicleType,
+    });
+  };
+
+  // Create vehicle options combining regular and state vehicles
+  const getVehicleOptions = () => {
+    return vehicles.map((vehicle: any) => {
+      // Check if it's a state vehicle or regular vehicle based on the presence of stateVehicleId
+      if (vehicle.stateVehicleId !== undefined) {
+        return {
+          value: `state-${vehicle.stateVehicleId}`,
+          label: `${vehicle.licensePlate} - ${vehicle.brand} ${vehicle.model} (État)`
+        };
+      } else {
+        return {
+          value: `reg-${vehicle.vehicleId}`,
+          label: `${vehicle.licensePlate} - ${vehicle.brand} ${vehicle.model}`
+        };
+      }
+    });
   };
 
   return (
@@ -66,9 +110,9 @@ const ContentieuxForm: React.FC<ContentieuxFormProps> = ({
               className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
             >
               <option value="">Sélectionner un véhicule</option>
-              {vehicles.map((vehicle) => (
-                <option key={vehicle.vehicleId} value={vehicle.vehicleId}>
-                  {vehicle.licensePlate} - {vehicle.brand} {vehicle.model}
+              {getVehicleOptions().map((option) => (
+                <option key={option.value} value={option.value}>
+                  {option.label}
                 </option>
               ))}
             </select>

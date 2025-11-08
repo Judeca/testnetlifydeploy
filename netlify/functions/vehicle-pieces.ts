@@ -87,6 +87,43 @@ export const handler = async (event: any) => {
           }
         }
 
+        // Handle dates properly - validate required dates
+        let dateDebut: Date;
+        const dateDebutObj = new Date(postData.dateDebut);
+        if (isNaN(dateDebutObj.getTime())) {
+          return {
+            statusCode: 400,
+            headers: {
+              'Content-Type': 'application/json',
+              'Access-Control-Allow-Origin': '*',
+            },
+            body: JSON.stringify({ error: 'Invalid dateDebut format' }),
+          };
+        }
+        dateDebut = dateDebutObj;
+
+        let dateFin: Date;
+        const dateFinObj = new Date(postData.dateFin);
+        if (isNaN(dateFinObj.getTime())) {
+          return {
+            statusCode: 400,
+            headers: {
+              'Content-Type': 'application/json',
+              'Access-Control-Allow-Origin': '*',
+            },
+            body: JSON.stringify({ error: 'Invalid dateFin format' }),
+          };
+        }
+        dateFin = dateFinObj;
+
+        let dateProchaine: Date | null = null;
+        if (postData.dateProchaine && postData.dateProchaine.trim() !== '') {
+          const dateProchaineObj = new Date(postData.dateProchaine);
+          if (!isNaN(dateProchaineObj.getTime())) {
+            dateProchaine = dateProchaineObj;
+          }
+        }
+
         const newPiece = await prisma.vehiclepieces.create({
           data: {
             vehicleId: parseInt(postData.vehicleId),
@@ -94,9 +131,9 @@ export const handler = async (event: any) => {
             typeLibre: postData.typeLibre || null,
             description: postData.description || null,
             montant: parseFloat(postData.montant),
-            dateDebut: new Date(postData.dateDebut),
-            dateFin: new Date(postData.dateFin),
-            dateProchaine: postData.dateProchaine ? new Date(postData.dateProchaine) : null,
+            dateDebut: dateDebut,
+            dateFin: dateFin,
+            dateProchaine: dateProchaine,
             fichierJoint: postData.fichierJoint || null,
             Inserteridentity: postData.Inserteridentity || null,
             InserterCountry: postData.InserterCountry || null,
@@ -130,15 +167,87 @@ export const handler = async (event: any) => {
         if (updateData && updateData.Inserteridentity != null) {
           updateData.Inserteridentity = String(updateData.Inserteridentity);
         }
+        
+        // Handle dates properly for updates as well
+        let updateDateDebut: Date | undefined = undefined;
+        if (updateData.dateDebut !== undefined) {
+          if (updateData.dateDebut === null || updateData.dateDebut === '') {
+            return {
+              statusCode: 400,
+              headers: {
+                'Content-Type': 'application/json',
+                'Access-Control-Allow-Origin': '*',
+              },
+              body: JSON.stringify({ error: 'dateDebut is required' }),
+            };
+          } else {
+            const date = new Date(updateData.dateDebut);
+            if (!isNaN(date.getTime())) {
+              updateDateDebut = date;
+            } else {
+              return {
+                statusCode: 400,
+                headers: {
+                  'Content-Type': 'application/json',
+                  'Access-Control-Allow-Origin': '*',
+                },
+                body: JSON.stringify({ error: 'Invalid dateDebut format' }),
+              };
+            }
+          }
+        }
+
+        let updateDateFin: Date | undefined = undefined;
+        if (updateData.dateFin !== undefined) {
+          if (updateData.dateFin === null || updateData.dateFin === '') {
+            return {
+              statusCode: 400,
+              headers: {
+                'Content-Type': 'application/json',
+                'Access-Control-Allow-Origin': '*',
+              },
+              body: JSON.stringify({ error: 'dateFin is required' }),
+            };
+          } else {
+            const date = new Date(updateData.dateFin);
+            if (!isNaN(date.getTime())) {
+              updateDateFin = date;
+            } else {
+              return {
+                statusCode: 400,
+                headers: {
+                  'Content-Type': 'application/json',
+                  'Access-Control-Allow-Origin': '*',
+                },
+                body: JSON.stringify({ error: 'Invalid dateFin format' }),
+              };
+            }
+          }
+        }
+
+        let updateDateProchaine: Date | null | undefined = undefined;
+        if (updateData.dateProchaine !== undefined) {
+          if (updateData.dateProchaine === null || updateData.dateProchaine === '') {
+            updateDateProchaine = null; // Explicitly set to null if empty
+          } else {
+            const date = new Date(updateData.dateProchaine);
+            if (!isNaN(date.getTime())) {
+              updateDateProchaine = date;
+            } else {
+              updateDateProchaine = null; // Invalid date, set to null
+            }
+          }
+        }
+
         const updatedPiece = await prisma.vehiclepieces.update({
           where: { pieceId: parseInt(updateId) },
           data: {
             ...updateData,
             vehicleId: updateData.vehicleId ? parseInt(updateData.vehicleId) : undefined,
             montant: updateData.montant ? parseFloat(updateData.montant) : undefined,
-            dateDebut: updateData.dateDebut ? new Date(updateData.dateDebut) : undefined,
-            dateFin: updateData.dateFin ? new Date(updateData.dateFin) : undefined,
-            dateProchaine: updateData.dateProchaine ? new Date(updateData.dateProchaine) : undefined,
+            dateDebut: updateDateDebut,
+            dateFin: updateDateFin,
+            dateProchaine: updateDateProchaine !== undefined ? updateDateProchaine : undefined,
           },
         });
 

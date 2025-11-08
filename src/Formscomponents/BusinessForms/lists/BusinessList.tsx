@@ -2,6 +2,7 @@ import React, { useState, useMemo } from 'react';
 import { Eye, Edit2, Trash2 } from 'lucide-react';
 import DeleteConfirmationModal from '../../vehicleforms/lists/DeleteConfirmationModal';
 import ViewDetailsModal from '../../ContactForms/lists/ViewDetailsModal';
+import ExportBusinessDropdown from './ExportBusinessDropdown';
 
 interface Business {
   businessId: number;
@@ -208,20 +209,6 @@ const BusinessList: React.FC<BusinessListProps> = ({ businesses, onEdit, onDelet
           </div>
 
           {/* Reset Filters - Added like Contact page */}
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Actions
-            </label>
-            <button
-              onClick={() => {
-                setFilters({ status: '', search: '' });
-                setCurrentPage(1);
-              }}
-              className="w-full text-sm text-blue-600 hover:text-blue-800"
-            >
-              Réinitialiser les filtres
-            </button>
-          </div>
         </div>
 
         {/* Results count - Updated to match Contact page */}
@@ -235,9 +222,13 @@ const BusinessList: React.FC<BusinessListProps> = ({ businesses, onEdit, onDelet
           >
             Réinitialiser les filtres
           </button>
-          <span className="text-sm text-gray-600">
-            {filteredBusinesses.length} affaire(s) trouvée(s)
-          </span>
+          <div className="flex items-center space-x-4">
+            <span className="text-sm text-gray-600">
+              {filteredBusinesses.length} affaire(s) trouvée(s)
+            </span>
+            {/* Export Dropdown */}
+            <ExportBusinessDropdown businesses={filteredBusinesses} />
+          </div>
         </div>
       </div>
 

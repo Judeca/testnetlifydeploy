@@ -2,20 +2,8 @@ import React, { useState, useMemo } from 'react';
 import { Eye, Edit2, Trash2 } from 'lucide-react';
 import DeleteConfirmationModal from './DeleteConfirmationModal';
 import ViewDetailsModal from './ViewDetailsModal';
-
-interface StateVehicle {
-  stateVehicleId: number;
-  licensePlate: string;
-  brand: string;
-  model: string;
-  year: number;
-  mileage: number;
-  ministry: string;
-  statePropertyNumber: string;
-  status: string;
-  createdAt?: string;
-  updatedAt?: string;
-}
+import ExportStateVehicleDropdown from './ExportStateVehicleDropdown';
+import { StateVehicle } from '../../../utils/exportVehicleUtils';
 
 interface StateVehicleListProps {
   stateVehicles: StateVehicle[];
@@ -171,22 +159,6 @@ const StateVehicleList: React.FC<StateVehicleListProps> = ({
               <option value="100">100</option>
             </select>
           </div>
-
-          {/* Reset filters */}
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Actions
-            </label>
-            <button
-              onClick={() => {
-                setFilters({ status: '', search: '' });
-                setCurrentPage(1);
-              }}
-              className="w-full text-sm text-blue-600 hover:text-blue-800"
-            >
-              Réinitialiser les filtres
-            </button>
-          </div>
         </div>
 
         {/* Reset Filters */}
@@ -200,9 +172,13 @@ const StateVehicleList: React.FC<StateVehicleListProps> = ({
           >
             Réinitialiser les filtres
           </button>
-          <span className="text-sm text-gray-600">
-            {filteredVehicles.length} véhicule(s) d'État trouvé(s)
-          </span>
+          <div className="flex items-center space-x-4">
+            <span className="text-sm text-gray-600">
+              {filteredVehicles.length} véhicule(s) d'État trouvé(s)
+            </span>
+            {/* Export Dropdown */}
+            <ExportStateVehicleDropdown stateVehicles={filteredVehicles} />
+          </div>
         </div>
       </div>
 
@@ -390,6 +366,9 @@ const StateVehicleList: React.FC<StateVehicleListProps> = ({
           { key: 'year', label: 'Année' },
           { key: 'mileage', label: 'Kilométrage', render: (val: number) => val ? `${val.toLocaleString()} km` : '-' },
           { key: 'ministry', label: 'Ministère' },
+          { key: 'department', label: 'Département' },
+          { key: 'service', label: 'Service' },
+          { key: 'budgetAllocation', label: 'Allocation budgétaire' },
           { key: 'statePropertyNumber', label: 'Numéro de propriété d\'État' },
           { key: 'status', label: 'Statut', render: (val: string) => <span className={`px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full ${getStatusColor(val)}`}>{getStatusText(val)}</span> },
           { key: 'Inserteridentity', label: 'Inserter Identity' },

@@ -228,7 +228,7 @@ const CompanyExpenseForm: React.FC<CompanyExpenseFormProps> = ({ onSubmit, onCan
               value={formData.attachment}
               onChange={(url) => setFormData(prev => ({ ...prev, attachment: url || '' }))}
               accept=".pdf,.doc,.docx,.jpg,.jpeg,.png"
-              folder="public"
+              useSupabase={false}
             />
           </div>
         </div>

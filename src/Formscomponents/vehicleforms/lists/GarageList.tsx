@@ -2,18 +2,8 @@ import React, { useState, useMemo } from 'react';
 import { Eye, Edit2, Trash2 } from 'lucide-react';
 import DeleteConfirmationModal from './DeleteConfirmationModal';
 import ViewDetailsModal from './ViewDetailsModal';
-
-interface Garage {
-  garageId: number;
-  name: string;
-  address: string;
-  phoneNumber: string;
-  manager: string;
-  capacity: number;
-  type: string;
-  createdAt?: string;
-  updatedAt?: string;
-}
+import ExportGarageDropdown from './ExportGarageDropdown';
+import { Garage } from '../../../utils/exportVehicleUtils';
 
 interface GarageListProps {
   garages: Garage[];
@@ -159,22 +149,6 @@ const GarageList: React.FC<GarageListProps> = ({ garages, onEdit, onDelete, onVi
               <option value="100">100</option>
             </select>
           </div>
-
-          {/* Reset filters */}
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Actions
-            </label>
-            <button
-              onClick={() => {
-                setFilters({ type: '', search: '' });
-                setCurrentPage(1);
-              }}
-              className="w-full text-sm text-blue-600 hover:text-blue-800"
-            >
-              Réinitialiser les filtres
-            </button>
-          </div>
         </div>
 
         {/* Reset Filters */}
@@ -188,9 +162,13 @@ const GarageList: React.FC<GarageListProps> = ({ garages, onEdit, onDelete, onVi
           >
             Réinitialiser les filtres
           </button>
-          <span className="text-sm text-gray-600">
-            {filteredGarages.length} garage(s) trouvé(s)
-          </span>
+          <div className="flex items-center space-x-4">
+            <span className="text-sm text-gray-600">
+              {filteredGarages.length} garage(s) trouvé(s)
+            </span>
+            {/* Export Dropdown */}
+            <ExportGarageDropdown garages={filteredGarages} />
+          </div>
         </div>
       </div>
 

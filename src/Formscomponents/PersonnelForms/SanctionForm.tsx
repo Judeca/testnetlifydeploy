@@ -285,6 +285,8 @@ export function SanctionForm({ initialData, isEdit = false, onSubmit, onCancel }
           label="Document justificatif"
           value={formData.supportingDocument}
           onChange={(url) => setFormData(prev => ({ ...prev, supportingDocument: url || '' }))}
+          accept=".pdf,.doc,.docx,.jpg,.jpeg,.png"
+          useSupabase={false}
         />
 
         <div className="flex justify-end space-x-3 pt-4">

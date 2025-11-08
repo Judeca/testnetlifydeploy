@@ -86,10 +86,25 @@ export const handler = async (event: any) => {
           }
         }
 
+        // Handle dates properly - validate required dates
+        let date: Date;
+        const dateObj = new Date(postData.date);
+        if (isNaN(dateObj.getTime())) {
+          return {
+            statusCode: 400,
+            headers: {
+              'Content-Type': 'application/json',
+              'Access-Control-Allow-Origin': '*',
+            },
+            body: JSON.stringify({ error: 'Invalid date format' }),
+          };
+        }
+        date = dateObj;
+
         const newFuelManagement = await prisma.fuelmanagements.create({
           data: {
             vehicleId: parseInt(postData.vehicleId),
-            date: new Date(postData.date),
+            date: date,
             typePaiement: postData.typePaiement,
             distance: parseInt(postData.distance) || 0,
             quantity: parseFloat(postData.quantity),
@@ -130,12 +145,42 @@ export const handler = async (event: any) => {
         if (updateData && updateData.Inserteridentity != null) {
           updateData.Inserteridentity = String(updateData.Inserteridentity);
         }
+        
+        // Handle dates properly for updates as well
+        let updateDate: Date | undefined = undefined;
+        if (updateData.date !== undefined) {
+          if (updateData.date === null || updateData.date === '') {
+            return {
+              statusCode: 400,
+              headers: {
+                'Content-Type': 'application/json',
+                'Access-Control-Allow-Origin': '*',
+              },
+              body: JSON.stringify({ error: 'date is required' }),
+            };
+          } else {
+            const date = new Date(updateData.date);
+            if (!isNaN(date.getTime())) {
+              updateDate = date;
+            } else {
+              return {
+                statusCode: 400,
+                headers: {
+                  'Content-Type': 'application/json',
+                  'Access-Control-Allow-Origin': '*',
+                },
+                body: JSON.stringify({ error: 'Invalid date format' }),
+              };
+            }
+          }
+        }
+
         const updatedFuelManagement = await prisma.fuelmanagements.update({
           where: { fuelManagementId: parseInt(updateId) },
           data: {
             ...updateData,
             vehicleId: updateData.vehicleId ? parseInt(updateData.vehicleId) : undefined,
-            date: updateData.date ? new Date(updateData.date) : undefined,
+            date: updateDate,
             distance: updateData.distance ? parseInt(updateData.distance) : undefined,
             quantity: updateData.quantity ? parseFloat(updateData.quantity) : undefined,
             amount: updateData.amount ? parseFloat(updateData.amount) : undefined,

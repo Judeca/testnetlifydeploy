@@ -2,33 +2,32 @@ import React, { useState, useMemo } from 'react';
 import { Eye, Edit2, Trash2 } from 'lucide-react';
 import DeleteConfirmationModal from './DeleteConfirmationModal';
 import ViewDetailsModal from './ViewDetailsModal';
+import ExportInvoiceDropdown from './ExportInvoiceDropdown';
 
-interface OtherInvoice {
+interface LocalOtherInvoice {
   otherInvoiceId: number;
   invoiceNumber: string;
-  category?: string;
-  description?: string;
-  amount: number;
-  devise: string; // Changed from currency to devise
-  invoiceDate: string;
-  paymentDate?: string;
+  category: string;
   supplier: string;
-  supplierContactId?: number;
-  status: string;
-  service?: string;
-  attachment?: string;
   supplierContact?: {
     firstName: string;
     lastName: string;
-    companyName: string;
   };
+  amount: number;
+  devise: string;
+  invoiceDate: string;
+  paymentDate?: string;
+  status: string;
+  description?: string;
+  service?: string;
+  attachment?: string;
 }
 
 interface OtherInvoiceListProps {
-  otherInvoices: OtherInvoice[];
-  onEdit: (invoice: OtherInvoice) => void;
+  otherInvoices: LocalOtherInvoice[];
+  onEdit: (invoice: LocalOtherInvoice) => void;
   onDelete: (id: number) => void;
-  onView: (invoice: OtherInvoice) => void;
+  onView: (invoice: LocalOtherInvoice) => void;
 }
 
 const OtherInvoiceList: React.FC<OtherInvoiceListProps> = ({
@@ -44,11 +43,11 @@ const OtherInvoiceList: React.FC<OtherInvoiceListProps> = ({
   });
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(10);
-  const [deleteModal, setDeleteModal] = useState<{ isOpen: boolean; invoice: OtherInvoice | null }>({
+  const [deleteModal, setDeleteModal] = useState<{ isOpen: boolean; invoice: LocalOtherInvoice | null }>({
     isOpen: false,
     invoice: null,
   });
-  const [viewModal, setViewModal] = useState<{ isOpen: boolean; invoice: OtherInvoice | null }>({
+  const [viewModal, setViewModal] = useState<{ isOpen: boolean; invoice: LocalOtherInvoice | null }>({
     isOpen: false,
     invoice: null,
   });
@@ -111,7 +110,7 @@ const OtherInvoiceList: React.FC<OtherInvoiceListProps> = ({
   const endIndex = startIndex + itemsPerPage;
   const paginatedInvoices = filteredInvoices.slice(startIndex, endIndex);
 
-  const handleDeleteClick = (invoice: OtherInvoice) => {
+  const handleDeleteClick = (invoice: LocalOtherInvoice) => {
     setDeleteModal({ isOpen: true, invoice });
   };
 
@@ -194,9 +193,19 @@ const OtherInvoiceList: React.FC<OtherInvoiceListProps> = ({
           >
             Réinitialiser les filtres
           </button>
-          <span className="text-sm text-gray-600">
-            {filteredInvoices.length} facture(s) trouvée(s)
-          </span>
+          <div className="flex items-center space-x-4">
+            <span className="text-sm text-gray-600">
+              {filteredInvoices.length} facture(s) trouvée(s)
+            </span>
+            {/* Export Dropdown */}
+            <ExportInvoiceDropdown 
+              invoices={filteredInvoices.map(invoice => ({
+                ...invoice,
+                category: invoice.category || ''
+              }))} 
+              invoiceType="otherinvoices" 
+            />
+          </div>
         </div>
       </div>
 

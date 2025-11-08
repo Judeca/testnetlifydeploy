@@ -97,18 +97,41 @@ export const handler = async (event: any) => {
           }
         }
 
+        // Handle dates properly - only create Date objects if values are provided
+        let interventionDate: Date;
+        const interventionDateObj = new Date(postData.interventionDate);
+        if (isNaN(interventionDateObj.getTime())) {
+          return {
+            statusCode: 400,
+            headers: {
+              'Content-Type': 'application/json',
+              'Access-Control-Allow-Origin': '*',
+            },
+            body: JSON.stringify({ error: 'Invalid interventionDate format' }),
+          };
+        }
+        interventionDate = interventionDateObj;
+
+        let nextInterventionDate: Date | null = null;
+        if (postData.nextInterventionDate && postData.nextInterventionDate.trim() !== '') {
+          const nextDateObj = new Date(postData.nextInterventionDate);
+          if (!isNaN(nextDateObj.getTime())) {
+            nextInterventionDate = nextDateObj;
+          }
+        }
+
         const newIntervention = await prisma.vehicleinterventions.create({
           data: {
             vehicleId: parseInt(postData.vehicleId),
             garageId: parseInt(postData.garageId),
-            interventionDate: new Date(postData.interventionDate),
+            interventionDate: interventionDate,
             type: postData.type,
             description: postData.description,
             cost: parseFloat(postData.cost),
             technician: postData.technician,
             devise: postData.devise,
             status: postData.status,
-            nextInterventionDate: postData.nextInterventionDate ? new Date(postData.nextInterventionDate) : null,
+            nextInterventionDate: nextInterventionDate,
             Inserteridentity: postData.Inserteridentity || null,
             InserterCountry: postData.InserterCountry || null,
           },
@@ -141,15 +164,59 @@ export const handler = async (event: any) => {
         if (updateData && updateData.Inserteridentity != null) {
           updateData.Inserteridentity = String(updateData.Inserteridentity);
         }
+        
+        // Handle dates properly for updates as well
+        let updateInterventionDate: Date | undefined = undefined;
+        if (updateData.interventionDate !== undefined) {
+          if (updateData.interventionDate === null || updateData.interventionDate === '') {
+            return {
+              statusCode: 400,
+              headers: {
+                'Content-Type': 'application/json',
+                'Access-Control-Allow-Origin': '*',
+              },
+              body: JSON.stringify({ error: 'interventionDate is required' }),
+            };
+          } else {
+            const date = new Date(updateData.interventionDate);
+            if (!isNaN(date.getTime())) {
+              updateInterventionDate = date;
+            } else {
+              return {
+                statusCode: 400,
+                headers: {
+                  'Content-Type': 'application/json',
+                  'Access-Control-Allow-Origin': '*',
+                },
+                body: JSON.stringify({ error: 'Invalid interventionDate format' }),
+              };
+            }
+          }
+        }
+
+        let updateNextInterventionDate: Date | null | undefined = undefined;
+        if (updateData.nextInterventionDate !== undefined) {
+          if (updateData.nextInterventionDate === null || updateData.nextInterventionDate === '') {
+            updateNextInterventionDate = null; // Explicitly set to null if empty
+          } else {
+            const date = new Date(updateData.nextInterventionDate);
+            if (!isNaN(date.getTime())) {
+              updateNextInterventionDate = date;
+            } else {
+              updateNextInterventionDate = null; // Invalid date, set to null
+            }
+          }
+        }
+
         const updatedIntervention = await prisma.vehicleinterventions.update({
           where: { interventionId: parseInt(updateId) },
           data: {
             ...updateData,
             vehicleId: updateData.vehicleId ? parseInt(updateData.vehicleId) : undefined,
             garageId: updateData.garageId ? parseInt(updateData.garageId) : undefined,
-            interventionDate: updateData.interventionDate ? new Date(updateData.interventionDate) : undefined,
+            interventionDate: updateInterventionDate,
             cost: updateData.cost ? parseFloat(updateData.cost) : undefined,
-            nextInterventionDate: updateData.nextInterventionDate ? new Date(updateData.nextInterventionDate) : undefined,
+            nextInterventionDate: updateNextInterventionDate !== undefined ? updateNextInterventionDate : undefined,
           },
         });
 

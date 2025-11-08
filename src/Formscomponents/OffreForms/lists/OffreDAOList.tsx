@@ -1,6 +1,7 @@
 import React, { useState, useMemo } from 'react';
 import DeleteConfirmationModal from './DeleteConfirmationModal';
 import { OffreDetailsModal } from '../../../components/Offres/OffreDetailsModal';
+import ExportOfferDropdown from './ExportOfferDropdown';
 
 interface OffreDAO {
   daoId: number;
@@ -169,9 +170,13 @@ const OffreDAOList: React.FC<OffreDAOListProps> = ({ offreDAO, onEdit, onDelete,
           </div>
         </div>
 
-        {/* Results count */}
-        <div className="mt-3 text-sm text-gray-600">
-          {filteredDAO.length} DAO trouvé(s)
+        {/* Results count and Export */}
+        <div className="mt-3 flex justify-between items-center">
+          <div className="text-sm text-gray-600">
+            {filteredDAO.length} DAO trouvé(s)
+          </div>
+          {/* Export Dropdown */}
+          <ExportOfferDropdown offers={filteredDAO} offerType="dao" />
         </div>
       </div>
 

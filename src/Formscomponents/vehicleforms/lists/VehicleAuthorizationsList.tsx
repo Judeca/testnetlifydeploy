@@ -2,17 +2,8 @@ import React, { useState, useMemo } from 'react';
 import { Eye } from 'lucide-react';
 import DeleteConfirmationModal from './DeleteConfirmationModal';
 import ViewDetailsModal from './ViewDetailsModal';
-
-interface VehicleAuthorization {
-  authorizationId: number;
-  authorizationNumber: string;
-  issueDate: string;
-  expiryDate: string;
-  issuingAuthority: string;
-  autorisationtype: string;
-  purpose: string;
-  status: string;
-}
+import ExportVehicleAuthorizationDropdown from './ExportVehicleAuthorizationDropdown';
+import { VehicleAuthorization } from '../../../utils/exportVehicleUtils';
 
 interface VehicleAuthorizationsListProps {
   authorizations: VehicleAuthorization[];
@@ -160,9 +151,15 @@ const VehicleAuthorizationsList: React.FC<VehicleAuthorizationsListProps> = ({
           </div>
         </div>
 
-        {/* Results count */}
-        <div className="mt-3 text-sm text-gray-600">
-          {filteredAuthorizations.length} autorisation(s) trouvée(s)
+        {/* Results count and export */}
+        <div className="mt-4 flex justify-between items-center">
+          <div className="text-sm text-gray-600">
+            {filteredAuthorizations.length} autorisation(s) trouvée(s)
+          </div>
+          <div className="flex items-center space-x-4">
+            {/* Export Dropdown */}
+            <ExportVehicleAuthorizationDropdown authorizations={filteredAuthorizations} />
+          </div>
         </div>
       </div>
 
@@ -294,4 +291,3 @@ const VehicleAuthorizationsList: React.FC<VehicleAuthorizationsListProps> = ({
 };
 
 export default VehicleAuthorizationsList;
-

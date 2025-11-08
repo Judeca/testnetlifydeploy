@@ -2,6 +2,7 @@ import React, { useState, useMemo } from 'react';
 import { Eye, Edit2, Trash2 } from 'lucide-react';
 import DeleteConfirmationModal from './DeleteConfirmationModal';
 import ViewDetailsModal from './ViewDetailsModal';
+import ExportAffectationDropdown from './ExportAffectationDropdown';
 
 interface Affectation {
   affectationsId: number;
@@ -173,6 +174,15 @@ const AffectationList: React.FC<AffectationListProps> = ({ affectations, onEdit,
             </select>
           </div>
         </div>
+        
+        {/* Results count and Export */}
+        <div className="mt-4 flex justify-between items-center">
+          <div className="text-sm text-gray-600">
+            {filteredAffectations.length} affectation(s) trouvée(s)
+          </div>
+          {/* Export Dropdown */}
+          <ExportAffectationDropdown affectations={filteredAffectations} />
+        </div>
       </div>
 
       {/* Table */}
@@ -315,11 +325,7 @@ const AffectationList: React.FC<AffectationListProps> = ({ affectations, onEdit,
           { key: 'site', label: 'Site' },
           { key: 'affectationtype', label: 'Type d\'affectation', render: (val: string) => getAffectationTypeText(val) },
           { key: 'description', label: 'Description' },
-          { key: 'attached_file', label: 'Fichier joint', render: (val: string) => val ? (
-            <a href={val} target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline">
-              Voir le fichier
-            </a>
-          ) : '-' },
+          { key: 'attached_file', label: 'Fichier joint' },
           { key: 'startDate', label: 'Date début', render: formatDate },
           { key: 'endDate', label: 'Date fin', render: formatDate },
           { key: 'createdAt', label: 'Créé le', render: formatDate },

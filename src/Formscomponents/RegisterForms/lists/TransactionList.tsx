@@ -2,6 +2,7 @@ import React, { useState, useMemo } from 'react';
 import { Eye } from 'lucide-react';
 import DeleteConfirmationModal from './DeleteConfirmationModal';
 import ViewDetailsModal from './ViewDetailsModal';
+import ExportTransactionDropdown from './ExportTransactionDropdown';
 
 interface Transaction {
   transactionId: number;
@@ -239,8 +240,12 @@ const TransactionList: React.FC<TransactionListProps> = ({ transactions, onEdit,
         </div>
 
         {/* Results count */}
-        <div className="mt-3 text-sm text-gray-600">
-          {filteredTransactions.length} transaction(s) trouvée(s)
+        <div className="mt-3 flex justify-between items-center">
+          <div className="text-sm text-gray-600">
+            {filteredTransactions.length} transaction(s) trouvée(s)
+          </div>
+          {/* Export Dropdown */}
+          <ExportTransactionDropdown transactions={filteredTransactions} />
         </div>
       </div>
 

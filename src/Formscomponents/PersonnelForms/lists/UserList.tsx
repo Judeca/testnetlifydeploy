@@ -2,6 +2,7 @@ import React, { useState, useMemo } from 'react';
 import { Eye, Edit2, Trash2 } from 'lucide-react';
 import DeleteConfirmationModal from './DeleteConfirmationModal';
 import ViewDetailsModal from './ViewDetailsModal';
+import ExportUserDropdown from './ExportUserDropdown';
 
 interface User {
   id: number;
@@ -145,6 +146,8 @@ const UserList: React.FC<UserListProps> = ({ users, onEdit, onDelete, onView }) 
               <option value="ADMIN">Admin</option>
               <option value="ACCOUNTANT">Comptable</option>
               <option value="DIRECTOR">Directeur</option>
+              <option value="DIRECTEUR_TECHNIQUE">Directeur Technique</option>
+              <option value="DIRECTEUR_ADMINISTRATIF">Directeur Administratif</option>
               <option value="EMPLOYEE">Employé</option>
               <option value="SECRETARY">Secrétaire</option>
               <option value="DRIVER">Chauffeur</option>
@@ -215,6 +218,15 @@ const UserList: React.FC<UserListProps> = ({ users, onEdit, onDelete, onView }) 
               <option value={100}>100</option>
             </select>
           </div>
+        </div>
+        
+        {/* Results count and Export */}
+        <div className="mt-4 flex justify-between items-center">
+          <div className="text-sm text-gray-600">
+            {filteredUsers.length} utilisateur(s) trouvé(s)
+          </div>
+          {/* Export Dropdown */}
+          <ExportUserDropdown users={filteredUsers} />
         </div>
       </div>
 

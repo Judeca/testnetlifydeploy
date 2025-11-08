@@ -87,11 +87,34 @@ export const handler = async (event: any) => {
           }
         }
 
+        // Handle dates properly - only create Date objects if values are provided
+        let date: Date;
+        const dateObj = new Date(postData.date);
+        if (isNaN(dateObj.getTime())) {
+          return {
+            statusCode: 400,
+            headers: {
+              'Content-Type': 'application/json',
+              'Access-Control-Allow-Origin': '*',
+            },
+            body: JSON.stringify({ error: 'Invalid date format' }),
+          };
+        }
+        date = dateObj;
+
+        let nextDate: Date | null = null;
+        if (postData.nextDate && postData.nextDate.trim() !== '') {
+          const nextDateObj = new Date(postData.nextDate);
+          if (!isNaN(nextDateObj.getTime())) {
+            nextDate = nextDateObj;
+          }
+        }
+
         const newExpense = await prisma.vehicleexpenses.create({
           data: {
             vehicleId: parseInt(postData.vehicleId),
-            date: new Date(postData.date),
-            nextDate: postData.nextDate ? new Date(postData.nextDate) : null,
+            date: date,
+            nextDate: nextDate,
             code: postData.code || null,
             description: postData.description,
             distance: parseInt(postData.distance) || 0,
@@ -131,13 +154,57 @@ export const handler = async (event: any) => {
         if (updateData && updateData.Inserteridentity != null) {
           updateData.Inserteridentity = String(updateData.Inserteridentity);
         }
+        
+        // Handle dates properly for updates as well
+        let updateDate: Date | undefined = undefined;
+        if (updateData.date !== undefined) {
+          if (updateData.date === null || updateData.date === '') {
+            return {
+              statusCode: 400,
+              headers: {
+                'Content-Type': 'application/json',
+                'Access-Control-Allow-Origin': '*',
+              },
+              body: JSON.stringify({ error: 'date is required' }),
+            };
+          } else {
+            const date = new Date(updateData.date);
+            if (!isNaN(date.getTime())) {
+              updateDate = date;
+            } else {
+              return {
+                statusCode: 400,
+                headers: {
+                  'Content-Type': 'application/json',
+                  'Access-Control-Allow-Origin': '*',
+                },
+                body: JSON.stringify({ error: 'Invalid date format' }),
+              };
+            }
+          }
+        }
+
+        let updateNextDate: Date | null | undefined = undefined;
+        if (updateData.nextDate !== undefined) {
+          if (updateData.nextDate === null || updateData.nextDate === '') {
+            updateNextDate = null; // Explicitly set to null if empty
+          } else {
+            const date = new Date(updateData.nextDate);
+            if (!isNaN(date.getTime())) {
+              updateNextDate = date;
+            } else {
+              updateNextDate = null; // Invalid date, set to null
+            }
+          }
+        }
+
         const updatedExpense = await prisma.vehicleexpenses.update({
           where: { expenseId: parseInt(updateId) },
           data: {
             ...updateData,
             vehicleId: updateData.vehicleId ? parseInt(updateData.vehicleId) : undefined,
-            date: updateData.date ? new Date(updateData.date) : undefined,
-            nextDate: updateData.nextDate ? new Date(updateData.nextDate) : undefined,
+            date: updateDate,
+            nextDate: updateNextDate !== undefined ? updateNextDate : undefined,
             distance: updateData.distance ? parseInt(updateData.distance) : undefined,
             amount: updateData.amount ? parseFloat(updateData.amount) : undefined,
           },

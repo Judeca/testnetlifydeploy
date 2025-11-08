@@ -204,8 +204,8 @@ const OffreAMIForm: React.FC<OffreAMIFormProps> = ({ onSubmit, initialData, isEd
               label="Pièce jointe"
               value={formData.attachment}
               onChange={(url: string | null) => setFormData(prev => ({ ...prev, attachment: url ?? "" }))}
-              folder="public"
-              className="mb-4"
+              accept=".pdf,.doc,.docx,.jpg,.jpeg,.png"
+              useSupabase={false}
             />
           </div>
         </div>

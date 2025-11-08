@@ -1,6 +1,7 @@
 import React, { useState, useMemo } from 'react';
 import DeleteConfirmationModal from './DeleteConfirmationModal';
 import { OffreDetailsModal } from '../../../components/Offres/OffreDetailsModal';
+import ExportOfferDropdown from './ExportOfferDropdown';
 
 interface OffreDevis {
   devisId: number;
@@ -144,9 +145,13 @@ const OffreDevisList: React.FC<OffreDevisListProps> = ({ offreDevis, onEdit, onD
           </div>
         </div>
 
-        {/* Results count */}
-        <div className="mt-3 text-sm text-gray-600">
-          {filteredDevis.length} devis trouvé(s)
+        {/* Results count and Export */}
+        <div className="mt-3 flex justify-between items-center">
+          <div className="text-sm text-gray-600">
+            {filteredDevis.length} devis trouvé(s)
+          </div>
+          {/* Export Dropdown */}
+          <ExportOfferDropdown offers={filteredDevis} offerType="devis" />
         </div>
       </div>
 

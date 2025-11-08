@@ -2,6 +2,7 @@ import React, { useState, useMemo } from 'react';
 import { Search, Edit2, Trash2, Eye, Receipt, Calendar, AlertCircle, CheckCircle, Clock, ChevronLeft, ChevronRight } from 'lucide-react';
 import { Button } from '../../../components/Common/Button';
 import ViewDetailsModal from './ViewDetailsModal';
+import ExportTaxDropdown from './ExportTaxDropdown';
 
 interface TaxDeclaration {
   id: number;
@@ -225,8 +226,12 @@ export const TaxDeclarationList: React.FC<TaxDeclarationListProps> = ({
           >
             Réinitialiser les filtres
           </button>
-          <div className="text-sm text-gray-600">
-            {filteredTaxes.length} déclaration{filteredTaxes.length !== 1 ? 's' : ''} trouvée{filteredTaxes.length !== 1 ? 's' : ''}
+          <div className="flex items-center space-x-4">
+            <div className="text-sm text-gray-600">
+              {filteredTaxes.length} déclaration{filteredTaxes.length !== 1 ? 's' : ''} trouvée{filteredTaxes.length !== 1 ? 's' : ''}
+            </div>
+            {/* Export Dropdown */}
+            <ExportTaxDropdown taxes={filteredTaxes} />
           </div>
         </div>
       </div>

@@ -2,6 +2,7 @@ import React, { useState, useMemo } from 'react';
 import { Eye, Edit2, Trash2 } from 'lucide-react';
 import DeleteConfirmationModal from './DeleteConfirmationModal';
 import ViewDetailsModal from './ViewDetailsModal';
+import ExportBonusDropdown from './ExportBonusDropdown';
 
 interface Bonus {
   bonusId: number;
@@ -190,6 +191,15 @@ const BonusList: React.FC<BonusListProps> = ({ bonuses, onEdit, onDelete, onView
             </select>
           </div>
         </div>
+        
+        {/* Results count and Export */}
+        <div className="mt-4 flex justify-between items-center">
+          <div className="text-sm text-gray-600">
+            {filteredBonuses.length} prime(s) trouvée(s)
+          </div>
+          {/* Export Dropdown */}
+          <ExportBonusDropdown bonuses={filteredBonuses} />
+        </div>
       </div>
 
       {/* Table */}
@@ -322,17 +332,16 @@ const BonusList: React.FC<BonusListProps> = ({ bonuses, onEdit, onDelete, onView
       />
 
       {/* View Modal */}
-      {viewModal.bonus && (
-        <ViewDetailsModal
-          isOpen={viewModal.isOpen}
-          onClose={() => setViewModal({ isOpen: false, bonus: null })}
-          title="Détails de la prime"
-          data={viewModal.bonus}
-          fields={[
+      <ViewDetailsModal
+        isOpen={viewModal.isOpen}
+        onClose={() => setViewModal({ isOpen: false, bonus: null })}
+        title="Détails de la prime"
+        data={viewModal.bonus || {}}
+        fields={[
             { key: 'bonusId', label: 'ID Prime' },
             { key: 'user', label: 'Employé', render: (user: any) => user ? `${user.firstName} ${user.lastName}` : '-' },
             { key: 'bonusType', label: 'Type de prime' },
-            { key: 'amount', label: 'Montant', render: (val: number) => formatCurrency(val, viewModal.bonus!.currency) },
+            { key: 'amount', label: 'Montant', render: (val: number) => viewModal.bonus ? formatCurrency(val, viewModal.bonus.currency) : '-' },
             { key: 'currency', label: 'Devise' },
             { key: 'awardDate', label: 'Date d\'attribution', render: formatDate },
             { key: 'reason', label: 'Raison' },
@@ -342,16 +351,11 @@ const BonusList: React.FC<BonusListProps> = ({ bonuses, onEdit, onDelete, onView
                 {getStatusText(val)}
               </span>
             )},
-            { key: 'supportingDocument', label: 'Document justificatif', render: (val: string) => val ? (
-              <a href={val} target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline">
-                Voir le document
-              </a>
-            ) : '-' },
+            { key: 'supportingDocument', label: 'Document justificatif' },
             { key: 'createdAt', label: 'Créé le', render: formatDate },
             { key: 'updatedAt', label: 'Mis à jour le', render: formatDate },
           ]}
         />
-      )}
     </div>
   );
 };

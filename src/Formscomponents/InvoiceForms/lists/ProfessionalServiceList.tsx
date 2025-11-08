@@ -1,6 +1,7 @@
 import React, { useState, useMemo } from 'react';
 import DeleteConfirmationModal from './DeleteConfirmationModal';
 import ViewDetailsModal from './ViewDetailsModal';
+import ExportInvoiceDropdown from './ExportInvoiceDropdown';
 
 interface ProfessionalService {
   professionalServiceId: number;
@@ -208,9 +209,13 @@ const ProfessionalServiceList: React.FC<ProfessionalServiceListProps> = ({
           >
             Réinitialiser les filtres
           </button>
-          <span className="text-sm text-gray-600">
-            {filteredServices.length} service(s) trouvé(s)
-          </span>
+          <div className="flex items-center space-x-4">
+            <span className="text-sm text-gray-600">
+              {filteredServices.length} service(s) trouvé(s)
+            </span>
+            {/* Export Dropdown */}
+            <ExportInvoiceDropdown invoices={filteredServices} invoiceType="professionalservices" />
+          </div>
         </div>
       </div>
 

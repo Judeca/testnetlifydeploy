@@ -163,7 +163,7 @@ const RegisterForm: React.FC<RegisterFormProps> = ({ onSubmit, initialData, isEd
               value={formData.attachmentfile}
               onChange={(url) => setFormData(prev => ({ ...prev, attachmentfile: url || '' }))}
               accept=".pdf,.doc,.docx,.jpg,.jpeg,.png"
-              folder="public"
+              useSupabase={false}
             />
           </div>
         </div>

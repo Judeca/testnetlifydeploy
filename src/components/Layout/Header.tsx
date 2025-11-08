@@ -329,7 +329,7 @@ export function Header({ onCountryChange }: HeaderProps) {
                         <button
                           onClick={() => {
                             setShowAlertsModal(false);
-                            navigate('/home/alertes');
+                            navigate('/dashboard/alertes');
                           }}
                           className="bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700 transition-colors"
                         >

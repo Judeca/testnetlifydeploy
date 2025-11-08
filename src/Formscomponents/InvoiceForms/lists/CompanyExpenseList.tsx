@@ -2,6 +2,23 @@ import React, { useState, useMemo } from 'react';
 import { Eye, Edit2, Trash2 } from 'lucide-react';
 import DeleteConfirmationModal from './DeleteConfirmationModal';
 import ViewDetailsModal from './ViewDetailsModal';
+import ExportInvoiceDropdown from './ExportInvoiceDropdown';
+
+interface LocalCompanyExpense {
+  companyExpenseId: number;
+  chargeType: string;
+  employee?: {
+    firstName: string;
+    lastName: string;
+  };
+  amount: number;
+  devise: string;
+  paymentDate: string;
+  status: string;
+  description?: string;
+  service?: string;
+  attachment?: string;
+}
 
 interface CompanyExpense {
   companyExpenseId: number;
@@ -186,9 +203,30 @@ const CompanyExpenseList: React.FC<CompanyExpenseListProps> = ({
           >
             Réinitialiser les filtres
           </button>
-          <span className="text-sm text-gray-600">
-            {filteredExpenses.length} charge(s) trouvée(s)
-          </span>
+          <div className="flex items-center space-x-4">
+            <span className="text-sm text-gray-600">
+              {filteredExpenses.length} charge(s) trouvée(s)
+            </span>
+            {/* Export Dropdown */}
+            <ExportInvoiceDropdown 
+              invoices={filteredExpenses.map(expense => ({
+                companyExpenseId: expense.companyExpenseId,
+                chargeType: expense.chargeType,
+                employee: expense.employee ? {
+                  firstName: expense.employee.firstName,
+                  lastName: expense.employee.lastName
+                } : undefined,
+                amount: expense.amount,
+                devise: expense.devise,
+                paymentDate: expense.paymentDate,
+                status: expense.status,
+                description: expense.description,
+                service: expense.service,
+                attachment: expense.attachment
+              }))} 
+              invoiceType="companyexpenses" 
+            />
+          </div>
         </div>
       </div>
 

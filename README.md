@@ -1,88 +1,169 @@
+Project Management - SitInfra
+
+A complete web management application developed with React, TypeScript, Vite, Prisma, and Netlify Functions.
+
+📋 Prerequisites
+
+Before starting, make sure you have installed the following tools on your machine:
+
+Node.js (version 18 or higher) – Download Node.js
+
+npm or yarn (usually included with Node.js)
+
+MySQL (version 8.0 or higher) – Download MySQL
+
+You must have a running MySQL server
+
+You must have created an empty MySQL database
+
+Git (to clone the project) – Download Git
+
+Checking prerequisites
+
+You can check if Node.js and npm are installed by running the following commands in your terminal:
+
+node --version
+npm --version
+
+🚀 Installation and Setup
+1. Clone the project (if needed)
+git clone <repo-url>
+cd netlify_v1
+
+2. Install dependencies
+npm install
 
 
+This command installs all necessary dependencies listed in package.json, including:
+
+React and React DOM
+
+TypeScript
+
+Vite
+
+Prisma Client
+
+Netlify Functions
+
+And other dependencies...
+
+3. Database configuration
+Create a .env file
+
+Create a .env file at the root of the project (same level as package.json).
+
+Configure the DATABASE_URL variable
+
+The DATABASE_URL variable is used by Prisma to connect to your MySQL database. It follows a specific format:
+
+DATABASE_URL="mysql://USER:PASSWORD@HOST:PORT/DATABASE"
+
+Explanation of the URL components:
+
+mysql:// — Connection protocol (always mysql:// for MySQL)
+
+USER — MySQL username with access rights to the database
+
+Example: root, admin, my_user
+
+PASSWORD — MySQL user password
+
+⚠️ Important: If your password contains special characters (like @, #, :, /), you must URL-encode them.
+For example: @ becomes %40, # becomes %23.
+
+HOST — MySQL server address
+
+For local databases: localhost or 127.0.0.1
+
+For remote databases: the IP address or domain name (e.g., db.example.com)
+
+PORT — The port MySQL is listening on (default is 3306)
+
+DATABASE — The name of the database you created
+
+Examples of DATABASE_URL:
+
+Example 1 – Local database with root user:
+
+DATABASE_URL="mysql://root:myPassword123@localhost:3306/sitinfra_db"
 
 
+Example 2 – Local database with special characters in password:
+If your password is P@ssw0rd#123, you must encode the special characters:
+
+DATABASE_URL="mysql://root:P%40ssw0rd%23123@localhost:3306/sitinfra_db"
 
 
+Example 3 – Remote database:
 
-/////////////////////////////////////////////////////////
-
- utilise fileupload comme dans personele et sur le modal met le button voir pour que une fois clicker sa nous dirige ver un onglrt blanc avec omme valeur url
-
- 
+DATABASE_URL="mysql://admin:securepass@192.168.1.100:3306/production_db"
 
 
+Example 4 – Hosted database (e.g., PlanetScale, Railway, etc.):
 
- ////////////////////////////////////////
+DATABASE_URL="mysql://user:password@hostname.provider.com:3306/database_name"
 
- Correction pour insert country et insert identity 
+URL Encoding Reference Table
+Character	URL Encoding
+@	%40
+#	%23
+:	%3A
+/	%2F
+%	%25
+&	%26
++	%2B
+(space)	%20
+Example of a complete .env file
 
- j'ai ajouter 2 champs en  base de donner dans chaque model il s'agit de 
- 
-  Inserteridentity       
- InserterCountry 
+Create a .env file at the project root with the following content (adapt it to your configuration):
 
- Il est question d'ajuster  donc les different formuliare de l'application pour que tous injecte ces valeur dans leur different formuliare pour ainsi etre stocker en base de donner et donc ca doit passer par les route netlify l faudra ajuster egalement le model netlify lier a chaque formulaire et chaque route pour ainsi faire  cette update et une fois cela fait il faudrai maintenant que a la recupereation c'est a dire au moment du get egalement , il est question de donc afficher chaque donnes de chaque model sur son listing page et il faut ajouter le filtrage par insertercountry qui sera un select des pays suivant IVORY_COAST GHANA  BENIN CAMEROON TOGO ROMANIE ITALIE le model actuellement completement implementer et fonctionel est celui de personelle  tu peu prendre exemple sur lui et nous allons commencer par corriger les formulaire des model suivant:
- Register
-Transaction
+# MySQL Database Configuration
+DATABASE_URL="mysql://root:your_password@localhost:3306/your_database_name"
 
-regarde les dans VehicleForms et leur page generale c'est Register.tsx
+4. Initialize the database with Prisma
+Generate the Prisma Client
+
+After setting up your database, generate the Prisma client:
+
+npx prisma generate
 
 
+This command generates the Prisma client based on your schema (prisma/schema.prisma).
 
-User
-AccountantProfile
-DirectorProfile
-EmployeeProfile
-SecretaryProfile
-DriverProfile
+Synchronize the database with Prisma models
 
-Contract 
-Absence
-Bonus
-Sanction
-MedicalRecord
-Affectation
+After configuring the database and generating the Prisma client, apply your Prisma schema to the database:
 
-Vehicles
-Statevehicles
-Garages
-Vehicleauthorizations
-Contentieux
-Vehicleinterventions
-Vehiclepieces
-Vehicleexpenses
-Vehiclereforms
-Fuelmanagements
-Paymentcards
-Cardoperations
+npx prisma db push
 
-Equipment
-Assignment
-EquipmentRevisions
-Calibration
-Maintenance
-Repair
-EquipmentExpense
+🏃 Run the project
+Development mode
 
-Register
-Transaction
+To run the project in development mode with automatic reloading:
 
-Business
+netlify dev
 
-Contact
+📚 Additional Documentation
 
-ProfessionalService
-CompanyExpense
-OtherInvoice
+Prisma Documentation
 
-TaxDeclaration
+Vite Documentation
 
-Alert
+React Documentation
 
-Bank
-BankTransaction
+Netlify Functions
 
-OffreDevis
-OffreDAO
-OffreAMI
+🏗️ Project Structure
+
+/src — React application source code
+
+/netlify/functions — Netlify serverless functions (backend API)
+
+/prisma — Prisma schema and migrations
+
+/public — Static files (images, etc.)
+
+netlify.toml — Netlify configuration
+
+package.json — npm dependencies and scripts

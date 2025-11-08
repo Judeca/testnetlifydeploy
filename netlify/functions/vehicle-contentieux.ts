@@ -87,15 +87,38 @@ export const handler = async (event: any) => {
           }
         }
 
+        // Handle dates properly - validate required dates
+        let incidentDate: Date;
+        const incidentDateObj = new Date(postData.incidentDate);
+        if (isNaN(incidentDateObj.getTime())) {
+          return {
+            statusCode: 400,
+            headers: {
+              'Content-Type': 'application/json',
+              'Access-Control-Allow-Origin': '*',
+            },
+            body: JSON.stringify({ error: 'Invalid incidentDate format' }),
+          };
+        }
+        incidentDate = incidentDateObj;
+
+        let resolutionDate: Date | null = null;
+        if (postData.resolutionDate && postData.resolutionDate.trim() !== '') {
+          const resolutionDateObj = new Date(postData.resolutionDate);
+          if (!isNaN(resolutionDateObj.getTime())) {
+            resolutionDate = resolutionDateObj;
+          }
+        }
+
         const newContentieux = await prisma.contentieux.create({
           data: {
             vehicleId: parseInt(postData.vehicleId),
-            incidentDate: new Date(postData.incidentDate),
+            incidentDate: incidentDate,
             description: postData.description,
             faultAttribution: postData.faultAttribution,
             conclusion: postData.conclusion || null,
             status: postData.status,
-            resolutionDate: postData.resolutionDate ? new Date(postData.resolutionDate) : null,
+            resolutionDate: resolutionDate,
             Inserteridentity: postData.Inserteridentity || null,
             InserterCountry: postData.InserterCountry || null,
           },
@@ -128,13 +151,57 @@ export const handler = async (event: any) => {
         if (updateData && updateData.Inserteridentity != null) {
           updateData.Inserteridentity = String(updateData.Inserteridentity);
         }
+        
+        // Handle dates properly for updates as well
+        let updateIncidentDate: Date | undefined = undefined;
+        if (updateData.incidentDate !== undefined) {
+          if (updateData.incidentDate === null || updateData.incidentDate === '') {
+            return {
+              statusCode: 400,
+              headers: {
+                'Content-Type': 'application/json',
+                'Access-Control-Allow-Origin': '*',
+              },
+              body: JSON.stringify({ error: 'incidentDate is required' }),
+            };
+          } else {
+            const date = new Date(updateData.incidentDate);
+            if (!isNaN(date.getTime())) {
+              updateIncidentDate = date;
+            } else {
+              return {
+                statusCode: 400,
+                headers: {
+                  'Content-Type': 'application/json',
+                  'Access-Control-Allow-Origin': '*',
+                },
+                body: JSON.stringify({ error: 'Invalid incidentDate format' }),
+              };
+            }
+          }
+        }
+
+        let updateResolutionDate: Date | null | undefined = undefined;
+        if (updateData.resolutionDate !== undefined) {
+          if (updateData.resolutionDate === null || updateData.resolutionDate === '') {
+            updateResolutionDate = null; // Explicitly set to null if empty
+          } else {
+            const date = new Date(updateData.resolutionDate);
+            if (!isNaN(date.getTime())) {
+              updateResolutionDate = date;
+            } else {
+              updateResolutionDate = null; // Invalid date, set to null
+            }
+          }
+        }
+
         const updatedContentieux = await prisma.contentieux.update({
           where: { contentieuxId: parseInt(updateId) },
           data: {
             ...updateData,
             vehicleId: updateData.vehicleId ? parseInt(updateData.vehicleId) : undefined,
-            incidentDate: updateData.incidentDate ? new Date(updateData.incidentDate) : undefined,
-            resolutionDate: updateData.resolutionDate ? new Date(updateData.resolutionDate) : undefined,
+            incidentDate: updateIncidentDate,
+            resolutionDate: updateResolutionDate !== undefined ? updateResolutionDate : undefined,
           },
         });
 

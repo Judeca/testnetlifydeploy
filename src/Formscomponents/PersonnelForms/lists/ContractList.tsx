@@ -2,6 +2,7 @@ import React, { useState, useMemo } from 'react';
 import { Eye, Edit2, Trash2 } from 'lucide-react';
 import DeleteConfirmationModal from './DeleteConfirmationModal';
 import ViewDetailsModal from './ViewDetailsModal';
+import ExportContractDropdown from './ExportContractDropdown';
 
 interface Contract {
   contractId: number;
@@ -183,6 +184,15 @@ const ContractList: React.FC<ContractListProps> = ({ contracts, onEdit, onDelete
             </select>
           </div>
         </div>
+        
+        {/* Results count and Export */}
+        <div className="mt-4 flex justify-between items-center">
+          <div className="text-sm text-gray-600">
+            {filteredContracts.length} contrat(s) trouvé(s)
+          </div>
+          {/* Export Dropdown */}
+          <ExportContractDropdown contracts={filteredContracts} />
+        </div>
       </div>
 
       {/* Table */}
@@ -315,34 +325,28 @@ const ContractList: React.FC<ContractListProps> = ({ contracts, onEdit, onDelete
       />
 
       {/* View Modal */}
-      {viewModal.contract && (
-        <ViewDetailsModal
-          isOpen={viewModal.isOpen}
-          onClose={() => setViewModal({ isOpen: false, contract: null })}
-          title="Détails du contrat"
-          data={viewModal.contract}
-          fields={[
+      <ViewDetailsModal
+        isOpen={viewModal.isOpen}
+        onClose={() => setViewModal({ isOpen: false, contract: null })}
+        title="Détails du contrat"
+        data={viewModal.contract || {}}
+        fields={[
             { key: 'contractId', label: 'ID Contrat' },
             { key: 'user', label: 'Employé', render: (user: any) => user ? `${user.firstName} ${user.lastName}` : '-' },
             { key: 'contractType', label: 'Type de contrat', render: (val: string) => getContractTypeText(val) },
             { key: 'post', label: 'Poste' },
             { key: 'department', label: 'Département' },
             { key: 'unit', label: 'Unité' },
-            { key: 'grossSalary', label: 'Salaire brut', render: (val: number) => formatCurrency(val, viewModal.contract!.currency) },
-            { key: 'netSalary', label: 'Salaire net', render: (val: number) => formatCurrency(val, viewModal.contract!.currency) },
+            { key: 'grossSalary', label: 'Salaire brut', render: (val: number) => viewModal.contract ? formatCurrency(val, viewModal.contract.currency) : '-' },
+            { key: 'netSalary', label: 'Salaire net', render: (val: number) => viewModal.contract ? formatCurrency(val, viewModal.contract.currency) : '-' },
             { key: 'currency', label: 'Devise' },
-            { key: 'contractFile', label: 'Fichier du contrat', render: (val: string) => val ? (
-              <a href={val} target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline">
-                Voir le fichier
-              </a>
-            ) : '-' },
+            { key: 'contractFile', label: 'Fichier du contrat' },
             { key: 'startDate', label: 'Date début', render: formatDate },
             { key: 'endDate', label: 'Date fin', render: formatDate },
             { key: 'createdAt', label: 'Créé le', render: formatDate },
             { key: 'updatedAt', label: 'Mis à jour le', render: formatDate },
           ]}
         />
-      )}
     </div>
   );
 };

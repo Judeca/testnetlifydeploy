@@ -2,6 +2,7 @@ import React, { useState, useMemo } from 'react';
 import { Eye, Edit2, Trash2 } from 'lucide-react';
 import DeleteConfirmationModal from './DeleteConfirmationModal';
 import ViewDetailsModal from './ViewDetailsModal';
+import ExportRegisterDropdown from './ExportRegisterDropdown';
 
 interface Register {
   registerId: number;
@@ -144,9 +145,13 @@ const RegisterList: React.FC<RegisterListProps> = ({ registers, onEdit, onDelete
           </div>
         </div>
 
-        {/* Results count */}
-        <div className="mt-3 text-sm text-gray-600">
-          {filteredRegisters.length} caisse(s) trouvée(s)
+        {/* Results count and Export */}
+        <div className="mt-3 flex justify-between items-center">
+          <div className="text-sm text-gray-600">
+            {filteredRegisters.length} caisse(s) trouvée(s)
+          </div>
+          {/* Export Dropdown */}
+          <ExportRegisterDropdown registers={filteredRegisters} />
         </div>
       </div>
 

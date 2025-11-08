@@ -2,6 +2,7 @@ import React, { useState, useMemo } from 'react';
 import { Eye } from 'lucide-react';
 import DeleteConfirmationModal from './DeleteConfirmationModal';
 import ViewDetailsModal from './ViewDetailsModal';
+import ExportVehiclePieceDropdown from './ExportVehiclePieceDropdown';
 
 interface VehiclePiece {
   pieceId: number;
@@ -178,9 +179,13 @@ const VehiclePiecesList: React.FC<VehiclePiecesListProps> = ({
           >
             Réinitialiser les filtres
           </button>
-          <span className="text-sm text-gray-600">
-            {filteredPieces.length} pièce(s) trouvée(s)
-          </span>
+          <div className="flex items-center space-x-4">
+            <span className="text-sm text-gray-600">
+              {filteredPieces.length} pièce(s) trouvée(s)
+            </span>
+            {/* Export Dropdown */}
+            <ExportVehiclePieceDropdown pieces={filteredPieces} />
+          </div>
         </div>
       </div>
 

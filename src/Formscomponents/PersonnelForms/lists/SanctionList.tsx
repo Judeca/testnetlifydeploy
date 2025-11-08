@@ -2,6 +2,7 @@ import React, { useState, useMemo } from 'react';
 import { Eye, Edit2, Trash2 } from 'lucide-react';
 import DeleteConfirmationModal from './DeleteConfirmationModal';
 import ViewDetailsModal from './ViewDetailsModal';
+import ExportSanctionDropdown from './ExportSanctionDropdown';
 
 interface Sanction {
   sanctionId: number;
@@ -148,6 +149,15 @@ const SanctionList: React.FC<SanctionListProps> = ({ sanctions, onEdit, onDelete
             </select>
           </div>
         </div>
+        
+        {/* Results count and Export */}
+        <div className="mt-4 flex justify-between items-center">
+          <div className="text-sm text-gray-600">
+            {filteredSanctions.length} sanction(s) trouvée(s)
+          </div>
+          {/* Export Dropdown */}
+          <ExportSanctionDropdown sanctions={filteredSanctions} />
+        </div>
       </div>
 
       {/* Table */}
@@ -289,11 +299,7 @@ const SanctionList: React.FC<SanctionListProps> = ({ sanctions, onEdit, onDelete
           { key: 'sanctionDate', label: 'Date de sanction', render: formatDate },
           { key: 'durationDays', label: 'Durée (jours)' },
           { key: 'decision', label: 'Décision' },
-          { key: 'supportingDocument', label: 'Document justificatif', render: (val: string) => val ? (
-            <a href={val} target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline">
-              Voir le document
-            </a>
-          ) : '-' },
+          { key: 'supportingDocument', label: 'Document justificatif' },
           { key: 'createdAt', label: 'Créé le', render: formatDate },
           { key: 'updatedAt', label: 'Mis à jour le', render: formatDate },
         ]}

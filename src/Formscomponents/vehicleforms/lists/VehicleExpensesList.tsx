@@ -2,6 +2,7 @@ import React, { useState, useMemo } from 'react';
 import { Eye } from 'lucide-react';
 import DeleteConfirmationModal from './DeleteConfirmationModal';
 import ViewDetailsModal from './ViewDetailsModal';
+import ExportVehicleExpenseDropdown from './ExportVehicleExpenseDropdown';
 
 interface VehicleExpense {
   expenseId: number;
@@ -182,9 +183,13 @@ const VehicleExpensesList: React.FC<VehicleExpensesListProps> = ({
           >
             Réinitialiser les filtres
           </button>
-          <span className="text-sm text-gray-600">
-            {filteredExpenses.length} dépense(s) trouvée(s)
-          </span>
+          <div className="flex items-center space-x-4">
+            <span className="text-sm text-gray-600">
+              {filteredExpenses.length} dépense(s) trouvée(s)
+            </span>
+            {/* Export Dropdown */}
+            <ExportVehicleExpenseDropdown expenses={filteredExpenses} />
+          </div>
         </div>
       </div>
 

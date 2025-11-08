@@ -189,8 +189,8 @@ const OffreDevisForm: React.FC<OffreDevisFormProps> = ({ onSubmit, initialData, 
               label="Pièce jointe"
               value={formData.attachment}
               onChange={(url: string | null) => setFormData(prev => ({ ...prev, attachment: url ?? "" }))}
-              folder="public"
-              className="mb-4"
+              accept=".pdf,.doc,.docx,.jpg,.jpeg,.png"
+              useSupabase={false}
             />
           </div>
 

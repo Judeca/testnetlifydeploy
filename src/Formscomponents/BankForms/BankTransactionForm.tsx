@@ -201,7 +201,7 @@ const BankTransactionForm: React.FC<BankTransactionFormProps> = ({
               value={formData.attachment}
               onChange={(url) => setFormData(prev => ({ ...prev, attachment: url || '' }))}
               accept=".pdf,.doc,.docx,.jpg,.jpeg,.png"
-              folder="public"
+              useSupabase={false}
             />
           </div>
         </div>

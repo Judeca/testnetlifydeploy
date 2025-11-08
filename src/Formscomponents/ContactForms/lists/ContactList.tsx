@@ -1,7 +1,8 @@
 import React, { useState, useMemo } from 'react';
-import { Eye, Edit2, Trash2 } from 'lucide-react';
+import { Eye, Edit2, Trash2, Search } from 'lucide-react';
 import DeleteConfirmationModal from './DeleteConfirmationModal';
 import ViewDetailsModal from './ViewDetailsModal';
+import ExportContactDropdown from './ExportContactDropdown';
 
 interface Contact {
   contactId: number;
@@ -121,34 +122,31 @@ const ContactList: React.FC<ContactListProps> = ({ contacts, onEdit, onDelete, o
 
   return (
     <div className="space-y-4">
-      {/* Filters Section */}
-      <div className="bg-white rounded-lg border border-gray-200 p-4">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+      {/* Search and Filters */}
+      <div className="bg-gray-50 p-4 rounded-lg border border-gray-200">
+        <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
           {/* Search */}
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Rechercher
-            </label>
-            <input
-              type="text"
-              placeholder="Nom, prénom, email, téléphone..."
-              value={filters.search}
-              onChange={(e) => setFilters({ ...filters, search: e.target.value })}
-              className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-            />
+          <div className="md:col-span-2">
+            <div className="relative">
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
+              <input
+                type="text"
+                placeholder="Rechercher par nom, prénom, email, téléphone..."
+                value={filters.search}
+                onChange={(e) => setFilters({ ...filters, search: e.target.value })}
+                className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              />
+            </div>
           </div>
 
           {/* Contact Groupe Filter */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Groupe
-            </label>
             <select
               value={filters.contactGroupe}
               onChange={(e) => setFilters({ ...filters, contactGroupe: e.target.value })}
-              className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
             >
-              <option value="">Tous</option>
+              <option value="">Tous les groupes</option>
               <option value="CLIENT">Client</option>
               <option value="SUPPLIER">Fournisseur</option>
               <option value="CONSULTANTS">Consultants</option>
@@ -159,15 +157,12 @@ const ContactList: React.FC<ContactListProps> = ({ contacts, onEdit, onDelete, o
 
           {/* Company Name Filter */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Entreprise
-            </label>
             <select
               value={filters.companyName}
               onChange={(e) => setFilters({ ...filters, companyName: e.target.value })}
-              className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
             >
-              <option value="">Toutes</option>
+              <option value="">Toutes les entreprises</option>
               <option value="SITINFRA_SARL">SITINFRA SARL</option>
               <option value="GEOTOP">GEOTOP</option>
               <option value="SITALIA">SITALIA</option>
@@ -177,16 +172,13 @@ const ContactList: React.FC<ContactListProps> = ({ contacts, onEdit, onDelete, o
 
           {/* Items per page */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Éléments par page
-            </label>
             <select
               value={itemsPerPage}
               onChange={(e) => {
                 setItemsPerPage(Number(e.target.value));
                 setCurrentPage(1);
               }}
-              className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
             >
               <option value="10">10</option>
               <option value="25">25</option>
@@ -196,7 +188,7 @@ const ContactList: React.FC<ContactListProps> = ({ contacts, onEdit, onDelete, o
           </div>
         </div>
 
-        {/* Reset Filters */}
+        {/* Reset Filters and Results count */}
         <div className="mt-4 flex justify-between items-center">
           <button
             onClick={() => {
@@ -207,13 +199,17 @@ const ContactList: React.FC<ContactListProps> = ({ contacts, onEdit, onDelete, o
           >
             Réinitialiser les filtres
           </button>
-          <span className="text-sm text-gray-600">
-            {filteredContacts.length} contact(s) trouvé(s)
-          </span>
+          <div className="flex items-center space-x-4">
+            <div className="text-sm text-gray-600">
+              {filteredContacts.length} contact{filteredContacts.length !== 1 ? 's' : ''} trouvé{filteredContacts.length !== 1 ? 's' : ''}
+            </div>
+            {/* Export Dropdown */}
+            <ExportContactDropdown contacts={filteredContacts} />
+          </div>
         </div>
       </div>
 
-      {/* Table Section */}
+      {/* Contacts Table */}
       <div className="bg-white rounded-lg border border-gray-200 overflow-hidden">
         <div className="overflow-x-auto">
           <table className="min-w-full divide-y divide-gray-200">

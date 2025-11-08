@@ -174,7 +174,7 @@ const PaymentCardForm: React.FC<PaymentCardFormProps> = ({ onSubmit, initialData
               value={formData.fichierJoint}
               onChange={(url) => setFormData(prev => ({ ...prev, fichierJoint: url || '' }))}
               accept=".pdf,.doc,.docx,.jpg,.jpeg,.png"
-              folder="public"
+              useSupabase={false}
             />
           </div>
 

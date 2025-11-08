@@ -83,10 +83,25 @@ export const handler = async (event: any) => {
           }
         }
 
+        // Handle dates properly - validate required dates
+        let operationDate: Date;
+        const operationDateObj = new Date(postData.operationDate);
+        if (isNaN(operationDateObj.getTime())) {
+          return {
+            statusCode: 400,
+            headers: {
+              'Content-Type': 'application/json',
+              'Access-Control-Allow-Origin': '*',
+            },
+            body: JSON.stringify({ error: 'Invalid operationDate format' }),
+          };
+        }
+        operationDate = operationDateObj;
+
         const newCardOperation = await prisma.cardoperations.create({
           data: {
             cardId: parseInt(postData.cardId),
-            operationDate: new Date(postData.operationDate),
+            operationDate: operationDate,
             amount: parseFloat(postData.amount),
             description: postData.description || null,
             devise: postData.devise,
@@ -122,12 +137,42 @@ export const handler = async (event: any) => {
         if (updateData && updateData.Inserteridentity != null) {
           updateData.Inserteridentity = String(updateData.Inserteridentity);
         }
+        
+        // Handle dates properly for updates as well
+        let updateOperationDate: Date | undefined = undefined;
+        if (updateData.operationDate !== undefined) {
+          if (updateData.operationDate === null || updateData.operationDate === '') {
+            return {
+              statusCode: 400,
+              headers: {
+                'Content-Type': 'application/json',
+                'Access-Control-Allow-Origin': '*',
+              },
+              body: JSON.stringify({ error: 'operationDate is required' }),
+            };
+          } else {
+            const date = new Date(updateData.operationDate);
+            if (!isNaN(date.getTime())) {
+              updateOperationDate = date;
+            } else {
+              return {
+                statusCode: 400,
+                headers: {
+                  'Content-Type': 'application/json',
+                  'Access-Control-Allow-Origin': '*',
+                },
+                body: JSON.stringify({ error: 'Invalid operationDate format' }),
+              };
+            }
+          }
+        }
+
         const updatedCardOperation = await prisma.cardoperations.update({
           where: { operationId: parseInt(updateId) },
           data: {
             ...updateData,
             cardId: updateData.cardId ? parseInt(updateData.cardId) : undefined,
-            operationDate: updateData.operationDate ? new Date(updateData.operationDate) : undefined,
+            operationDate: updateOperationDate,
             amount: updateData.amount ? parseFloat(updateData.amount) : undefined,
           },
         });

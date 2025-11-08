@@ -291,6 +291,8 @@ export function AffectationForm({ initialData, isEdit = false, onSubmit, onCance
           label="Document d'affectation"
           value={formData.attached_file}
           onChange={(url) => setFormData(prev => ({ ...prev, attached_file: url || '' }))}
+          accept=".pdf,.doc,.docx,.jpg,.jpeg,.png"
+          useSupabase={false}
         />
 
         {error && <p className="text-red-600 text-sm">{error}</p>}

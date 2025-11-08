@@ -76,6 +76,15 @@ export const handler = async (event: any) => {
           }
         }
 
+        // Handle acquisitionDate properly - only create Date object if value is provided
+        let acquisitionDate: Date | undefined;
+        if (postData.acquisitionDate && postData.acquisitionDate.trim() !== '') {
+          const date = new Date(postData.acquisitionDate);
+          if (!isNaN(date.getTime())) {
+            acquisitionDate = date;
+          }
+        }
+
         const newVehicle = await prisma.vehicles.create({
           data: {
             licensePlate: postData.licensePlate,
@@ -87,7 +96,7 @@ export const handler = async (event: any) => {
             mileage: parseInt(postData.mileage) || 0,
             civilRegistration: postData.civilRegistration || '',
             administrativeRegistration: postData.administrativeRegistration || '',
-            acquisitionDate: new Date(postData.acquisitionDate),
+            acquisitionDate: acquisitionDate,
             usingEntity: postData.usingEntity || '',
             holder: postData.holder || '',
             chassisNumber: postData.chassisNumber,
@@ -126,13 +135,29 @@ export const handler = async (event: any) => {
         if (updateData && updateData.Inserteridentity != null) {
           updateData.Inserteridentity = String(updateData.Inserteridentity);
         }
+        
+        // Handle acquisitionDate properly for updates as well
+        let updateAcquisitionDate: Date | undefined | null = undefined;
+        if (updateData.acquisitionDate !== undefined) {
+          if (updateData.acquisitionDate === null || updateData.acquisitionDate === '') {
+            updateAcquisitionDate = null; // Explicitly set to null if empty
+          } else {
+            const date = new Date(updateData.acquisitionDate);
+            if (!isNaN(date.getTime())) {
+              updateAcquisitionDate = date;
+            } else {
+              updateAcquisitionDate = null; // Invalid date, set to null
+            }
+          }
+        }
+
         const updatedVehicle = await prisma.vehicles.update({
           where: { vehicleId: parseInt(updateId) },
           data: {
             ...updateData,
             year: updateData.year ? parseInt(updateData.year) : undefined,
             mileage: updateData.mileage ? parseInt(updateData.mileage) : undefined,
-            acquisitionDate: updateData.acquisitionDate ? new Date(updateData.acquisitionDate) : undefined,
+            acquisitionDate: updateAcquisitionDate !== undefined ? updateAcquisitionDate : undefined,
           },
         });
 

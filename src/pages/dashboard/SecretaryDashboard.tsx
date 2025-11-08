@@ -1,94 +1,105 @@
-import { Calendar, Phone, Mail, FileText, Users } from 'lucide-react';
-import { DashboardLayout } from '../../components/Layout/DashboardLayout';
+import { Link } from 'react-router-dom';
+import { useAuth } from '../../context/AuthContext';
+import { LayoutDashboard, Users, Contact, Wrench, Package, 
+  Briefcase, AlertTriangle, Car, FileText } from 'lucide-react';
 
 export function SecretaryDashboard() {
+  const { email, firstName, lastName } = useAuth();
+  
+  const getDisplayName = () => {
+    if (firstName && lastName) {
+      return `${firstName} ${lastName}`;
+    }
+    if (firstName) {
+      return firstName;
+    }
+    if (email) {
+      const emailPart = email.split('@')[0];
+      const firstPart = emailPart.split('.')[0];
+      if (firstPart) {
+        return firstPart.charAt(0).toUpperCase() + firstPart.slice(1);
+      }
+    }
+    return 'Secrétaire';
+  };
+  const displayName = getDisplayName();
+
+  const quickLinks = [
+    { icon: FileText, label: 'Factures', path: '/dashboard/factures', color: 'bg-yellow-100 text-yellow-600' },
+    { icon: Wrench, label: 'Équipements', path: '/dashboard/equipements', color: 'bg-purple-100 text-purple-600' },
+    { icon: Contact, label: 'Contacts', path: '/dashboard/contacts', color: 'bg-green-100 text-green-600' },
+    { icon: Package, label: 'Offres', path: '/dashboard/offres', color: 'bg-orange-100 text-orange-600' },
+    { icon: Briefcase, label: 'Affaires', path: '/dashboard/affaires', color: 'bg-indigo-100 text-indigo-600' },
+    { icon: AlertTriangle, label: 'Alertes', path: '/dashboard/alertes', color: 'bg-red-100 text-red-600' },
+    { icon: Car, label: 'Parc Auto', path: '/dashboard/parc-auto', color: 'bg-cyan-100 text-cyan-600' },
+    { icon: Users, label: 'Personnel', path: '/dashboard/personnel', color: 'bg-blue-100 text-blue-600' },
+  ];
+
   return (
-    <DashboardLayout>
-      <div className="p-6">
+    <div className="min-h-full bg-gradient-to-br from-gray-50 to-gray-100 p-6">
       <div className="max-w-7xl mx-auto">
+        {/* Welcome Section */}
+        <div className="bg-white rounded-xl shadow-lg p-8 mb-8 border border-gray-200">
+          <div className="flex items-center gap-4 mb-4">
+            <div className="p-4 bg-blue-100 rounded-xl">
+              <LayoutDashboard className="w-10 h-10 text-blue-600" />
+            </div>
+            <div>
+              <h1 className="text-3xl font-bold text-gray-900">
+                Bienvenue, {displayName} !
+              </h1>
+              <p className="text-gray-600 mt-1">
+                Tableau de bord de gestion administrative
+              </p>
+            </div>
+          </div>
+          
+          <div className="mt-6 p-6 bg-blue-50 rounded-lg border-l-4 border-blue-500">
+            <p className="text-gray-700 leading-relaxed">
+              👋 <strong>Bienvenue dans votre espace de secrétariat !</strong>
+            </p>
+            <p className="text-gray-600 mt-2 leading-relaxed">
+              Utilisez la <strong>barre latérale (Sidebar)</strong> à gauche pour naviguer entre les différents modules. 
+              Vous pouvez gérer les factures, les équipements, les contacts, les offres, les affaires, les alertes, 
+              le parc auto et le personnel.
+            </p>
+          </div>
+        </div>
+
+        {/* Quick Links Grid */}
         <div className="mb-8">
-          <h1 className="text-3xl font-bold text-gray-900">Tableau de bord Secrétaire</h1>
-          <p className="mt-2 text-gray-600">Gestion administrative</p>
-        </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-          <div className="bg-white rounded-lg shadow p-6 border border-gray-200">
-            <div className="flex items-center">
-              <div className="p-3 bg-blue-100 rounded-lg">
-                <Calendar className="w-8 h-8 text-blue-600" />
-              </div>
-              <div className="ml-4">
-                <p className="text-sm font-medium text-gray-600">Rendez-vous</p>
-                <p className="text-2xl font-bold text-gray-900">15</p>
-              </div>
-            </div>
-          </div>
-
-          <div className="bg-white rounded-lg shadow p-6 border border-gray-200">
-            <div className="flex items-center">
-              <div className="p-3 bg-green-100 rounded-lg">
-                <Phone className="w-8 h-8 text-green-600" />
-              </div>
-              <div className="ml-4">
-                <p className="text-sm font-medium text-gray-600">Appels</p>
-                <p className="text-2xl font-bold text-gray-900">23</p>
-              </div>
-            </div>
-          </div>
-
-          <div className="bg-white rounded-lg shadow p-6 border border-gray-200">
-            <div className="flex items-center">
-              <div className="p-3 bg-orange-100 rounded-lg">
-                <Mail className="w-8 h-8 text-orange-600" />
-              </div>
-              <div className="ml-4">
-                <p className="text-sm font-medium text-gray-600">Messages</p>
-                <p className="text-2xl font-bold text-gray-900">8</p>
-              </div>
-            </div>
-          </div>
-
-          <div className="bg-white rounded-lg shadow p-6 border border-gray-200">
-            <div className="flex items-center">
-              <div className="p-3 bg-purple-100 rounded-lg">
-                <FileText className="w-8 h-8 text-purple-600" />
-              </div>
-              <div className="ml-4">
-                <p className="text-sm font-medium text-gray-600">Documents</p>
-                <p className="text-2xl font-bold text-gray-900">42</p>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <div className="bg-white rounded-lg shadow p-6 border border-gray-200">
-          <h2 className="text-xl font-semibold text-gray-900 mb-4">Actions disponibles</h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <button className="p-4 border border-gray-300 rounded-lg hover:bg-gray-50 text-left">
-              <Calendar className="w-6 h-6 text-blue-600 mb-2" />
-              <p className="font-semibold">Gérer les rendez-vous</p>
-              <p className="text-sm text-gray-600">Planifier et modifier les rendez-vous</p>
-            </button>
-            <button className="p-4 border border-gray-300 rounded-lg hover:bg-gray-50 text-left">
-              <Users className="w-6 h-6 text-green-600 mb-2" />
-              <p className="font-semibold">Contacter les clients</p>
-              <p className="text-sm text-gray-600">Gérer les communications</p>
-            </button>
-            <button className="p-4 border border-gray-300 rounded-lg hover:bg-gray-50 text-left">
-              <FileText className="w-6 h-6 text-orange-600 mb-2" />
-              <p className="font-semibold">Documents administratifs</p>
-              <p className="text-sm text-gray-600">Consulter et gérer les fichiers</p>
-            </button>
-            <button className="p-4 border border-gray-300 rounded-lg hover:bg-gray-50 text-left">
-              <Mail className="w-6 h-6 text-purple-600 mb-2" />
-              <p className="font-semibold">Messagerie</p>
-              <p className="text-sm text-gray-600">Voir et répondre aux messages</p>
-            </button>
+          <h2 className="text-2xl font-semibold text-gray-900 mb-4">
+            Accès rapide aux modules
+          </h2>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+            {quickLinks.map((link) => {
+              const Icon = link.icon;
+              return (
+                <Link
+                  key={link.path}
+                  to={link.path}
+                  className="bg-white rounded-lg shadow-md p-6 border border-gray-200 hover:shadow-lg transition-all duration-200 hover:scale-105 group"
+                >
+                  <div className="flex items-center gap-4">
+                    <div className={`p-3 rounded-lg ${link.color} group-hover:scale-110 transition-transform`}>
+                      <Icon className="w-6 h-6" />
+                    </div>
+                    <div>
+                      <p className="font-semibold text-gray-900 group-hover:text-blue-600 transition-colors">
+                        {link.label}
+                      </p>
+                      <p className="text-xs text-gray-500 mt-1">
+                        Cliquez pour accéder
+                      </p>
+                    </div>
+                  </div>
+                </Link>
+              );
+            })}
           </div>
         </div>
       </div>
-      </div>
-    </DashboardLayout>
+    </div>
   );
 }
 
