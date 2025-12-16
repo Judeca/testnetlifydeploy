@@ -1,4 +1,4 @@
-import { PrismaClient } from '@prisma/client';
+import { PrismaClient } from '@prisma/client'; 
 
 const prisma = new PrismaClient();
 
@@ -44,7 +44,7 @@ export const handler = async (event: any) => {
         ]);
 
         // Process contacts to split phone numbers
-        const processedContacts = contacts.map(contact => {
+        const processedContacts = contacts.map((contact:any) => {
           if (contact.phone) {
             const phoneNumbers = contact.phone.split(' | ');
             return {

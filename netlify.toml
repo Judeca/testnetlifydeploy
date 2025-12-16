@@ -2,7 +2,7 @@
 [build]
 command = "npm run build" # Votre commande de build existante
 publish = "dist"          # Votre dossier de sortie (e.g. build, dist)
-functions = "netlify/functions" # Le dossier de vos fonctions
+functions = "netlify/functions-dist" # Le dossier de vos fonctions compilées (JS)
 
 [build.environment]
 SECRETS_SCAN_OMIT_KEYS = "VITE_SUPABASE_ANON_KEY,VITE_SUPABASE_URL"
@@ -30,6 +30,9 @@ from = "/*"
 to = "/index.html"
 status = 200
 
+[dev]
+edge_functions = []             # Désactive totalement les Edge Functions
+autoLaunch = false 
 
 
 

@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useAuth } from '../../context/AuthContext';
 import { FileUpload } from '../../components/Personnel/FileUpload';
 
@@ -30,6 +31,7 @@ interface MedicalRecordFormProps {
 }
 
 export function MedicalRecordForm({ initialData, isEdit = false, onSubmit, onCancel }: MedicalRecordFormProps = {}) {
+  const { t } = useTranslation();
   const { userId: authUserId, effectiveCountryCode } = useAuth();
   const [users, setUsers] = useState<User[]>([]);
   const [formData, setFormData] = useState<MedicalRecordFormData>({
@@ -129,10 +131,10 @@ export function MedicalRecordForm({ initialData, isEdit = false, onSubmit, onCan
 
       if (!res.ok) {
         const data = await res.json().catch(() => ({}));
-        throw new Error(data.error || `Échec de la ${isEdit ? 'modification' : 'création'} du dossier médical`);
+        throw new Error(data.error || (isEdit ? t('personnel.forms.messages.errorEdit') : t('personnel.forms.messages.errorCreate')) + ' du dossier médical');
       }
 
-      setSuccess(`Dossier médical ${isEdit ? 'modifié' : 'créé'} avec succès`);
+      setSuccess(`Dossier médical ${isEdit ? t('personnel.forms.messages.successEdit') : t('personnel.forms.messages.successCreate')}`);
       
       if (onSubmit) {
         await onSubmit(formData);
@@ -160,7 +162,7 @@ export function MedicalRecordForm({ initialData, isEdit = false, onSubmit, onCan
         });
       }
     } catch (err: any) {
-      setError(err.message || 'Erreur inconnue');
+      setError(err.message || t('personnel.forms.messages.errorUnknown'));
     } finally {
       setLoading(false);
     }
@@ -168,13 +170,13 @@ export function MedicalRecordForm({ initialData, isEdit = false, onSubmit, onCan
 
   return (
     <div className="bg-white p-6 rounded-lg shadow">
-      <h2 className="text-xl font-semibold mb-4">{isEdit ? 'Modifier un Dossier Médical' : 'Créer un Dossier Médical'}</h2>
+      <h2 className="text-xl font-semibold mb-4">{isEdit ? t('personnel.forms.titles.editMedicalRecord') : t('personnel.forms.titles.createMedicalRecord')}</h2>
       
       <form onSubmit={handleSubmit} className="space-y-4">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
-              Employé <span className="text-red-500">*</span>
+              {t('personnel.forms.labels.employee')} <span className="text-red-500">*</span>
             </label>
             <select
               name="userId"
@@ -183,7 +185,7 @@ export function MedicalRecordForm({ initialData, isEdit = false, onSubmit, onCan
               required
               className="w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-1 focus:ring-blue-500"
             >
-              <option value={0}>Sélectionner un employé</option>
+              <option value={0}>{t('personnel.forms.placeholders.selectEmployee')}</option>
               {users.map(user => (
                 <option key={user.id} value={user.id}>
                   {user.firstName} {user.lastName} ({user.employeeNumber})
@@ -194,7 +196,7 @@ export function MedicalRecordForm({ initialData, isEdit = false, onSubmit, onCan
 
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
-              Date de visite <span className="text-red-500">*</span>
+              {t('personnel.forms.labels.visitDate')} <span className="text-red-500">*</span>
             </label>
             <input
               type="date"
@@ -209,7 +211,7 @@ export function MedicalRecordForm({ initialData, isEdit = false, onSubmit, onCan
 
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-1">
-            Description de la visite
+            {t('personnel.forms.labels.description')}
           </label>
           <textarea
             name="description"
@@ -217,13 +219,13 @@ export function MedicalRecordForm({ initialData, isEdit = false, onSubmit, onCan
             onChange={handleInputChange}
             rows={3}
             className="w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-1 focus:ring-blue-500"
-            placeholder="Décrivez les symptômes ou la raison de la visite..."
+            placeholder={t('personnel.forms.placeholders.descriptionAffectation')}
           />
         </div>
 
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-1">
-            Diagnostic
+            {t('personnel.forms.labels.diagnosis')}
           </label>
           <textarea
             name="diagnosis"
@@ -231,14 +233,14 @@ export function MedicalRecordForm({ initialData, isEdit = false, onSubmit, onCan
             onChange={handleInputChange}
             rows={2}
             className="w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-1 focus:ring-blue-500"
-            placeholder="Diagnostic médical..."
+            placeholder={t('personnel.forms.placeholders.diagnosisMedical')}
           />
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
-              Tests effectués
+              {t('personnel.forms.labels.testsPerformed')}
             </label>
             <textarea
               name="testsPerformed"
@@ -246,13 +248,13 @@ export function MedicalRecordForm({ initialData, isEdit = false, onSubmit, onCan
               onChange={handleInputChange}
               rows={2}
               className="w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-1 focus:ring-blue-500"
-              placeholder="Liste des tests effectués..."
+              placeholder={t('personnel.forms.placeholders.testsPerformedMedical')}
             />
           </div>
 
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
-              Résultats des tests
+              {t('personnel.forms.labels.testResults')}
             </label>
             <textarea
               name="testResults"
@@ -260,14 +262,14 @@ export function MedicalRecordForm({ initialData, isEdit = false, onSubmit, onCan
               onChange={handleInputChange}
               rows={2}
               className="w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-1 focus:ring-blue-500"
-              placeholder="Résultats des tests..."
+              placeholder={t('personnel.forms.placeholders.testResultsMedical')}
             />
           </div>
         </div>
 
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-1">
-            Action prescrite
+            {t('personnel.forms.labels.prescribedAction')}
           </label>
           <textarea
             name="prescribedAction"
@@ -275,13 +277,13 @@ export function MedicalRecordForm({ initialData, isEdit = false, onSubmit, onCan
             onChange={handleInputChange}
             rows={2}
             className="w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-1 focus:ring-blue-500"
-            placeholder="Médicaments prescrits, traitement recommandé..."
+            placeholder={t('personnel.forms.placeholders.prescribedActionMedical')}
           />
         </div>
 
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-1">
-            Notes médicales
+            {t('personnel.forms.labels.notes')}
           </label>
           <textarea
             name="notes"
@@ -289,13 +291,13 @@ export function MedicalRecordForm({ initialData, isEdit = false, onSubmit, onCan
             onChange={handleInputChange}
             rows={3}
             className="w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-1 focus:ring-blue-500"
-            placeholder="Notes supplémentaires du médecin..."
+            placeholder={t('personnel.forms.placeholders.notesMedical')}
           />
         </div>
 
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-1">
-            Prochaine visite
+            {t('personnel.forms.labels.nextVisitDate')}
           </label>
           <input
             type="date"
@@ -307,7 +309,7 @@ export function MedicalRecordForm({ initialData, isEdit = false, onSubmit, onCan
         </div>
 
         <FileUpload
-          label="Fichier médical"
+          label={t('personnel.forms.labels.medicalFile')}
           value={formData.medicalFile}
           onChange={(url) => setFormData(prev => ({ ...prev, medicalFile: url || '' }))}
           accept=".pdf,.doc,.docx,.jpg,.jpeg,.png"
@@ -324,7 +326,7 @@ export function MedicalRecordForm({ initialData, isEdit = false, onSubmit, onCan
               onClick={onCancel}
               className="px-4 py-2 border border-gray-300 rounded text-gray-700 hover:bg-gray-50"
             >
-              Annuler
+              {t('personnel.forms.buttons.cancel')}
             </button>
           ) : (
             <button
@@ -343,7 +345,7 @@ export function MedicalRecordForm({ initialData, isEdit = false, onSubmit, onCan
               })}
               className="px-4 py-2 border border-gray-300 rounded text-gray-700 hover:bg-gray-50"
             >
-              Réinitialiser
+              {t('personnel.forms.buttons.reset')}
             </button>
           )}
           <button
@@ -351,7 +353,7 @@ export function MedicalRecordForm({ initialData, isEdit = false, onSubmit, onCan
             disabled={loading}
             className="px-4 py-2 bg-blue-600 text-white rounded disabled:opacity-60 hover:bg-blue-700"
           >
-            {loading ? (isEdit ? 'Modification...' : 'Création...') : (isEdit ? 'Modifier le dossier médical' : 'Créer le dossier médical')}
+            {loading ? (isEdit ? t('personnel.forms.buttons.updating') : t('personnel.forms.buttons.creating')) : (isEdit ? t('personnel.forms.buttons.updateMedicalRecord') : t('personnel.forms.buttons.createMedicalRecord'))}
           </button>
         </div>
       </form>

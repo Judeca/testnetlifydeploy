@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useAuth } from '../../context/AuthContext';
 import { FileUpload } from '../../components/Personnel/FileUpload';
 
@@ -27,6 +28,7 @@ interface SanctionFormProps {
 }
 
 export function SanctionForm({ initialData, isEdit = false, onSubmit, onCancel }: SanctionFormProps) {
+  const { t } = useTranslation();
   const { userId: authUserId, effectiveCountryCode } = useAuth();
   const [users, setUsers] = useState<User[]>([]);
   const [formData, setFormData] = useState<SanctionFormData>({
@@ -120,10 +122,10 @@ export function SanctionForm({ initialData, isEdit = false, onSubmit, onCancel }
 
       if (!res.ok) {
         const data = await res.json().catch(() => ({}));
-        throw new Error(data.error || `Échec ${isEdit ? 'de la mise à jour' : 'de la création'} de la sanction`);
+        throw new Error(data.error || (isEdit ? t('personnel.forms.messages.errorUpdate') : t('personnel.forms.messages.errorCreate')) + ' de la sanction');
       }
 
-      setSuccess(`Sanction ${isEdit ? 'mise à jour' : 'créée'} avec succès`);
+      setSuccess(`Sanction ${isEdit ? t('personnel.forms.messages.successUpdate') : t('personnel.forms.messages.successCreate')}`);
       
       // Call onSubmit callback if provided
       if (onSubmit) {
@@ -150,7 +152,7 @@ export function SanctionForm({ initialData, isEdit = false, onSubmit, onCancel }
         });
       }
     } catch (err: any) {
-      setError(err.message || 'Erreur inconnue');
+      setError(err.message || t('personnel.forms.messages.errorUnknown'));
     } finally {
       setLoading(false);
     }
@@ -160,7 +162,7 @@ export function SanctionForm({ initialData, isEdit = false, onSubmit, onCancel }
 
   return (
     <div className="bg-white p-6 rounded-lg shadow">
-      <h2 className="text-xl font-semibold mb-4">{isEdit ? 'Modifier une Sanction' : 'Créer une Sanction'}</h2>
+      <h2 className="text-xl font-semibold mb-4">{isEdit ? t('personnel.forms.titles.editSanction') : t('personnel.forms.titles.createSanction')}</h2>
       
       {error && (
         <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded text-red-700 text-sm">
@@ -178,7 +180,7 @@ export function SanctionForm({ initialData, isEdit = false, onSubmit, onCancel }
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
-              Employé <span className="text-red-500">*</span>
+              {t('personnel.forms.labels.employee')} <span className="text-red-500">*</span>
             </label>
             <select
               name="userId"
@@ -187,7 +189,7 @@ export function SanctionForm({ initialData, isEdit = false, onSubmit, onCancel }
               required
               className="w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-1 focus:ring-blue-500"
             >
-              <option value={0}>Sélectionner un employé</option>
+              <option value={0}>{t('personnel.forms.placeholders.selectEmployee')}</option>
               {users.map(user => (
                 <option key={user.id} value={user.id}>
                   {user.firstName} {user.lastName} ({user.employeeNumber})
@@ -198,7 +200,7 @@ export function SanctionForm({ initialData, isEdit = false, onSubmit, onCancel }
 
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
-              Type de sanction <span className="text-red-500">*</span>
+              {t('personnel.forms.labels.sanctionType')} <span className="text-red-500">*</span>
             </label>
             <select
               name="sanctionType"
@@ -207,17 +209,17 @@ export function SanctionForm({ initialData, isEdit = false, onSubmit, onCancel }
               required
               className="w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-1 focus:ring-blue-500"
             >
-              <option value="">Sélectionner le type</option>
-              <option value="WARNING">Avertissement</option>
-              <option value="SUSPENSION">Suspension</option>
-              <option value="DEMOTION">Rétrogradation</option>
+              <option value="">{t('personnel.forms.placeholders.selectType')}</option>
+              <option value="WARNING">{t('personnel.forms.options.sanctionTypes.WARNING')}</option>
+              <option value="SUSPENSION">{t('personnel.forms.options.sanctionTypes.SUSPENSION')}</option>
+              <option value="DEMOTION">{t('personnel.forms.options.sanctionTypes.DEMOTION')}</option>
             </select>
           </div>
         </div>
 
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-1">
-            Raison <span className="text-red-500">*</span>
+            {t('personnel.forms.labels.reason')} <span className="text-red-500">*</span>
           </label>
           <textarea
             name="reason"
@@ -226,14 +228,14 @@ export function SanctionForm({ initialData, isEdit = false, onSubmit, onCancel }
             required
             rows={3}
             className="w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-1 focus:ring-blue-500"
-            placeholder="Décrivez la raison de cette sanction..."
+            placeholder={t('personnel.forms.placeholders.describeReason')}
           />
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
-              Date de sanction <span className="text-red-500">*</span>
+              {t('personnel.forms.labels.sanctionDate')} <span className="text-red-500">*</span>
             </label>
             <input
               type="date"
@@ -247,7 +249,7 @@ export function SanctionForm({ initialData, isEdit = false, onSubmit, onCancel }
 
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
-              Durée (en jours)
+              {t('personnel.forms.labels.durationDays')}
             </label>
             <input
               type="number"
@@ -259,17 +261,17 @@ export function SanctionForm({ initialData, isEdit = false, onSubmit, onCancel }
               className={`w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-1 focus:ring-blue-500 ${
                 isWarningType ? 'bg-gray-100 cursor-not-allowed' : ''
               }`}
-              placeholder={isWarningType ? 'Non applicable pour un avertissement' : '0'}
+              placeholder={isWarningType ? t('personnel.forms.sanctionMessages.notApplicable') : '0'}
             />
             {isWarningType && (
-              <p className="text-xs text-gray-500 mt-1">Les avertissements n'ont pas de durée</p>
+              <p className="text-xs text-gray-500 mt-1">{t('personnel.forms.sanctionMessages.warningNoDuration')}</p>
             )}
           </div>
         </div>
 
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-1">
-            Décision
+            {t('personnel.forms.labels.decision')}
           </label>
           <textarea
             name="decision"
@@ -277,12 +279,12 @@ export function SanctionForm({ initialData, isEdit = false, onSubmit, onCancel }
             onChange={handleInputChange}
             rows={3}
             className="w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-1 focus:ring-blue-500"
-            placeholder="Décrivez la décision prise..."
+            placeholder={t('personnel.forms.placeholders.reasonSanction')}
           />
         </div>
 
         <FileUpload
-          label="Document justificatif"
+          label={t('personnel.forms.labels.supportingDocument')}
           value={formData.supportingDocument}
           onChange={(url) => setFormData(prev => ({ ...prev, supportingDocument: url || '' }))}
           accept=".pdf,.doc,.docx,.jpg,.jpeg,.png"
@@ -296,7 +298,7 @@ export function SanctionForm({ initialData, isEdit = false, onSubmit, onCancel }
               onClick={onCancel}
               className="px-4 py-2 border border-gray-300 rounded text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
             >
-              Annuler
+              {t('personnel.forms.buttons.cancel')}
             </button>
           )}
           <button
@@ -304,7 +306,7 @@ export function SanctionForm({ initialData, isEdit = false, onSubmit, onCancel }
             disabled={loading}
             className="px-4 py-2 border border-transparent rounded text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50"
           >
-            {loading ? 'En cours...' : (isEdit ? 'Mettre à jour' : 'Créer')}
+            {loading ? t('personnel.forms.buttons.loading') : (isEdit ? t('personnel.forms.buttons.updateSanction') : t('personnel.forms.buttons.createSanction'))}
           </button>
         </div>
       </form>

@@ -2,7 +2,7 @@ import { Link } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import { LayoutDashboard, Users, Contact, Wrench, Package, 
   Briefcase, AlertTriangle, Car, FileText, 
-  Banknote, Wallet, Calculator } from 'lucide-react';
+  Banknote, Wallet, Calculator, Monitor, FolderOpen, Network } from 'lucide-react';
 
 export function SuperAdminDashboard() {
   const { email, firstName, lastName } = useAuth();
@@ -37,6 +37,9 @@ export function SuperAdminDashboard() {
     { icon: Banknote, label: 'Banques', path: '/dashboard/banques', color: 'bg-emerald-100 text-emerald-600' },
     { icon: Wallet, label: 'Caisses', path: '/dashboard/registres', color: 'bg-pink-100 text-pink-600' },
     { icon: Calculator, label: 'Impôts et Taxes', path: '/dashboard/impots', color: 'bg-amber-100 text-amber-600' },
+    { icon: Monitor, label: 'Logiciels', path: '/dashboard/software', color: 'bg-teal-100 text-teal-600' },
+    { icon: FolderOpen, label: 'Documents', path: '/dashboard/documents', color: 'bg-violet-100 text-violet-600' },
+    { icon: Network, label: 'Organigramme', path: '/dashboard/organigramme', color: 'bg-sky-100 text-sky-600' },
   ];
 
   return (

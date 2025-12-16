@@ -1,7 +1,7 @@
 import { Link } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import { LayoutDashboard, Users, Contact, Wrench, Package, 
-  Briefcase, AlertTriangle, Car, FileText } from 'lucide-react';
+  Briefcase, AlertTriangle, Car, FileText, Monitor, FolderOpen, Network } from 'lucide-react';
 
 export function SecretaryDashboard() {
   const { email, firstName, lastName } = useAuth();
@@ -33,6 +33,9 @@ export function SecretaryDashboard() {
     { icon: AlertTriangle, label: 'Alertes', path: '/dashboard/alertes', color: 'bg-red-100 text-red-600' },
     { icon: Car, label: 'Parc Auto', path: '/dashboard/parc-auto', color: 'bg-cyan-100 text-cyan-600' },
     { icon: Users, label: 'Personnel', path: '/dashboard/personnel', color: 'bg-blue-100 text-blue-600' },
+    { icon: Monitor, label: 'Logiciels', path: '/dashboard/software', color: 'bg-teal-100 text-teal-600' },
+    { icon: FolderOpen, label: 'Documents', path: '/dashboard/documents', color: 'bg-violet-100 text-violet-600' },
+    { icon: Network, label: 'Organigramme', path: '/dashboard/organigramme', color: 'bg-sky-100 text-sky-600' },
   ];
 
   return (

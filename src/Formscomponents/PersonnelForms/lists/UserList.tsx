@@ -1,4 +1,5 @@
 import React, { useState, useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Eye, Edit2, Trash2 } from 'lucide-react';
 import DeleteConfirmationModal from './DeleteConfirmationModal';
 import ViewDetailsModal from './ViewDetailsModal';
@@ -14,6 +15,8 @@ interface User {
   status: string;
   department: string;
   workcountry: string;
+  structureName: string | null;
+  isStructureResponsible: boolean;
   hireDate: string;
   createdAt: string;
   updatedAt: string;
@@ -27,6 +30,7 @@ interface UserListProps {
 }
 
 const UserList: React.FC<UserListProps> = ({ users, onEdit, onDelete, onView }) => {
+  const { t } = useTranslation();
   const [filters, setFilters] = useState({
     role: '',
     status: '',
@@ -60,10 +64,10 @@ const UserList: React.FC<UserListProps> = ({ users, onEdit, onDelete, onView }) 
 
   const getStatusText = (status: string) => {
     switch (status) {
-      case 'ACTIVE': return 'Actif';
-      case 'SUSPENDED': return 'Suspendu';
-      case 'FIRED': return 'Licencié';
-      case 'ON_HOLIDAY': return 'En congé';
+      case 'ACTIVE': return t('personnel.forms.options.userStatus.ACTIVE');
+      case 'SUSPENDED': return t('personnel.forms.options.userStatus.SUSPENDED');
+      case 'FIRED': return t('personnel.forms.options.userStatus.FIRED');
+      case 'ON_HOLIDAY': return t('personnel.forms.options.userStatus.ON_HOLIDAY');
       default: return status;
     }
   };
@@ -123,11 +127,11 @@ const UserList: React.FC<UserListProps> = ({ users, onEdit, onDelete, onView }) 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-6 gap-4">
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
-              Rechercher
+              {t('personnel.lists.filters.search')}
             </label>
             <input
               type="text"
-              placeholder="Nom, prénom, email..."
+              placeholder={t('personnel.lists.filters.searchPlaceholderUser')}
               value={filters.search}
               onChange={(e) => setFilters({ ...filters, search: e.target.value })}
               className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
@@ -135,47 +139,47 @@ const UserList: React.FC<UserListProps> = ({ users, onEdit, onDelete, onView }) 
           </div>
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
-              Rôle
+              {t('personnel.lists.filters.role')}
             </label>
             <select
               value={filters.role}
               onChange={(e) => setFilters({ ...filters, role: e.target.value })}
               className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
             >
-              <option value="">Tous</option>
-              <option value="ADMIN">Admin</option>
-              <option value="ACCOUNTANT">Comptable</option>
-              <option value="DIRECTOR">Directeur</option>
-              <option value="DIRECTEUR_TECHNIQUE">Directeur Technique</option>
-              <option value="DIRECTEUR_ADMINISTRATIF">Directeur Administratif</option>
-              <option value="EMPLOYEE">Employé</option>
-              <option value="SECRETARY">Secrétaire</option>
-              <option value="DRIVER">Chauffeur</option>
+              <option value="">{t('personnel.lists.filters.all')}</option>
+              <option value="ADMIN">{t('personnel.forms.options.roles.ADMIN')}</option>
+              <option value="ACCOUNTANT">{t('personnel.forms.options.roles.ACCOUNTANT')}</option>
+              <option value="DIRECTOR">{t('personnel.forms.options.roles.DIRECTOR')}</option>
+              <option value="DIRECTEUR_TECHNIQUE">{t('personnel.forms.options.roles.DIRECTEUR_TECHNIQUE')}</option>
+              <option value="DIRECTEUR_ADMINISTRATIF">{t('personnel.forms.options.roles.DIRECTEUR_ADMINISTRATIF')}</option>
+              <option value="EMPLOYEE">{t('personnel.forms.options.roles.EMPLOYEE')}</option>
+              <option value="SECRETARY">{t('personnel.forms.options.roles.SECRETARY')}</option>
+              <option value="DRIVER">{t('personnel.forms.options.roles.DRIVER')}</option>
             </select>
           </div>
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
-              Statut
+              {t('personnel.lists.filters.userStatus')}
             </label>
             <select
               value={filters.status}
               onChange={(e) => setFilters({ ...filters, status: e.target.value })}
               className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
             >
-              <option value="">Tous</option>
-              <option value="ACTIVE">Actif</option>
-              <option value="SUSPENDED">Suspendu</option>
-              <option value="FIRED">Licencié</option>
-              <option value="ON_HOLIDAY">En congé</option>
+              <option value="">{t('personnel.lists.filters.all')}</option>
+              <option value="ACTIVE">{t('personnel.forms.options.userStatus.ACTIVE')}</option>
+              <option value="SUSPENDED">{t('personnel.forms.options.userStatus.SUSPENDED')}</option>
+              <option value="FIRED">{t('personnel.forms.options.userStatus.FIRED')}</option>
+              <option value="ON_HOLIDAY">{t('personnel.forms.options.userStatus.ON_HOLIDAY')}</option>
             </select>
           </div>
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
-              Département
+              {t('personnel.lists.filters.department')}
             </label>
             <input
               type="text"
-              placeholder="Département"
+              placeholder={t('personnel.lists.filters.department')}
               value={filters.department}
               onChange={(e) => setFilters({ ...filters, department: e.target.value })}
               className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
@@ -183,26 +187,26 @@ const UserList: React.FC<UserListProps> = ({ users, onEdit, onDelete, onView }) 
           </div>
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
-              Pays
+              {t('personnel.lists.filters.workCountry')}
             </label>
             <select
               value={filters.workcountry}
               onChange={(e) => setFilters({ ...filters, workcountry: e.target.value })}
               className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
             >
-              <option value="">Tous</option>
-              <option value="IVORY_COAST">Côte d'Ivoire</option>
-              <option value="GHANA">Ghana</option>
-              <option value="BENIN">Bénin</option>
-              <option value="CAMEROON">Cameroun</option>
-              <option value="TOGO">Togo</option>
-              <option value="ROMANIE">Romanie</option>
-              <option value="ITALIE">Italie</option>
+              <option value="">{t('personnel.lists.filters.all')}</option>
+              <option value="IVORY_COAST">{t('personnel.forms.options.workCountries.IVORY_COAST')}</option>
+              <option value="GHANA">{t('personnel.forms.options.workCountries.GHANA')}</option>
+              <option value="BENIN">{t('personnel.forms.options.workCountries.BENIN')}</option>
+              <option value="CAMEROON">{t('personnel.forms.options.workCountries.CAMEROON')}</option>
+              <option value="TOGO">{t('personnel.forms.options.workCountries.TOGO')}</option>
+              <option value="ROMANIE">{t('personnel.forms.options.workCountries.ROMANIE')}</option>
+              <option value="ITALIE">{t('personnel.forms.options.workCountries.ITALIE')}</option>
             </select>
           </div>
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
-              Par page
+              {t('personnel.lists.filters.itemsPerPage')}
             </label>
             <select
               value={itemsPerPage}
@@ -223,7 +227,7 @@ const UserList: React.FC<UserListProps> = ({ users, onEdit, onDelete, onView }) 
         {/* Results count and Export */}
         <div className="mt-4 flex justify-between items-center">
           <div className="text-sm text-gray-600">
-            {filteredUsers.length} utilisateur(s) trouvé(s)
+            {t('personnel.lists.filters.resultsCountUser', { count: filteredUsers.length })}
           </div>
           {/* Export Dropdown */}
           <ExportUserDropdown users={filteredUsers} />
@@ -235,16 +239,16 @@ const UserList: React.FC<UserListProps> = ({ users, onEdit, onDelete, onView }) 
         <table className="w-full min-w-[1200px]">
           <thead className="bg-gray-50">
             <tr>
-              <th className="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">ID</th>
-              <th className="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Matricule</th>
-              <th className="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Nom complet</th>
-              <th className="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Email</th>
-              <th className="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Rôle</th>
-              <th className="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Statut</th>
-              <th className="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Département</th>
-              <th className="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Pays</th>
-              <th className="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date d'embauche</th>
-              <th className="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+              <th className="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{t('personnel.lists.modals.fields.userId')}</th>
+              <th className="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{t('personnel.forms.labels.employeeNumber')}</th>
+              <th className="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{t('personnel.forms.labels.firstName')} / {t('personnel.forms.labels.lastName')}</th>
+              <th className="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{t('personnel.forms.labels.email')}</th>
+              <th className="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{t('personnel.forms.labels.role')}</th>
+              <th className="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{t('personnel.forms.labels.userStatus')}</th>
+              <th className="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{t('personnel.lists.columns.department')}</th>
+              <th className="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{t('personnel.forms.labels.workCountry')}</th>
+              <th className="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{t('personnel.forms.labels.hireDate')}</th>
+              <th className="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{t('personnel.lists.columns.actions')}</th>
             </tr>
           </thead>
           <tbody className="divide-y divide-gray-200">
@@ -256,7 +260,7 @@ const UserList: React.FC<UserListProps> = ({ users, onEdit, onDelete, onView }) 
                 <td className="px-3 py-2 text-sm text-gray-900">{user.email}</td>
                 <td className="px-3 py-2 text-sm text-gray-900">
                   <span className="px-2 py-1 text-xs rounded-full bg-blue-100 text-blue-800">
-                    {user.role}
+                    {t(`personnel.forms.options.roles.${user.role}`) || user.role}
                   </span>
                 </td>
                 <td className="px-3 py-2 text-sm text-gray-900">
@@ -272,21 +276,21 @@ const UserList: React.FC<UserListProps> = ({ users, onEdit, onDelete, onView }) 
                     <button
                       onClick={() => handleViewClick(user)}
                       className="p-1 text-blue-600 hover:text-blue-800 hover:bg-blue-50 rounded transition-colors"
-                      title="Voir"
+                      title={t('personnel.lists.actions.view')}
                     >
                       <Eye className="w-4 h-4" />
                     </button>
                     <button
                       onClick={() => onEdit(user)}
                       className="p-1 text-green-600 hover:text-green-800 hover:bg-green-50 rounded transition-colors"
-                      title="Modifier"
+                      title={t('personnel.lists.actions.edit')}
                     >
                       <Edit2 className="w-4 h-4" />
                     </button>
                     <button
                       onClick={() => handleDeleteClick(user)}
                       className="p-1 text-red-600 hover:text-red-800 hover:bg-red-50 rounded transition-colors"
-                      title="Supprimer"
+                      title={t('personnel.lists.actions.delete')}
                     >
                       <Trash2 className="w-4 h-4" />
                     </button>
@@ -307,22 +311,22 @@ const UserList: React.FC<UserListProps> = ({ users, onEdit, onDelete, onView }) 
               disabled={currentPage === 1}
               className="relative inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              Précédent
+              {t('personnel.lists.pagination.previous')}
             </button>
             <button
               onClick={() => handlePageChange(currentPage + 1)}
               disabled={currentPage === totalPages}
               className="ml-3 relative inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              Suivant
+              {t('personnel.lists.pagination.next')}
             </button>
           </div>
           <div className="hidden sm:flex-1 sm:flex sm:items-center sm:justify-between">
             <div>
               <p className="text-sm text-gray-700">
-                Affichage de <span className="font-medium">{startIndex + 1}</span> à{' '}
-                <span className="font-medium">{Math.min(endIndex, filteredUsers.length)}</span> sur{' '}
-                <span className="font-medium">{filteredUsers.length}</span> résultats
+                {t('personnel.lists.pagination.showing')} <span className="font-medium">{startIndex + 1}</span> {t('personnel.lists.pagination.to')}{' '}
+                <span className="font-medium">{Math.min(endIndex, filteredUsers.length)}</span> {t('personnel.lists.pagination.of')}{' '}
+                <span className="font-medium">{filteredUsers.length}</span> {t('personnel.lists.pagination.results')}
               </p>
             </div>
             <div>
@@ -332,7 +336,7 @@ const UserList: React.FC<UserListProps> = ({ users, onEdit, onDelete, onView }) 
                   disabled={currentPage === 1}
                   className="relative inline-flex items-center px-2 py-2 rounded-l-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
                 >
-                  Précédent
+                  {t('personnel.lists.pagination.previous')}
                 </button>
                 {[...Array(totalPages)].map((_, idx) => (
                   <button
@@ -352,7 +356,7 @@ const UserList: React.FC<UserListProps> = ({ users, onEdit, onDelete, onView }) 
                   disabled={currentPage === totalPages}
                   className="relative inline-flex items-center px-2 py-2 rounded-r-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
                 >
-                  Suivant
+                  {t('personnel.lists.pagination.next')}
                 </button>
               </nav>
             </div>
@@ -373,25 +377,27 @@ const UserList: React.FC<UserListProps> = ({ users, onEdit, onDelete, onView }) 
       <ViewDetailsModal
         isOpen={viewModal.isOpen}
         onClose={() => setViewModal({ isOpen: false, user: null })}
-        title="Détails de l'utilisateur"
+        title={t('personnel.lists.modals.viewTitleUser')}
         data={viewModal.user || {}}
         fields={[
-          { key: 'id', label: 'ID' },
-          { key: 'employeeNumber', label: 'Matricule' },
-          { key: 'firstName', label: 'Prénom' },
-          { key: 'lastName', label: 'Nom' },
-          { key: 'email', label: 'Email' },
-          { key: 'role', label: 'Rôle' },
-          { key: 'status', label: 'Statut', render: (val: string) => (
+          { key: 'id', label: t('personnel.lists.modals.fields.userId') },
+          { key: 'employeeNumber', label: t('personnel.forms.labels.employeeNumber') },
+          { key: 'firstName', label: t('personnel.forms.labels.firstName') },
+          { key: 'lastName', label: t('personnel.forms.labels.lastName') },
+          { key: 'email', label: t('personnel.forms.labels.email') },
+          { key: 'role', label: t('personnel.forms.labels.role'), render: (val: string) => t(`personnel.forms.options.roles.${val}`) || val },
+          { key: 'status', label: t('personnel.forms.labels.userStatus'), render: (val: string) => (
             <span className={`px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full ${getStatusColor(val)}`}>
               {getStatusText(val)}
             </span>
           )},
-          { key: 'department', label: 'Département' },
-          { key: 'workcountry', label: 'Pays de travail' },
-          { key: 'hireDate', label: 'Date d\'embauche', render: formatDate },
-          { key: 'createdAt', label: 'Créé le', render: formatDate },
-          { key: 'updatedAt', label: 'Mis à jour le', render: formatDate },
+          { key: 'department', label: t('personnel.lists.columns.department') },
+          { key: 'workcountry', label: t('personnel.forms.labels.workCountry') },
+          { key: 'structureName', label: 'Structure', render: (val: string | null) => val || '-' },
+          { key: 'isStructureResponsible', label: 'Responsable de structure', render: (val: boolean) => val ? 'Oui' : 'Non' },
+          { key: 'hireDate', label: t('personnel.forms.labels.hireDate'), render: formatDate },
+          { key: 'createdAt', label: t('personnel.lists.modals.fields.createdAt'), render: formatDate },
+          { key: 'updatedAt', label: t('personnel.lists.modals.fields.updatedAt'), render: formatDate },
         ]}
       />
     </div>

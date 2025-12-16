@@ -34,7 +34,7 @@ export const handler: Handler = async (event) => {
   }
 
   try {
-    const { employeeNumber, firstName, lastName, email, password, phone, role, status, workcountry } = JSON.parse(event.body || '{}');
+    const { employeeNumber, firstName, lastName, email, password, phone, role, status, workcountry, structureName, isStructureResponsible } = JSON.parse(event.body || '{}');
 
     // Required fields validation
     if (!email || !phone) {
@@ -94,6 +94,8 @@ export const handler: Handler = async (event) => {
       identityType: 'NATIONAL_ID_CARD',
       identity: '',
       workcountry: workcountry || 'IVORY_COAST',
+      structureName: structureName || null,
+      isStructureResponsible: isStructureResponsible || false,
       address: '',
       phoneno: '',
       gender: 'MALE',

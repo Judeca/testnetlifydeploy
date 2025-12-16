@@ -1,11 +1,13 @@
 import { Link } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
+import { useTranslation } from 'react-i18next';
 import { LayoutDashboard, Users, Contact, Wrench, Package, 
   Briefcase, AlertTriangle, Car, FileText, 
-  Banknote, Wallet, Calculator } from 'lucide-react';
+  Banknote, Wallet, Calculator, Monitor, FolderOpen, Network } from 'lucide-react';
 
 export function AdminDashboard() {
   const { email, firstName, lastName } = useAuth();
+  const { t } = useTranslation();
   
   const getDisplayName = () => {
     if (firstName && lastName) {
@@ -26,17 +28,20 @@ export function AdminDashboard() {
   const displayName = getDisplayName();
 
   const quickLinks = [
-    { icon: Users, label: 'Personnel', path: '/dashboard/personnel', color: 'bg-blue-100 text-blue-600' },
-    { icon: Contact, label: 'Contacts', path: '/dashboard/contacts', color: 'bg-green-100 text-green-600' },
-    { icon: Wrench, label: 'Équipements', path: '/dashboard/equipements', color: 'bg-purple-100 text-purple-600' },
-    { icon: Package, label: 'Offres', path: '/dashboard/offres', color: 'bg-orange-100 text-orange-600' },
-    { icon: Briefcase, label: 'Affaires', path: '/dashboard/affaires', color: 'bg-indigo-100 text-indigo-600' },
-    { icon: AlertTriangle, label: 'Alertes', path: '/dashboard/alertes', color: 'bg-red-100 text-red-600' },
-    { icon: Car, label: 'Parc Auto', path: '/dashboard/parc-auto', color: 'bg-cyan-100 text-cyan-600' },
-    { icon: FileText, label: 'Factures', path: '/dashboard/factures', color: 'bg-yellow-100 text-yellow-600' },
-    { icon: Banknote, label: 'Banques', path: '/dashboard/banques', color: 'bg-emerald-100 text-emerald-600' },
-    { icon: Wallet, label: 'Caisses', path: '/dashboard/registres', color: 'bg-pink-100 text-pink-600' },
-    { icon: Calculator, label: 'Impôts et Taxes', path: '/dashboard/impots', color: 'bg-amber-100 text-amber-600' },
+    { icon: Users, label: t('sidebar.personnel'), path: '/dashboard/personnel', color: 'bg-blue-100 text-blue-600' },
+    { icon: Contact, label: t('sidebar.contacts'), path: '/dashboard/contacts', color: 'bg-green-100 text-green-600' },
+    { icon: Wrench, label: t('sidebar.equipment'), path: '/dashboard/equipements', color: 'bg-purple-100 text-purple-600' },
+    { icon: Package, label: t('sidebar.offers'), path: '/dashboard/offres', color: 'bg-orange-100 text-orange-600' },
+    { icon: Briefcase, label: t('sidebar.business'), path: '/dashboard/affaires', color: 'bg-indigo-100 text-indigo-600' },
+    { icon: AlertTriangle, label: t('sidebar.alertsShort'), path: '/dashboard/alertes', color: 'bg-red-100 text-red-600' },
+    { icon: Car, label: t('sidebar.vehicles'), path: '/dashboard/parc-auto', color: 'bg-cyan-100 text-cyan-600' },
+    { icon: FileText, label: t('sidebar.invoices'), path: '/dashboard/factures', color: 'bg-yellow-100 text-yellow-600' },
+    { icon: Banknote, label: t('sidebar.banks'), path: '/dashboard/banques', color: 'bg-emerald-100 text-emerald-600' },
+    { icon: Wallet, label: t('sidebar.registers'), path: '/dashboard/registres', color: 'bg-pink-100 text-pink-600' },
+    { icon: Calculator, label: t('sidebar.taxes'), path: '/dashboard/impots', color: 'bg-amber-100 text-amber-600' },
+    { icon: Monitor, label: t('sidebar.software'), path: '/dashboard/software', color: 'bg-teal-100 text-teal-600' },
+    { icon: FolderOpen, label: t('sidebar.documents'), path: '/dashboard/documents', color: 'bg-violet-100 text-violet-600' },
+    { icon: Network, label: t('sidebar.organigramme'), path: '/dashboard/organigramme', color: 'bg-sky-100 text-sky-600' },
   ];
 
   return (
@@ -50,22 +55,20 @@ export function AdminDashboard() {
             </div>
             <div>
               <h1 className="text-3xl font-bold text-gray-900">
-                Bienvenue, {displayName} !
+                {t('dashboard.welcome')}, {displayName} !
               </h1>
               <p className="text-gray-600 mt-1">
-                Tableau de bord de gestion d'entreprise
+                {t('dashboard.admin.subtitle')}
               </p>
             </div>
           </div>
           
           <div className="mt-6 p-6 bg-blue-50 rounded-lg border-l-4 border-blue-500">
             <p className="text-gray-700 leading-relaxed">
-              👋 <strong>Bienvenue dans votre espace d'administration !</strong>
+              👋 <strong>{t('dashboard.admin.welcomeMessage')}</strong>
             </p>
             <p className="text-gray-600 mt-2 leading-relaxed">
-              Utilisez la <strong>barre latérale (Sidebar)</strong> à gauche pour naviguer entre les différents modules de gestion de votre entreprise. 
-              Vous pouvez accéder à toutes les fonctionnalités disponibles telles que la gestion du personnel, des contacts, des équipements, 
-              des affaires, des factures et bien plus encore.
+              {t('dashboard.admin.description')}
             </p>
           </div>
         </div>
@@ -73,7 +76,7 @@ export function AdminDashboard() {
         {/* Quick Links Grid */}
         <div className="mb-8">
           <h2 className="text-2xl font-semibold text-gray-900 mb-4">
-            Accès rapide aux modules
+            {t('dashboard.quickAccess')}
           </h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
             {quickLinks.map((link) => {
@@ -93,7 +96,7 @@ export function AdminDashboard() {
                         {link.label}
                       </p>
                       <p className="text-xs text-gray-500 mt-1">
-                        Cliquez pour accéder
+                        {t('dashboard.clickToAccess')}
                       </p>
                     </div>
                   </div>
@@ -107,24 +110,24 @@ export function AdminDashboard() {
         <div className="bg-white rounded-xl shadow-md p-6 border border-gray-200">
           <h3 className="text-lg font-semibold text-gray-900 mb-3 flex items-center gap-2">
             <LayoutDashboard className="w-5 h-5 text-blue-600" />
-            Instructions de navigation
+            {t('dashboard.navigationInstructions')}
           </h3>
           <ul className="space-y-2 text-gray-600">
             <li className="flex items-start gap-2">
               <span className="text-blue-600 mt-1">•</span>
-              <span>La <strong>sidebar</strong> (barre latérale gauche) contient tous les modules de gestion disponibles</span>
+              <span>{t('dashboard.navigationPoint1')}</span>
             </li>
             <li className="flex items-start gap-2">
               <span className="text-blue-600 mt-1">•</span>
-              <span>Cliquez sur n'importe quel élément du menu pour accéder au module correspondant</span>
+              <span>{t('dashboard.navigationPoint2')}</span>
             </li>
             <li className="flex items-start gap-2">
               <span className="text-blue-600 mt-1">•</span>
-              <span>Vous pouvez également utiliser les cartes ci-dessus pour un accès rapide</span>
+              <span>{t('dashboard.navigationPoint3')}</span>
             </li>
             <li className="flex items-start gap-2">
               <span className="text-blue-600 mt-1">•</span>
-              <span>La barre de navigation supérieure vous permet de changer de pays et d'accéder à votre profil</span>
+              <span>{t('dashboard.navigationPoint4')}</span>
             </li>
           </ul>
         </div>

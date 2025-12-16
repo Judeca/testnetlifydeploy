@@ -1,4 +1,5 @@
 import React, { useState, useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Eye, Edit2, Trash2 } from 'lucide-react';
 import DeleteConfirmationModal from './DeleteConfirmationModal';
 import ViewDetailsModal from './ViewDetailsModal';
@@ -33,6 +34,7 @@ interface AffectationListProps {
 }
 
 const AffectationList: React.FC<AffectationListProps> = ({ affectations, onEdit, onDelete, onView }) => {
+  const { t } = useTranslation();
   const [filters, setFilters] = useState({
     affectationtype: '',
     workLocation: '',
@@ -59,11 +61,11 @@ const AffectationList: React.FC<AffectationListProps> = ({ affectations, onEdit,
 
   const getAffectationTypeText = (type: string) => {
     switch (type) {
-      case 'PERMANENT': return 'Permanente';
-      case 'TEMPORARY': return 'Temporaire';
-      case 'TRANSFER': return 'Mutation';
-      case 'PROJECT_BASED': return 'Basée sur projet';
-      case 'SPECIAL_ASSIGNMENT': return 'Mission spéciale';
+      case 'PERMANENT': return t('personnel.forms.options.affectationTypes.PERMANENT');
+      case 'TEMPORARY': return t('personnel.forms.options.affectationTypes.TEMPORARY');
+      case 'TRANSFER': return t('personnel.forms.options.affectationTypes.TRANSFER');
+      case 'PROJECT_BASED': return t('personnel.forms.options.affectationTypes.PROJECT_BASED');
+      case 'SPECIAL_ASSIGNMENT': return t('personnel.forms.options.affectationTypes.SPECIAL_ASSIGNMENT');
       default: return type;
     }
   };
@@ -116,11 +118,11 @@ const AffectationList: React.FC<AffectationListProps> = ({ affectations, onEdit,
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
-              Rechercher
+              {t('personnel.lists.filters.search')}
             </label>
             <input
               type="text"
-              placeholder="Employé, lieu, site..."
+              placeholder={t('personnel.lists.filters.searchPlaceholder')}
               value={filters.search}
               onChange={(e) => setFilters({ ...filters, search: e.target.value })}
               className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
@@ -128,28 +130,28 @@ const AffectationList: React.FC<AffectationListProps> = ({ affectations, onEdit,
           </div>
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
-              Type d'affectation
+              {t('personnel.lists.filters.affectationType')}
             </label>
             <select
               value={filters.affectationtype}
               onChange={(e) => setFilters({ ...filters, affectationtype: e.target.value })}
               className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
             >
-              <option value="">Tous</option>
-              <option value="PERMANENT">Permanente</option>
-              <option value="TEMPORARY">Temporaire</option>
-              <option value="TRANSFER">Mutation</option>
-              <option value="PROJECT_BASED">Basée sur projet</option>
-              <option value="SPECIAL_ASSIGNMENT">Mission spéciale</option>
+              <option value="">{t('personnel.lists.filters.all')}</option>
+              <option value="PERMANENT">{t('personnel.forms.options.affectationTypes.PERMANENT')}</option>
+              <option value="TEMPORARY">{t('personnel.forms.options.affectationTypes.TEMPORARY')}</option>
+              <option value="TRANSFER">{t('personnel.forms.options.affectationTypes.TRANSFER')}</option>
+              <option value="PROJECT_BASED">{t('personnel.forms.options.affectationTypes.PROJECT_BASED')}</option>
+              <option value="SPECIAL_ASSIGNMENT">{t('personnel.forms.options.affectationTypes.SPECIAL_ASSIGNMENT')}</option>
             </select>
           </div>
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
-              Lieu de travail
+              {t('personnel.lists.filters.workLocation')}
             </label>
             <input
               type="text"
-              placeholder="Lieu de travail"
+              placeholder={t('personnel.lists.filters.workLocation')}
               value={filters.workLocation}
               onChange={(e) => setFilters({ ...filters, workLocation: e.target.value })}
               className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
@@ -157,7 +159,7 @@ const AffectationList: React.FC<AffectationListProps> = ({ affectations, onEdit,
           </div>
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
-              Par page
+              {t('personnel.lists.filters.itemsPerPage')}
             </label>
             <select
               value={itemsPerPage}
@@ -178,7 +180,7 @@ const AffectationList: React.FC<AffectationListProps> = ({ affectations, onEdit,
         {/* Results count and Export */}
         <div className="mt-4 flex justify-between items-center">
           <div className="text-sm text-gray-600">
-            {filteredAffectations.length} affectation(s) trouvée(s)
+            {t('personnel.lists.filters.resultsCountAffectation', { count: filteredAffectations.length })}
           </div>
           {/* Export Dropdown */}
           <ExportAffectationDropdown affectations={filteredAffectations} />
@@ -190,13 +192,13 @@ const AffectationList: React.FC<AffectationListProps> = ({ affectations, onEdit,
         <table className="w-full min-w-[1000px]">
           <thead className="bg-gray-50">
             <tr>
-              <th className="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Employé</th>
-              <th className="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Lieu d'affectation</th>
-              <th className="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Site</th>
-              <th className="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Type</th>
-              <th className="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date Début</th>
-              <th className="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date Fin</th>
-              <th className="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+              <th className="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{t('personnel.lists.tableHeaders.employee')}</th>
+              <th className="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{t('personnel.lists.tableHeaders.workLocation')}</th>
+              <th className="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{t('personnel.lists.tableHeaders.site')}</th>
+              <th className="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{t('personnel.lists.tableHeaders.affectationType')}</th>
+              <th className="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{t('personnel.lists.tableHeaders.startDate')}</th>
+              <th className="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{t('personnel.lists.tableHeaders.endDate')}</th>
+              <th className="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{t('personnel.lists.tableHeaders.actions')}</th>
             </tr>
           </thead>
           <tbody className="divide-y divide-gray-200">
@@ -215,21 +217,21 @@ const AffectationList: React.FC<AffectationListProps> = ({ affectations, onEdit,
                     <button
                       onClick={() => handleViewClick(affectation)}
                       className="p-1 text-blue-600 hover:text-blue-800 hover:bg-blue-50 rounded transition-colors"
-                      title="Voir"
+                      title={t('personnel.lists.actions.view')}
                     >
                       <Eye className="w-4 h-4" />
                     </button>
                     <button
                       onClick={() => onEdit(affectation)}
                       className="p-1 text-green-600 hover:text-green-800 hover:bg-green-50 rounded transition-colors"
-                      title="Modifier"
+                      title={t('personnel.lists.actions.edit')}
                     >
                       <Edit2 className="w-4 h-4" />
                     </button>
                     <button
                       onClick={() => handleDeleteClick(affectation)}
                       className="p-1 text-red-600 hover:text-red-800 hover:bg-red-50 rounded transition-colors"
-                      title="Supprimer"
+                      title={t('personnel.lists.actions.delete')}
                     >
                       <Trash2 className="w-4 h-4" />
                     </button>
@@ -250,23 +252,19 @@ const AffectationList: React.FC<AffectationListProps> = ({ affectations, onEdit,
               disabled={currentPage === 1}
               className="relative inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              Précédent
+              {t('personnel.lists.messages.previous')}
             </button>
             <button
               onClick={() => handlePageChange(currentPage + 1)}
               disabled={currentPage === totalPages}
               className="ml-3 relative inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              Suivant
+              {t('personnel.lists.messages.next')}
             </button>
           </div>
           <div className="hidden sm:flex-1 sm:flex sm:items-center sm:justify-between">
             <div>
-              <p className="text-sm text-gray-700">
-                Affichage de <span className="font-medium">{startIndex + 1}</span> à{' '}
-                <span className="font-medium">{Math.min(endIndex, filteredAffectations.length)}</span> sur{' '}
-                <span className="font-medium">{filteredAffectations.length}</span> résultats
-              </p>
+              <p className="text-sm text-gray-700" dangerouslySetInnerHTML={{ __html: t('personnel.lists.messages.showingResults', { start: startIndex + 1, end: Math.min(endIndex, filteredAffectations.length), total: filteredAffectations.length }) }}></p>
             </div>
             <div>
               <nav className="relative z-0 inline-flex rounded-md shadow-sm -space-x-px">
@@ -275,7 +273,7 @@ const AffectationList: React.FC<AffectationListProps> = ({ affectations, onEdit,
                   disabled={currentPage === 1}
                   className="relative inline-flex items-center px-2 py-2 rounded-l-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
                 >
-                  Précédent
+                  {t('personnel.lists.messages.previous')}
                 </button>
                 {[...Array(totalPages)].map((_, idx) => (
                   <button
@@ -295,7 +293,7 @@ const AffectationList: React.FC<AffectationListProps> = ({ affectations, onEdit,
                   disabled={currentPage === totalPages}
                   className="relative inline-flex items-center px-2 py-2 rounded-r-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
                 >
-                  Suivant
+                  {t('personnel.lists.messages.next')}
                 </button>
               </nav>
             </div>
@@ -308,28 +306,28 @@ const AffectationList: React.FC<AffectationListProps> = ({ affectations, onEdit,
         isOpen={deleteModal.isOpen}
         onClose={() => setDeleteModal({ isOpen: false, affectation: null })}
         onConfirm={handleDeleteConfirm}
-        itemName={deleteModal.affectation ? `Affectation de ${deleteModal.affectation.user?.firstName} ${deleteModal.affectation.user?.lastName}` : ''}
-        itemType="l'affectation"
+        itemName={deleteModal.affectation ? `${deleteModal.affectation.user?.firstName} ${deleteModal.affectation.user?.lastName}` : ''}
+        itemType={t('personnel.lists.messages.affectation')}
       />
 
       {/* View Modal */}
       <ViewDetailsModal
         isOpen={viewModal.isOpen}
         onClose={() => setViewModal({ isOpen: false, affectation: null })}
-        title="Détails de l'affectation"
+        title={t('personnel.lists.messages.viewDetailsTitle', { itemType: t('personnel.lists.messages.affectation') })}
         data={viewModal.affectation || {}}
         fields={[
-          { key: 'affectationsId', label: 'ID Affectation' },
-          { key: 'user', label: 'Employé', render: (user: any) => user ? `${user.firstName} ${user.lastName}` : '-' },
-          { key: 'workLocation', label: 'Lieu de travail' },
-          { key: 'site', label: 'Site' },
-          { key: 'affectationtype', label: 'Type d\'affectation', render: (val: string) => getAffectationTypeText(val) },
-          { key: 'description', label: 'Description' },
-          { key: 'attached_file', label: 'Fichier joint' },
-          { key: 'startDate', label: 'Date début', render: formatDate },
-          { key: 'endDate', label: 'Date fin', render: formatDate },
-          { key: 'createdAt', label: 'Créé le', render: formatDate },
-          { key: 'updatedAt', label: 'Mis à jour le', render: formatDate },
+          { key: 'affectationsId', label: t('personnel.lists.messages.id') },
+          { key: 'user', label: t('personnel.lists.tableHeaders.employee'), render: (user: any) => user ? `${user.firstName} ${user.lastName}` : '-' },
+          { key: 'workLocation', label: t('personnel.lists.tableHeaders.workLocation') },
+          { key: 'site', label: t('personnel.lists.tableHeaders.site') },
+          { key: 'affectationtype', label: t('personnel.lists.tableHeaders.affectationType'), render: (val: string) => getAffectationTypeText(val) },
+          { key: 'description', label: t('personnel.lists.messages.description') },
+          { key: 'attached_file', label: t('personnel.lists.messages.file') },
+          { key: 'startDate', label: t('personnel.lists.tableHeaders.startDate'), render: formatDate },
+          { key: 'endDate', label: t('personnel.lists.tableHeaders.endDate'), render: formatDate },
+          { key: 'createdAt', label: t('personnel.lists.messages.createdAt'), render: formatDate },
+          { key: 'updatedAt', label: t('personnel.lists.messages.updatedAt'), render: formatDate },
         ]}
       />
     </div>

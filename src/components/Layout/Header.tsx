@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { User, Bell, Globe, ChevronDown, LogOut } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 
 interface HeaderProps {
   onCountryChange: (country: string) => void;
@@ -10,7 +11,7 @@ interface HeaderProps {
 export function Header({ onCountryChange }: HeaderProps) {
   const { logout, role, email, firstName, lastName, effectiveCountryCode } = useAuth();
   const navigate = useNavigate();
-  const [language, setLanguage] = useState('fr');
+  const { t, i18n } = useTranslation();
   const [country, setCountry] = useState(effectiveCountryCode || '');
   const [showLanguageMenu, setShowLanguageMenu] = useState(false);
   const [showCountryMenu, setShowCountryMenu] = useState(false);
@@ -42,7 +43,7 @@ export function Header({ onCountryChange }: HeaderProps) {
   };
 
   const changeLanguage = (lang: string) => {
-    setLanguage(lang);
+    i18n.changeLanguage(lang);
     setShowLanguageMenu(false);
   };
 
@@ -60,10 +61,14 @@ export function Header({ onCountryChange }: HeaderProps) {
     { code: 'cameroun', name: 'Cameroun', flag: '/image/cameroun.png' },
     { code: 'coteIvoire', name: 'Côte d\'Ivoire', flag: '/image/coteIvoire.png' },
     { code: 'italie', name: 'Italie', flag: '/image/italie.png' },
+    { code: 'guinee', name: 'Guinée Conakry', flag: '/image/guinee.png' },
+    { code: 'burkina', name: 'Burkina Faso', flag: '/image/burkina.png' },
     { code: 'ghana', name: 'Ghana', flag: '/image/ghana.jpg' },
     { code: 'benin', name: 'Bénin', flag: '/image/benin.png' },
     { code: 'togo', name: 'Togo', flag: '/image/togo.png' },
-    { code: 'romanie', name: 'Roumanie', flag: '/image/romanie.png' }
+    { code: 'romanie', name: 'Roumanie', flag: '/image/romanie.png' },
+    { code: 'sierraLeone', name: 'Sierra Leone', flag: '/image/sierraLeone.png' },
+    { code: 'italiepkbim', name: 'Italie PKBIM', flag: '/image/italie.png', enterprise: 'PKBIM', logo: '/image/pkbim.png' }
   ];
 
   // Fonction pour obtenir le chemin du drapeau selon le pays
@@ -113,6 +118,17 @@ export function Header({ onCountryChange }: HeaderProps) {
     <header className="bg-white shadow-sm border-b border-gray-200 px-6 py-4">
       <div className="flex items-center justify-between">
         <div className="flex-1">
+          {/* Message de bienvenue */}
+          <div className="flex items-center space-x-2">
+            <span className="text-lg font-medium text-gray-700">
+              {t('header.welcome')}
+            </span>
+            {firstName && (
+              <span className="text-lg font-semibold text-blue-600">
+                {firstName}!
+              </span>
+            )}
+          </div>
         </div>
         
         <div className="flex items-center space-x-4">
@@ -126,7 +142,7 @@ export function Header({ onCountryChange }: HeaderProps) {
               className="flex items-center space-x-2 p-2 text-gray-500 hover:text-gray-700 hover:bg-gray-100 rounded-lg transition-colors"
             >
               <Globe className="w-5 h-5" />
-              <span className="text-sm font-medium">{language.toUpperCase()}</span>
+              <span className="text-sm font-medium">{i18n.language.toUpperCase()}</span>
               <ChevronDown className="w-4 h-4" />
             </button>
             
@@ -135,7 +151,7 @@ export function Header({ onCountryChange }: HeaderProps) {
                 <button
                   onClick={() => changeLanguage('fr')}
                   className={`block w-full text-left px-4 py-2 text-sm hover:bg-gray-100 ${
-                    language === 'fr' ? 'bg-blue-50 text-blue-600 font-medium' : 'text-gray-700'
+                    i18n.language === 'fr' ? 'bg-blue-50 text-blue-600 font-medium' : 'text-gray-700'
                   }`}
                 >
                   🇫🇷 Français
@@ -143,7 +159,7 @@ export function Header({ onCountryChange }: HeaderProps) {
                 <button
                   onClick={() => changeLanguage('en')}
                   className={`block w-full text-left px-4 py-2 text-sm hover:bg-gray-100 ${
-                    language === 'en' ? 'bg-blue-50 text-blue-600 font-medium' : 'text-gray-700'
+                    i18n.language === 'en' ? 'bg-blue-50 text-blue-600 font-medium' : 'text-gray-700'
                   }`}
                 >
                   🇬🇧 English
@@ -151,7 +167,7 @@ export function Header({ onCountryChange }: HeaderProps) {
                 <button
                   onClick={() => changeLanguage('it')}
                   className={`block w-full text-left px-4 py-2 text-sm hover:bg-gray-100 ${
-                    language === 'it' ? 'bg-blue-50 text-blue-600 font-medium' : 'text-gray-700'
+                    i18n.language === 'it' ? 'bg-blue-50 text-blue-600 font-medium' : 'text-gray-700'
                   }`}
                 >
                   🇮🇹 Italiano
@@ -171,11 +187,11 @@ export function Header({ onCountryChange }: HeaderProps) {
             >
               <img 
                 src={getFlagPath(country || 'cameroun')} 
-                alt={`Drapeau ${country}`} 
+                alt={`${country || 'cameroun'}`} 
                 className="w-5 h-5 object-cover rounded-sm"
                 onError={(e) => {
-                  console.error(`Erreur de chargement du drapeau: ${getFlagPath(country || 'cameroun')}`);
-                  e.currentTarget.src = 'image/cameroun.png'; // Image de secours
+                  console.error(`Error loading flag: ${getFlagPath(country || 'cameroun')}`);
+                  e.currentTarget.src = 'image/cameroun.png'; // Fallback image
                 }}
               />
               <span className="text-sm font-medium capitalize">{country || 'cameroun'}</span>
@@ -231,9 +247,9 @@ export function Header({ onCountryChange }: HeaderProps) {
               <p className="text-sm font-medium text-gray-900">
                 {firstName && lastName 
                   ? `${firstName} ${lastName}` 
-                  : email?.split('@')[0].toUpperCase() || 'USER'}
+                  : email?.split('@')[0].toUpperCase() || t('header.user')}
               </p>
-              <p className="text-xs text-gray-500">{role || 'Utilisateur'}</p>
+              <p className="text-xs text-gray-500">{role || t('header.user')}</p>
             </div>
             <button 
               onClick={(e) => {
@@ -255,7 +271,7 @@ export function Header({ onCountryChange }: HeaderProps) {
                   className="flex items-center w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-red-50"
                 >
                   <LogOut className="w-4 h-4 mr-2" />
-                  Déconnexion
+                  {t('header.logout')}
                 </button>
               </div>
             )}
@@ -268,10 +284,10 @@ export function Header({ onCountryChange }: HeaderProps) {
               setShowLogoutModal(true);
             }}
             className="flex items-center space-x-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors shadow-sm hover:shadow-md"
-            title="Déconnexion"
+            title={t('header.logout')}
           >
             <LogOut className="w-5 h-5" />
-            <span className="text-sm font-medium">Déconnexion</span>
+            <span className="text-sm font-medium">{t('header.logout')}</span>
           </button>
         </div>
       </div>
@@ -292,10 +308,12 @@ export function Header({ onCountryChange }: HeaderProps) {
               <div className="bg-gray-50 px-4 py-3 border-b border-gray-200 sm:px-6 flex items-center justify-between">
                 <div className="flex items-center space-x-3">
                   <Bell className="w-6 h-6 text-blue-600" />
-                  <h3 className="text-lg font-medium text-gray-900">Alertes en Retard</h3>
+                  <h3 className="text-lg font-medium text-gray-900">{t('header.alertsTitle')}</h3>
                   {overdueAlertsCount > 0 && (
                     <span className="bg-red-500 text-white px-2 py-1 rounded-full text-sm">
-                      {overdueAlertsCount} alerte{overdueAlertsCount > 1 ? 's' : ''}
+                      {overdueAlertsCount === 1 
+                        ? t('header.alertsCount', { count: overdueAlertsCount })
+                        : t('header.alertsCountPlural', { count: overdueAlertsCount })}
                     </span>
                   )}
                 </div>
@@ -314,17 +332,21 @@ export function Header({ onCountryChange }: HeaderProps) {
                   {overdueAlertsCount === 0 ? (
                     <div className="text-center py-12">
                       <Bell className="w-12 h-12 text-gray-300 mx-auto mb-4" />
-                      <p className="text-gray-500">Aucune alerte en retard</p>
+                      <p className="text-gray-500">{t('header.noAlerts')}</p>
                     </div>
                   ) : (
                     <div className="text-center py-8">
                       <div className="bg-red-50 border border-red-200 rounded-lg p-6">
                         <Bell className="w-12 h-12 text-red-500 mx-auto mb-4" />
                         <h4 className="text-red-800 font-semibold text-lg mb-2">
-                          {overdueAlertsCount} Alerte{overdueAlertsCount > 1 ? 's' : ''} en Retard
+                          {overdueAlertsCount === 1 
+                            ? t('header.alertsCount', { count: overdueAlertsCount })
+                            : t('header.alertsCountPlural', { count: overdueAlertsCount })}
                         </h4>
                         <p className="text-red-600 mb-4">
-                          Vous avez {overdueAlertsCount} alerte{overdueAlertsCount > 1 ? 's' : ''} qui nécessite{overdueAlertsCount > 1 ? 'nt' : ''} votre attention.
+                          {overdueAlertsCount === 1 
+                            ? t('header.alertsMessage', { count: overdueAlertsCount })
+                            : t('header.alertsMessagePlural', { count: overdueAlertsCount })}
                         </p>
                         <button
                           onClick={() => {
@@ -333,7 +355,7 @@ export function Header({ onCountryChange }: HeaderProps) {
                           }}
                           className="bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700 transition-colors"
                         >
-                          Voir les Alertes
+                          {t('header.viewAlerts')}
                         </button>
                       </div>
                     </div>
@@ -348,7 +370,7 @@ export function Header({ onCountryChange }: HeaderProps) {
                   className="w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 sm:w-auto sm:text-sm"
                   onClick={() => setShowAlertsModal(false)}
                 >
-                  Fermer
+                  {t('header.close')}
                 </button>
               </div>
             </div>
@@ -379,7 +401,7 @@ export function Header({ onCountryChange }: HeaderProps) {
                       <LogOut className="w-6 h-6 text-white" />
                     </div>
                     <h3 className="text-xl font-semibold text-white">
-                      Confirmation de déconnexion
+                      {t('header.logoutConfirmTitle')}
                     </h3>
                   </div>
                   <button
@@ -387,7 +409,7 @@ export function Header({ onCountryChange }: HeaderProps) {
                     onClick={() => setShowLogoutModal(false)}
                     className="text-white hover:text-gray-200 transition-colors"
                   >
-                    <span className="sr-only">Fermer</span>
+                    <span className="sr-only">{t('header.close')}</span>
                     <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
                     </svg>
@@ -405,10 +427,10 @@ export function Header({ onCountryChange }: HeaderProps) {
                   </div>
                   <div className="flex-1">
                     <p className="text-gray-700 text-base leading-relaxed">
-                      Êtes-vous sûr de vouloir vous déconnecter ?
+                      {t('header.logoutConfirm')}
                     </p>
                     <p className="text-gray-500 text-sm mt-2">
-                      Toutes vos données de session seront supprimées et vous devrez vous reconnecter pour accéder à l'application.
+                      {t('header.logoutConfirmMessage')}
                     </p>
                   </div>
                 </div>
@@ -421,14 +443,14 @@ export function Header({ onCountryChange }: HeaderProps) {
                   onClick={() => setShowLogoutModal(false)}
                   className="px-5 py-2.5 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
                 >
-                  Annuler
+                  {t('common.cancel')}
                 </button>
                 <button
                   type="button"
                   onClick={handleLogoutConfirm}
                   className="px-5 py-2.5 text-sm font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700 transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 shadow-sm hover:shadow-md"
                 >
-                  Oui, me déconnecter
+                  {t('header.logoutConfirmButton')}
                 </button>
               </div>
             </div>

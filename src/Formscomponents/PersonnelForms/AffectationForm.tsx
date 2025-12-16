@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useAuth } from '../../context/AuthContext';
 import { FileUpload } from '../../components/Personnel/FileUpload';
 
@@ -28,6 +29,7 @@ interface AffectationFormProps {
 }
 
 export function AffectationForm({ initialData, isEdit = false, onSubmit, onCancel }: AffectationFormProps = {}) {
+  const { t } = useTranslation();
   const { userId: authUserId, effectiveCountryCode } = useAuth();
   const [users, setUsers] = useState<User[]>([]);
   const [formData, setFormData] = useState<AffectationFormData>({
@@ -122,10 +124,10 @@ export function AffectationForm({ initialData, isEdit = false, onSubmit, onCance
 
       if (!res.ok) {
         const data = await res.json().catch(() => ({}));
-        throw new Error(data.error || `Échec de la ${isEdit ? 'modification' : 'création'} de l'affectation`);
+        throw new Error(data.error || (isEdit ? t('personnel.forms.messages.errorEdit') : t('personnel.forms.messages.errorCreate')) + ' de l\'affectation');
       }
 
-      setSuccess(`Affectation ${isEdit ? 'modifiée' : 'créée'} avec succès`);
+      setSuccess(`Affectation ${isEdit ? t('personnel.forms.messages.successEdit') : t('personnel.forms.messages.successCreate')}`);
       
       if (onSubmit) {
         await onSubmit(formData);
@@ -151,7 +153,7 @@ export function AffectationForm({ initialData, isEdit = false, onSubmit, onCance
         });
       }
     } catch (err: any) {
-      setError(err.message || 'Erreur inconnue');
+      setError(err.message || t('personnel.forms.messages.errorUnknown'));
     } finally {
       setLoading(false);
     }
@@ -161,13 +163,13 @@ export function AffectationForm({ initialData, isEdit = false, onSubmit, onCance
 
   return (
     <div className="bg-white p-6 rounded-lg shadow">
-      <h2 className="text-xl font-semibold mb-4">{isEdit ? 'Modifier une Affectation' : 'Créer une Affectation'}</h2>
+      <h2 className="text-xl font-semibold mb-4">{isEdit ? t('personnel.forms.titles.editAffectation') : t('personnel.forms.titles.createAffectation')}</h2>
       
       <form onSubmit={handleSubmit} className="space-y-4">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
-              Employé <span className="text-red-500">*</span>
+              {t('personnel.forms.labels.employee')} <span className="text-red-500">*</span>
             </label>
             <select
               name="userId"
@@ -176,7 +178,7 @@ export function AffectationForm({ initialData, isEdit = false, onSubmit, onCance
               required
               className="w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-1 focus:ring-blue-500"
             >
-              <option value={0}>Sélectionner un employé</option>
+              <option value={0}>{t('personnel.forms.placeholders.selectEmployee')}</option>
               {users.map(user => (
                 <option key={user.id} value={user.id}>
                   {user.firstName} {user.lastName} ({user.employeeNumber})
@@ -187,7 +189,7 @@ export function AffectationForm({ initialData, isEdit = false, onSubmit, onCance
 
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
-              Type d'affectation <span className="text-red-500">*</span>
+              {t('personnel.forms.labels.affectationType')} <span className="text-red-500">*</span>
             </label>
             <select
               name="affectationtype"
@@ -196,12 +198,12 @@ export function AffectationForm({ initialData, isEdit = false, onSubmit, onCance
               required
               className="w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-1 focus:ring-blue-500"
             >
-              <option value="">Sélectionner le type</option>
-              <option value="PERMANENT">Permanente</option>
-              <option value="TEMPORARY">Temporaire</option>
-              <option value="TRANSFER">Mutation</option>
-              <option value="PROJECT_BASED">Basée sur un projet</option>
-              <option value="SPECIAL_ASSIGNMENT">Mission spéciale</option>
+              <option value="">{t('personnel.forms.placeholders.selectType')}</option>
+              <option value="PERMANENT">{t('personnel.forms.options.affectationTypes.PERMANENT')}</option>
+              <option value="TEMPORARY">{t('personnel.forms.options.affectationTypes.TEMPORARY')}</option>
+              <option value="TRANSFER">{t('personnel.forms.options.affectationTypes.TRANSFER')}</option>
+              <option value="PROJECT_BASED">{t('personnel.forms.options.affectationTypes.PROJECT_BASED')}</option>
+              <option value="SPECIAL_ASSIGNMENT">{t('personnel.forms.options.affectationTypes.SPECIAL_ASSIGNMENT')}</option>
             </select>
           </div>
         </div>
@@ -209,7 +211,7 @@ export function AffectationForm({ initialData, isEdit = false, onSubmit, onCance
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
-              Lieu de travail <span className="text-red-500">*</span>
+              {t('personnel.forms.labels.workLocation')} <span className="text-red-500">*</span>
             </label>
             <input
               type="text"
@@ -218,13 +220,13 @@ export function AffectationForm({ initialData, isEdit = false, onSubmit, onCance
               onChange={handleInputChange}
               required
               className="w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-1 focus:ring-blue-500"
-              placeholder="Ex: Abidjan, Côte d'Ivoire"
+              placeholder={t('personnel.forms.placeholders.workLocationExample')}
             />
           </div>
 
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
-              Site <span className="text-red-500">*</span>
+              {t('personnel.forms.labels.site')} <span className="text-red-500">*</span>
             </label>
             <input
               type="text"
@@ -233,14 +235,14 @@ export function AffectationForm({ initialData, isEdit = false, onSubmit, onCance
               onChange={handleInputChange}
               required
               className="w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-1 focus:ring-blue-500"
-              placeholder="Ex: Siège social, Bureau principal"
+              placeholder={t('personnel.forms.placeholders.siteExample')}
             />
           </div>
         </div>
 
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-1">
-            Description
+            {t('personnel.forms.labels.description')}
           </label>
           <textarea
             name="description"
@@ -248,14 +250,14 @@ export function AffectationForm({ initialData, isEdit = false, onSubmit, onCance
             onChange={handleInputChange}
             rows={3}
             className="w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-1 focus:ring-blue-500"
-            placeholder="Décrivez la raison de cette affectation..."
+            placeholder={t('personnel.forms.placeholders.descriptionAffectation')}
           />
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
-              Date de début <span className="text-red-500">*</span>
+              {t('personnel.forms.labels.startDate')} <span className="text-red-500">*</span>
             </label>
             <input
               type="date"
@@ -269,7 +271,7 @@ export function AffectationForm({ initialData, isEdit = false, onSubmit, onCance
 
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
-              Date de fin
+              {t('personnel.forms.labels.endDate')}
             </label>
             <input
               type="date"
@@ -282,13 +284,13 @@ export function AffectationForm({ initialData, isEdit = false, onSubmit, onCance
               }`}
             />
             {isPermanentType && (
-              <p className="text-xs text-gray-500 mt-1">Les affectations permanentes n'ont pas de date de fin</p>
+              <p className="text-xs text-gray-500 mt-1">{t('personnel.forms.sanctionMessages.permanentNoEndDate')}</p>
             )}
           </div>
         </div>
 
         <FileUpload
-          label="Document d'affectation"
+          label={t('personnel.forms.labels.attachedFile')}
           value={formData.attached_file}
           onChange={(url) => setFormData(prev => ({ ...prev, attached_file: url || '' }))}
           accept=".pdf,.doc,.docx,.jpg,.jpeg,.png"
@@ -305,7 +307,7 @@ export function AffectationForm({ initialData, isEdit = false, onSubmit, onCance
               onClick={onCancel}
               className="px-4 py-2 border border-gray-300 rounded text-gray-700 hover:bg-gray-50"
             >
-              Annuler
+              {t('personnel.forms.buttons.cancel')}
             </button>
           ) : (
             <button
@@ -322,7 +324,7 @@ export function AffectationForm({ initialData, isEdit = false, onSubmit, onCance
               })}
               className="px-4 py-2 border border-gray-300 rounded text-gray-700 hover:bg-gray-50"
             >
-              Réinitialiser
+              {t('personnel.forms.buttons.reset')}
             </button>
           )}
           <button
@@ -330,7 +332,7 @@ export function AffectationForm({ initialData, isEdit = false, onSubmit, onCance
             disabled={loading}
             className="px-4 py-2 bg-blue-600 text-white rounded disabled:opacity-60 hover:bg-blue-700"
           >
-            {loading ? (isEdit ? 'Modification...' : 'Création...') : (isEdit ? 'Modifier l\'affectation' : 'Créer l\'affectation')}
+            {loading ? (isEdit ? t('personnel.forms.buttons.updating') : t('personnel.forms.buttons.creating')) : (isEdit ? t('personnel.forms.buttons.updateAffectation') : t('personnel.forms.buttons.createAffectation'))}
           </button>
         </div>
       </form>

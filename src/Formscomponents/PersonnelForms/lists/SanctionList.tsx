@@ -1,4 +1,5 @@
 import React, { useState, useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Eye, Edit2, Trash2 } from 'lucide-react';
 import DeleteConfirmationModal from './DeleteConfirmationModal';
 import ViewDetailsModal from './ViewDetailsModal';
@@ -32,6 +33,7 @@ interface SanctionListProps {
 }
 
 const SanctionList: React.FC<SanctionListProps> = ({ sanctions, onEdit, onDelete, onView }) => {
+  const { t } = useTranslation();
   const [filters, setFilters] = useState({
     sanctionType: '',
     search: '',
@@ -102,11 +104,11 @@ const SanctionList: React.FC<SanctionListProps> = ({ sanctions, onEdit, onDelete
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
-              Rechercher
+              {t('personnel.lists.filters.search')}
             </label>
             <input
               type="text"
-              placeholder="Employé, type, motif..."
+              placeholder={t('personnel.lists.filters.searchPlaceholder')}
               value={filters.search}
               onChange={(e) => setFilters({ ...filters, search: e.target.value })}
               className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
@@ -114,25 +116,22 @@ const SanctionList: React.FC<SanctionListProps> = ({ sanctions, onEdit, onDelete
           </div>
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
-              Type de sanction
+              {t('personnel.lists.filters.sanctionType')}
             </label>
             <select
               value={filters.sanctionType}
               onChange={(e) => setFilters({ ...filters, sanctionType: e.target.value })}
               className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
             >
-              <option value="">Tous</option>
-              <option value="VERBAL_WARNING">Avertissement verbal</option>
-              <option value="WRITTEN_WARNING">Avertissement écrit</option>
-              <option value="SUSPENSION">Suspension</option>
-              <option value="DEMOTION">Rétrogradation</option>
-              <option value="TERMINATION">Licenciement</option>
-              <option value="OTHER">Autre</option>
+              <option value="">{t('personnel.lists.filters.all')}</option>
+              <option value="WARNING">{t('personnel.forms.options.sanctionTypes.WARNING')}</option>
+              <option value="SUSPENSION">{t('personnel.forms.options.sanctionTypes.SUSPENSION')}</option>
+              <option value="DEMOTION">{t('personnel.forms.options.sanctionTypes.DEMOTION')}</option>
             </select>
           </div>
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
-              Par page
+              {t('personnel.lists.filters.itemsPerPage')}
             </label>
             <select
               value={itemsPerPage}
@@ -153,7 +152,7 @@ const SanctionList: React.FC<SanctionListProps> = ({ sanctions, onEdit, onDelete
         {/* Results count and Export */}
         <div className="mt-4 flex justify-between items-center">
           <div className="text-sm text-gray-600">
-            {filteredSanctions.length} sanction(s) trouvée(s)
+            {t('personnel.lists.filters.resultsCountSanction', { count: filteredSanctions.length })}
           </div>
           {/* Export Dropdown */}
           <ExportSanctionDropdown sanctions={filteredSanctions} />
@@ -165,12 +164,12 @@ const SanctionList: React.FC<SanctionListProps> = ({ sanctions, onEdit, onDelete
         <table className="w-full min-w-[1000px]">
           <thead className="bg-gray-50">
             <tr>
-              <th className="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Employé</th>
-              <th className="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Type Sanction</th>
-              <th className="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Motif</th>
-              <th className="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date</th>
-              <th className="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Durée</th>
-              <th className="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+              <th className="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{t('personnel.lists.tableHeaders.employee')}</th>
+              <th className="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{t('personnel.lists.tableHeaders.sanctionType')}</th>
+              <th className="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{t('personnel.lists.tableHeaders.reason')}</th>
+              <th className="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{t('personnel.lists.tableHeaders.sanctionDate')}</th>
+              <th className="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{t('personnel.lists.tableHeaders.durationDays')}</th>
+              <th className="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{t('personnel.lists.tableHeaders.actions')}</th>
             </tr>
           </thead>
           <tbody className="divide-y divide-gray-200">
@@ -179,30 +178,35 @@ const SanctionList: React.FC<SanctionListProps> = ({ sanctions, onEdit, onDelete
                 <td className="px-3 py-2 text-sm text-gray-900">
                   {sanction.user?.firstName} {sanction.user?.lastName}
                 </td>
-                <td className="px-3 py-2 text-sm text-gray-900">{sanction.sanctionType}</td>
+                <td className="px-3 py-2 text-sm text-gray-900">
+                  {sanction.sanctionType === 'WARNING' ? t('personnel.forms.options.sanctionTypes.WARNING') :
+                   sanction.sanctionType === 'SUSPENSION' ? t('personnel.forms.options.sanctionTypes.SUSPENSION') :
+                   sanction.sanctionType === 'DEMOTION' ? t('personnel.forms.options.sanctionTypes.DEMOTION') :
+                   sanction.sanctionType}
+                </td>
                 <td className="px-3 py-2 text-sm text-gray-900">{sanction.reason}</td>
                 <td className="px-3 py-2 text-sm text-gray-900">{formatDate(sanction.sanctionDate)}</td>
-                <td className="px-3 py-2 text-sm text-gray-900">{sanction.durationDays ? `${sanction.durationDays} jours` : '-'}</td>
+                <td className="px-3 py-2 text-sm text-gray-900">{sanction.durationDays ? `${sanction.durationDays} ${t('personnel.lists.tableHeaders.durationDays').toLowerCase()}` : '-'}</td>
                 <td className="px-3 py-2 text-sm">
                   <div className="flex items-center space-x-2">
                     <button
                       onClick={() => handleViewClick(sanction)}
                       className="p-1 text-blue-600 hover:text-blue-800 hover:bg-blue-50 rounded transition-colors"
-                      title="Voir"
+                      title={t('personnel.lists.actions.view')}
                     >
                       <Eye className="w-4 h-4" />
                     </button>
                     <button
                       onClick={() => onEdit(sanction)}
                       className="p-1 text-green-600 hover:text-green-800 hover:bg-green-50 rounded transition-colors"
-                      title="Modifier"
+                      title={t('personnel.lists.actions.edit')}
                     >
                       <Edit2 className="w-4 h-4" />
                     </button>
                     <button
                       onClick={() => handleDeleteClick(sanction)}
                       className="p-1 text-red-600 hover:text-red-800 hover:bg-red-50 rounded transition-colors"
-                      title="Supprimer"
+                      title={t('personnel.lists.actions.delete')}
                     >
                       <Trash2 className="w-4 h-4" />
                     </button>
@@ -223,23 +227,19 @@ const SanctionList: React.FC<SanctionListProps> = ({ sanctions, onEdit, onDelete
               disabled={currentPage === 1}
               className="relative inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              Précédent
+              {t('personnel.lists.messages.previous')}
             </button>
             <button
               onClick={() => handlePageChange(currentPage + 1)}
               disabled={currentPage === totalPages}
               className="ml-3 relative inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              Suivant
+              {t('personnel.lists.messages.next')}
             </button>
           </div>
           <div className="hidden sm:flex-1 sm:flex sm:items-center sm:justify-between">
             <div>
-              <p className="text-sm text-gray-700">
-                Affichage de <span className="font-medium">{startIndex + 1}</span> à{' '}
-                <span className="font-medium">{Math.min(endIndex, filteredSanctions.length)}</span> sur{' '}
-                <span className="font-medium">{filteredSanctions.length}</span> résultats
-              </p>
+              <p className="text-sm text-gray-700" dangerouslySetInnerHTML={{ __html: t('personnel.lists.messages.showingResults', { start: startIndex + 1, end: Math.min(endIndex, filteredSanctions.length), total: filteredSanctions.length }) }}></p>
             </div>
             <div>
               <nav className="relative z-0 inline-flex rounded-md shadow-sm -space-x-px">
@@ -248,7 +248,7 @@ const SanctionList: React.FC<SanctionListProps> = ({ sanctions, onEdit, onDelete
                   disabled={currentPage === 1}
                   className="relative inline-flex items-center px-2 py-2 rounded-l-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
                 >
-                  Précédent
+                  {t('personnel.lists.messages.previous')}
                 </button>
                 {[...Array(totalPages)].map((_, idx) => (
                   <button
@@ -268,7 +268,7 @@ const SanctionList: React.FC<SanctionListProps> = ({ sanctions, onEdit, onDelete
                   disabled={currentPage === totalPages}
                   className="relative inline-flex items-center px-2 py-2 rounded-r-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
                 >
-                  Suivant
+                  {t('personnel.lists.messages.next')}
                 </button>
               </nav>
             </div>
@@ -281,27 +281,31 @@ const SanctionList: React.FC<SanctionListProps> = ({ sanctions, onEdit, onDelete
         isOpen={deleteModal.isOpen}
         onClose={() => setDeleteModal({ isOpen: false, sanction: null })}
         onConfirm={handleDeleteConfirm}
-        itemName={deleteModal.sanction ? `Sanction de ${deleteModal.sanction.user?.firstName} ${deleteModal.sanction.user?.lastName}` : ''}
-        itemType="la sanction"
+        itemName={deleteModal.sanction ? `${deleteModal.sanction.user?.firstName} ${deleteModal.sanction.user?.lastName}` : ''}
+        itemType={t('personnel.lists.messages.sanction')}
       />
 
       {/* View Modal */}
       <ViewDetailsModal
         isOpen={viewModal.isOpen}
         onClose={() => setViewModal({ isOpen: false, sanction: null })}
-        title="Détails de la sanction"
+        title={t('personnel.lists.messages.viewDetailsTitle', { itemType: t('personnel.lists.messages.sanction') })}
         data={viewModal.sanction || {}}
         fields={[
-          { key: 'sanctionId', label: 'ID Sanction' },
-          { key: 'user', label: 'Employé', render: (user: any) => user ? `${user.firstName} ${user.lastName}` : '-' },
-          { key: 'sanctionType', label: 'Type de sanction' },
-          { key: 'reason', label: 'Motif' },
-          { key: 'sanctionDate', label: 'Date de sanction', render: formatDate },
-          { key: 'durationDays', label: 'Durée (jours)' },
-          { key: 'decision', label: 'Décision' },
-          { key: 'supportingDocument', label: 'Document justificatif' },
-          { key: 'createdAt', label: 'Créé le', render: formatDate },
-          { key: 'updatedAt', label: 'Mis à jour le', render: formatDate },
+          { key: 'sanctionId', label: t('personnel.lists.messages.id') },
+          { key: 'user', label: t('personnel.lists.tableHeaders.employee'), render: (user: any) => user ? `${user.firstName} ${user.lastName}` : '-' },
+          { key: 'sanctionType', label: t('personnel.lists.tableHeaders.sanctionType'), render: (val: string) => 
+            val === 'WARNING' ? t('personnel.forms.options.sanctionTypes.WARNING') :
+            val === 'SUSPENSION' ? t('personnel.forms.options.sanctionTypes.SUSPENSION') :
+            val === 'DEMOTION' ? t('personnel.forms.options.sanctionTypes.DEMOTION') : val
+          },
+          { key: 'reason', label: t('personnel.lists.tableHeaders.reason') },
+          { key: 'sanctionDate', label: t('personnel.lists.tableHeaders.sanctionDate'), render: formatDate },
+          { key: 'durationDays', label: t('personnel.lists.tableHeaders.durationDays') },
+          { key: 'decision', label: t('personnel.lists.tableHeaders.decision') },
+          { key: 'supportingDocument', label: t('personnel.lists.messages.document') },
+          { key: 'createdAt', label: t('personnel.lists.messages.createdAt'), render: formatDate },
+          { key: 'updatedAt', label: t('personnel.lists.messages.updatedAt'), render: formatDate },
         ]}
       />
     </div>

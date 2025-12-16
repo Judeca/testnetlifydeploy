@@ -1,4 +1,5 @@
 import React, { useState, useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Eye, Edit2, Trash2 } from 'lucide-react';
 import DeleteConfirmationModal from './DeleteConfirmationModal';
 import ViewDetailsModal from './ViewDetailsModal';
@@ -35,6 +36,7 @@ interface MedicalRecordListProps {
 }
 
 const MedicalRecordList: React.FC<MedicalRecordListProps> = ({ medicalRecords, onEdit, onDelete, onView }) => {
+  const { t } = useTranslation();
   const [filters, setFilters] = useState({
     search: '',
   });
@@ -103,11 +105,11 @@ const MedicalRecordList: React.FC<MedicalRecordListProps> = ({ medicalRecords, o
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
-              Rechercher
+              {t('personnel.lists.filters.search')}
             </label>
             <input
               type="text"
-              placeholder="Employé, description, diagnostic..."
+              placeholder={t('personnel.lists.filters.searchPlaceholder')}
               value={filters.search}
               onChange={(e) => setFilters({ ...filters, search: e.target.value })}
               className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
@@ -115,7 +117,7 @@ const MedicalRecordList: React.FC<MedicalRecordListProps> = ({ medicalRecords, o
           </div>
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
-              Par page
+              {t('personnel.lists.filters.itemsPerPage')}
             </label>
             <select
               value={itemsPerPage}
@@ -136,7 +138,7 @@ const MedicalRecordList: React.FC<MedicalRecordListProps> = ({ medicalRecords, o
         {/* Results count and Export */}
         <div className="mt-4 flex justify-between items-center">
           <div className="text-sm text-gray-600">
-            {filteredRecords.length} dossier(s) médical(aux) trouvé(s)
+            {t('personnel.lists.filters.resultsCountMedicalRecord', { count: filteredRecords.length })}
           </div>
           {/* Export Dropdown */}
           <ExportMedicalRecordDropdown medicalRecords={filteredRecords} />
@@ -148,12 +150,12 @@ const MedicalRecordList: React.FC<MedicalRecordListProps> = ({ medicalRecords, o
         <table className="w-full min-w-[1000px]">
           <thead className="bg-gray-50">
             <tr>
-              <th className="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Employé</th>
-              <th className="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date Visite</th>
-              <th className="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Description</th>
-              <th className="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Diagnostic</th>
-              <th className="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Prochaine Visite</th>
-              <th className="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+              <th className="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{t('personnel.lists.tableHeaders.employee')}</th>
+              <th className="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{t('personnel.lists.tableHeaders.visitDate')}</th>
+              <th className="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{t('personnel.lists.messages.description')}</th>
+              <th className="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{t('personnel.lists.tableHeaders.diagnosis')}</th>
+              <th className="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{t('personnel.lists.tableHeaders.nextVisitDate')}</th>
+              <th className="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{t('personnel.lists.tableHeaders.actions')}</th>
             </tr>
           </thead>
           <tbody className="divide-y divide-gray-200">
@@ -171,21 +173,21 @@ const MedicalRecordList: React.FC<MedicalRecordListProps> = ({ medicalRecords, o
                     <button
                       onClick={() => handleViewClick(record)}
                       className="p-1 text-blue-600 hover:text-blue-800 hover:bg-blue-50 rounded transition-colors"
-                      title="Voir"
+                      title={t('personnel.lists.actions.view')}
                     >
                       <Eye className="w-4 h-4" />
                     </button>
                     <button
                       onClick={() => onEdit(record)}
                       className="p-1 text-green-600 hover:text-green-800 hover:bg-green-50 rounded transition-colors"
-                      title="Modifier"
+                      title={t('personnel.lists.actions.edit')}
                     >
                       <Edit2 className="w-4 h-4" />
                     </button>
                     <button
                       onClick={() => handleDeleteClick(record)}
                       className="p-1 text-red-600 hover:text-red-800 hover:bg-red-50 rounded transition-colors"
-                      title="Supprimer"
+                      title={t('personnel.lists.actions.delete')}
                     >
                       <Trash2 className="w-4 h-4" />
                     </button>
@@ -206,23 +208,19 @@ const MedicalRecordList: React.FC<MedicalRecordListProps> = ({ medicalRecords, o
               disabled={currentPage === 1}
               className="relative inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              Précédent
+              {t('personnel.lists.messages.previous')}
             </button>
             <button
               onClick={() => handlePageChange(currentPage + 1)}
               disabled={currentPage === totalPages}
               className="ml-3 relative inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              Suivant
+              {t('personnel.lists.messages.next')}
             </button>
           </div>
           <div className="hidden sm:flex-1 sm:flex sm:items-center sm:justify-between">
             <div>
-              <p className="text-sm text-gray-700">
-                Affichage de <span className="font-medium">{startIndex + 1}</span> à{' '}
-                <span className="font-medium">{Math.min(endIndex, filteredRecords.length)}</span> sur{' '}
-                <span className="font-medium">{filteredRecords.length}</span> résultats
-              </p>
+              <p className="text-sm text-gray-700" dangerouslySetInnerHTML={{ __html: t('personnel.lists.messages.showingResults', { start: startIndex + 1, end: Math.min(endIndex, filteredRecords.length), total: filteredRecords.length }) }}></p>
             </div>
             <div>
               <nav className="relative z-0 inline-flex rounded-md shadow-sm -space-x-px">
@@ -231,7 +229,7 @@ const MedicalRecordList: React.FC<MedicalRecordListProps> = ({ medicalRecords, o
                   disabled={currentPage === 1}
                   className="relative inline-flex items-center px-2 py-2 rounded-l-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
                 >
-                  Précédent
+                  {t('personnel.lists.messages.previous')}
                 </button>
                 {[...Array(totalPages)].map((_, idx) => (
                   <button
@@ -251,7 +249,7 @@ const MedicalRecordList: React.FC<MedicalRecordListProps> = ({ medicalRecords, o
                   disabled={currentPage === totalPages}
                   className="relative inline-flex items-center px-2 py-2 rounded-r-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
                 >
-                  Suivant
+                  {t('personnel.lists.messages.next')}
                 </button>
               </nav>
             </div>
@@ -264,30 +262,30 @@ const MedicalRecordList: React.FC<MedicalRecordListProps> = ({ medicalRecords, o
         isOpen={deleteModal.isOpen}
         onClose={() => setDeleteModal({ isOpen: false, record: null })}
         onConfirm={handleDeleteConfirm}
-        itemName={deleteModal.record ? `Dossier médical de ${deleteModal.record.user?.firstName} ${deleteModal.record.user?.lastName}` : ''}
-        itemType="le dossier médical"
+        itemName={deleteModal.record ? `${deleteModal.record.user?.firstName} ${deleteModal.record.user?.lastName}` : ''}
+        itemType={t('personnel.lists.messages.medicalRecord')}
       />
 
       {/* View Modal */}
       <ViewDetailsModal
         isOpen={viewModal.isOpen}
         onClose={() => setViewModal({ isOpen: false, record: null })}
-        title="Détails du dossier médical"
+        title={t('personnel.lists.messages.viewDetailsTitle', { itemType: t('personnel.lists.messages.medicalRecord') })}
         data={viewModal.record || {}}
         fields={[
-          { key: 'medicalRecordsId', label: 'ID Dossier' },
-          { key: 'user', label: 'Employé', render: (user: any) => user ? `${user.firstName} ${user.lastName}` : '-' },
-          { key: 'visitDate', label: 'Date de visite', render: formatDate },
-          { key: 'description', label: 'Description' },
-          { key: 'diagnosis', label: 'Diagnostic' },
-          { key: 'testsPerformed', label: 'Tests effectués' },
-          { key: 'testResults', label: 'Résultats des tests' },
-          { key: 'prescribedAction', label: 'Action prescrite' },
-          { key: 'notes', label: 'Notes' },
-          { key: 'nextVisitDate', label: 'Prochaine visite', render: formatDate },
-          { key: 'medicalFile', label: 'Fichier médical' },
-          { key: 'createdAt', label: 'Créé le', render: formatDate },
-          { key: 'updatedAt', label: 'Mis à jour le', render: formatDate },
+          { key: 'medicalRecordsId', label: t('personnel.lists.messages.id') },
+          { key: 'user', label: t('personnel.lists.tableHeaders.employee'), render: (user: any) => user ? `${user.firstName} ${user.lastName}` : '-' },
+          { key: 'visitDate', label: t('personnel.lists.tableHeaders.visitDate'), render: formatDate },
+          { key: 'description', label: t('personnel.lists.messages.description') },
+          { key: 'diagnosis', label: t('personnel.lists.tableHeaders.diagnosis') },
+          { key: 'testsPerformed', label: t('personnel.lists.messages.testsPerformed') },
+          { key: 'testResults', label: t('personnel.lists.messages.testResults') },
+          { key: 'prescribedAction', label: t('personnel.lists.messages.prescribedAction') },
+          { key: 'notes', label: t('personnel.lists.messages.notes') },
+          { key: 'nextVisitDate', label: t('personnel.lists.tableHeaders.nextVisitDate'), render: formatDate },
+          { key: 'medicalFile', label: t('personnel.lists.messages.medicalFile') },
+          { key: 'createdAt', label: t('personnel.lists.messages.createdAt'), render: formatDate },
+          { key: 'updatedAt', label: t('personnel.lists.messages.updatedAt'), render: formatDate },
         ]}
       />
     </div>

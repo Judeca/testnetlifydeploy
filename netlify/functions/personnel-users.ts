@@ -46,6 +46,8 @@ export const handler: Handler = async (event) => {
             identityType: true,
             identity: true,
             workcountry: true,
+            structureName: true,
+            isStructureResponsible: true,
             address: true,
             phone: true,
             phoneno: true,
@@ -87,6 +89,8 @@ export const handler: Handler = async (event) => {
           identityType,
           identity,
           workcountry,
+          structureName,
+          isStructureResponsible,
           // contacts
           address,
           phone,
@@ -118,18 +122,19 @@ export const handler: Handler = async (event) => {
           civilityDropdown,
           maritalStatus,
           nationality,
-          identityType,
-          identity,
-          workcountry,
-          address,
-          phone,
-          phoneno,
-          gender,
-          country,
-          emergencyName,
-          emergencyContact,
-          department,
-          salary,
+            identityType,
+            identity,
+            workcountry,
+            address,
+            phone,
+            phoneno,
+            gender,
+            country,
+            emergencyName,
+            emergencyContact,
+            department,
+            salary,
+            // structureName and isStructureResponsible are optional
         } as Record<string, unknown>;
 
         const missing = Object.entries(required)
@@ -139,6 +144,10 @@ export const handler: Handler = async (event) => {
           return json(400, { error: `Missing fields: ${missing.join(', ')}` });
         }
 
+        // Prepare data for database
+        const finalStructureName = structureName && structureName.trim() !== '' ? structureName : null;
+        const finalIsStructureResponsible = isStructureResponsible !== undefined ? Boolean(isStructureResponsible) : false;
+        
         const created = await prisma.user.create({
           data: {
             employeeNumber,
@@ -157,6 +166,8 @@ export const handler: Handler = async (event) => {
             identityType,
             identity,
             workcountry,
+            structureName: finalStructureName,
+            isStructureResponsible: finalIsStructureResponsible,
             address,
             phone,
             phoneno,
@@ -187,6 +198,8 @@ export const handler: Handler = async (event) => {
             identityType: true,
             identity: true,
             workcountry: true,
+            structureName: true,
+            isStructureResponsible: true,
             address: true,
             phone: true,
             phoneno: true,
@@ -231,6 +244,8 @@ export const handler: Handler = async (event) => {
         if (payload.identityType) updateData.identityType = payload.identityType;
         if (payload.identity) updateData.identity = payload.identity;
         if (payload.workcountry) updateData.workcountry = payload.workcountry;
+        if (payload.structureName !== undefined) updateData.structureName = payload.structureName && payload.structureName.trim() !== '' ? payload.structureName : null;
+        if (payload.isStructureResponsible !== undefined) updateData.isStructureResponsible = Boolean(payload.isStructureResponsible);
         if (payload.address) updateData.address = payload.address;
         if (payload.phone) updateData.phone = payload.phone;
         if (payload.phoneno) updateData.phoneno = payload.phoneno;
@@ -264,6 +279,8 @@ export const handler: Handler = async (event) => {
             identityType: true,
             identity: true,
             workcountry: true,
+            structureName: true,
+            isStructureResponsible: true,
             address: true,
             phone: true,
             phoneno: true,

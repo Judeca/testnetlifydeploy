@@ -85,27 +85,34 @@ export const handler = async (event: any) => {
           }
         }
 
+        // Build data object with conditional acquisitionDate
+        const vehicleData: any = {
+          licensePlate: postData.licensePlate,
+          brand: postData.brand,
+          model: postData.model,
+          type: postData.type,
+          vehiclecountry: postData.vehiclecountry || 'IVORY_COAST',
+          year: parseInt(postData.year),
+          mileage: parseInt(postData.mileage) || 0,
+          civilRegistration: postData.civilRegistration || '',
+          administrativeRegistration: postData.administrativeRegistration || '',
+          usingEntity: postData.usingEntity || '',
+          holder: postData.holder || '',
+          chassisNumber: postData.chassisNumber,
+          status: postData.status || 'AVAILABLE',
+          assignedTo: postData.assignedTo || null,
+          fuelType: postData.fuelType,
+          Inserteridentity: postData.Inserteridentity || null,
+          InserterCountry: postData.InserterCountry || null,
+        };
+
+        // Only add acquisitionDate if it's defined
+        if (acquisitionDate !== undefined) {
+          vehicleData.acquisitionDate = acquisitionDate;
+        }
+
         const newVehicle = await prisma.vehicles.create({
-          data: {
-            licensePlate: postData.licensePlate,
-            brand: postData.brand,
-            model: postData.model,
-            type: postData.type,
-            vehiclecountry: postData.vehiclecountry || 'IVORY_COAST',
-            year: parseInt(postData.year),
-            mileage: parseInt(postData.mileage) || 0,
-            civilRegistration: postData.civilRegistration || '',
-            administrativeRegistration: postData.administrativeRegistration || '',
-            acquisitionDate: acquisitionDate,
-            usingEntity: postData.usingEntity || '',
-            holder: postData.holder || '',
-            chassisNumber: postData.chassisNumber,
-            status: postData.status || 'AVAILABLE',
-            assignedTo: postData.assignedTo || null,
-            fuelType: postData.fuelType,
-            Inserteridentity: postData.Inserteridentity || null,
-            InserterCountry: postData.InserterCountry || null,
-          },
+          data: vehicleData,
         });
 
         return {

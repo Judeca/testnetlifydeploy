@@ -48,7 +48,7 @@ export const AlertForm: React.FC<AlertFormProps> = ({
       setFormData({
         title: initialData.title || '',
         description: initialData.description || '',
-        dueDate: initialData.dueDate ? new Date(initialData.dueDate).toISOString().split('T')[0] : '',
+        dueDate: initialData.dueDate ? initialData.dueDate.split('T')[0] : '',
         dueTime: initialData.dueTime || '',
         priority: initialData.priority || 'MEDIUM',
         type: initialData.type || '',

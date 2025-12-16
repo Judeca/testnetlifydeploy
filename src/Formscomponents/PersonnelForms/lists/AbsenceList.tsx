@@ -1,4 +1,5 @@
 import React, { useState, useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Eye, Edit2, Trash2 } from 'lucide-react';
 import DeleteConfirmationModal from './DeleteConfirmationModal';
 import ViewDetailsModal from './ViewDetailsModal';
@@ -33,6 +34,7 @@ interface AbsenceListProps {
 }
 
 const AbsenceList: React.FC<AbsenceListProps> = ({ absences, onEdit, onDelete, onView }) => {
+  const { t } = useTranslation();
   const [filters, setFilters] = useState({
     absenceType: '',
     search: '',
@@ -102,11 +104,11 @@ const AbsenceList: React.FC<AbsenceListProps> = ({ absences, onEdit, onDelete, o
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
-              Rechercher
+              {t('personnel.lists.filters.search')}
             </label>
             <input
               type="text"
-              placeholder="Employé, type..."
+              placeholder={t('personnel.lists.filters.searchPlaceholder')}
               value={filters.search}
               onChange={(e) => setFilters({ ...filters, search: e.target.value })}
               className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
@@ -114,25 +116,25 @@ const AbsenceList: React.FC<AbsenceListProps> = ({ absences, onEdit, onDelete, o
           </div>
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
-              Type d'absence
+              {t('personnel.lists.filters.type')}
             </label>
             <select
               value={filters.absenceType}
               onChange={(e) => setFilters({ ...filters, absenceType: e.target.value })}
               className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
             >
-              <option value="">Tous</option>
-              <option value="SICK_LEAVE">Congé maladie</option>
-              <option value="ANNUAL_LEAVE">Congé annuel</option>
-              <option value="MATERNITY_LEAVE">Congé maternité</option>
-              <option value="PATERNITY_LEAVE">Congé paternité</option>
-              <option value="UNPAID_LEAVE">Congé sans solde</option>
-              <option value="OTHER">Autre</option>
+              <option value="">{t('personnel.lists.filters.all')}</option>
+              <option value="SICK_LEAVE">{t('personnel.forms.options.absenceTypes.SICK_LEAVE')}</option>
+              <option value="ANNUAL_LEAVE">{t('personnel.forms.options.absenceTypes.ANNUAL_LEAVE')}</option>
+              <option value="MATERNITY_LEAVE">{t('personnel.forms.options.absenceTypes.MATERNITY_LEAVE')}</option>
+              <option value="PATERNITY_LEAVE">{t('personnel.forms.options.absenceTypes.PATERNITY_LEAVE')}</option>
+              <option value="UNPAID_LEAVE">{t('personnel.forms.options.absenceTypes.UNPAID_LEAVE')}</option>
+              <option value="OTHER">{t('personnel.forms.options.absenceTypes.OTHER')}</option>
             </select>
           </div>
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
-              Par page
+              {t('personnel.lists.filters.itemsPerPage')}
             </label>
             <select
               value={itemsPerPage}
@@ -153,7 +155,7 @@ const AbsenceList: React.FC<AbsenceListProps> = ({ absences, onEdit, onDelete, o
         {/* Results count and Export */}
         <div className="mt-4 flex justify-between items-center">
           <div className="text-sm text-gray-600">
-            {filteredAbsences.length} absence(s) trouvée(s)
+            {t('personnel.lists.filters.resultsCount', { count: filteredAbsences.length })}
           </div>
           {/* Export Dropdown */}
           <ExportAbsenceDropdown absences={filteredAbsences} />
@@ -165,13 +167,13 @@ const AbsenceList: React.FC<AbsenceListProps> = ({ absences, onEdit, onDelete, o
         <table className="w-full min-w-[1000px]">
           <thead className="bg-gray-50">
             <tr>
-              <th className="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Employé</th>
-              <th className="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Type Absence</th>
-              <th className="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date Début</th>
-              <th className="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Jours</th>
-              <th className="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date Fin</th>
-              <th className="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date Retour</th>
-              <th className="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+              <th className="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{t('personnel.lists.columns.employee')}</th>
+              <th className="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{t('personnel.lists.columns.absenceType')}</th>
+              <th className="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{t('personnel.lists.columns.startDate')}</th>
+              <th className="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{t('personnel.lists.columns.days')}</th>
+              <th className="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{t('personnel.lists.columns.endDate')}</th>
+              <th className="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{t('personnel.lists.columns.returnDate')}</th>
+              <th className="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{t('personnel.lists.columns.actions')}</th>
             </tr>
           </thead>
           <tbody className="divide-y divide-gray-200">
@@ -190,21 +192,21 @@ const AbsenceList: React.FC<AbsenceListProps> = ({ absences, onEdit, onDelete, o
                     <button
                       onClick={() => handleViewClick(absence)}
                       className="p-1 text-blue-600 hover:text-blue-800 hover:bg-blue-50 rounded transition-colors"
-                      title="Voir"
+                      title={t('personnel.lists.actions.view')}
                     >
                       <Eye className="w-4 h-4" />
                     </button>
                     <button
                       onClick={() => onEdit(absence)}
                       className="p-1 text-green-600 hover:text-green-800 hover:bg-green-50 rounded transition-colors"
-                      title="Modifier"
+                      title={t('personnel.lists.actions.edit')}
                     >
                       <Edit2 className="w-4 h-4" />
                     </button>
                     <button
                       onClick={() => handleDeleteClick(absence)}
                       className="p-1 text-red-600 hover:text-red-800 hover:bg-red-50 rounded transition-colors"
-                      title="Supprimer"
+                      title={t('personnel.lists.actions.delete')}
                     >
                       <Trash2 className="w-4 h-4" />
                     </button>
@@ -225,22 +227,22 @@ const AbsenceList: React.FC<AbsenceListProps> = ({ absences, onEdit, onDelete, o
               disabled={currentPage === 1}
               className="relative inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              Précédent
+              {t('personnel.lists.pagination.previous')}
             </button>
             <button
               onClick={() => handlePageChange(currentPage + 1)}
               disabled={currentPage === totalPages}
               className="ml-3 relative inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              Suivant
+              {t('personnel.lists.pagination.next')}
             </button>
           </div>
           <div className="hidden sm:flex-1 sm:flex sm:items-center sm:justify-between">
             <div>
               <p className="text-sm text-gray-700">
-                Affichage de <span className="font-medium">{startIndex + 1}</span> à{' '}
-                <span className="font-medium">{Math.min(endIndex, filteredAbsences.length)}</span> sur{' '}
-                <span className="font-medium">{filteredAbsences.length}</span> résultats
+                {t('personnel.lists.pagination.showing')} <span className="font-medium">{startIndex + 1}</span> {t('personnel.lists.pagination.to')}{' '}
+                <span className="font-medium">{Math.min(endIndex, filteredAbsences.length)}</span> {t('personnel.lists.pagination.of')}{' '}
+                <span className="font-medium">{filteredAbsences.length}</span> {t('personnel.lists.pagination.results')}
               </p>
             </div>
             <div>
@@ -250,7 +252,7 @@ const AbsenceList: React.FC<AbsenceListProps> = ({ absences, onEdit, onDelete, o
                   disabled={currentPage === 1}
                   className="relative inline-flex items-center px-2 py-2 rounded-l-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
                 >
-                  Précédent
+                  {t('personnel.lists.pagination.previous')}
                 </button>
                 {[...Array(totalPages)].map((_, idx) => (
                   <button
@@ -270,7 +272,7 @@ const AbsenceList: React.FC<AbsenceListProps> = ({ absences, onEdit, onDelete, o
                   disabled={currentPage === totalPages}
                   className="relative inline-flex items-center px-2 py-2 rounded-r-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
                 >
-                  Suivant
+                  {t('personnel.lists.pagination.next')}
                 </button>
               </nav>
             </div>
@@ -291,20 +293,20 @@ const AbsenceList: React.FC<AbsenceListProps> = ({ absences, onEdit, onDelete, o
       <ViewDetailsModal
         isOpen={viewModal.isOpen}
         onClose={() => setViewModal({ isOpen: false, absence: null })}
-        title="Détails de l'absence"
+        title={t('personnel.lists.modals.viewTitle')}
         data={viewModal.absence || {}}
         fields={[
-          { key: 'absenceId', label: 'ID Absence' },
-          { key: 'user', label: 'Employé', render: (user: any) => user ? `${user.firstName} ${user.lastName}` : '-' },
-          { key: 'absenceType', label: 'Type d\'absence' },
-          { key: 'description', label: 'Description' },
-          { key: 'supportingDocument', label: 'Document justificatif' },
-          { key: 'startDate', label: 'Date début', render: formatDate },
-          { key: 'endDate', label: 'Date fin', render: formatDate },
-          { key: 'daysCount', label: 'Nombre de jours' },
-          { key: 'returnDate', label: 'Date de retour', render: formatDate },
-          { key: 'createdAt', label: 'Créé le', render: formatDate },
-          { key: 'updatedAt', label: 'Mis à jour le', render: formatDate },
+          { key: 'absenceId', label: t('personnel.lists.modals.fields.absenceId') },
+          { key: 'user', label: t('personnel.forms.labels.employee'), render: (user: any) => user ? `${user.firstName} ${user.lastName}` : '-' },
+          { key: 'absenceType', label: t('personnel.forms.labels.absenceType') },
+          { key: 'description', label: t('personnel.forms.labels.description') },
+          { key: 'supportingDocument', label: t('personnel.forms.labels.supportingDocument') },
+          { key: 'startDate', label: t('personnel.forms.labels.startDate'), render: formatDate },
+          { key: 'endDate', label: t('personnel.forms.labels.endDate'), render: formatDate },
+          { key: 'daysCount', label: t('personnel.forms.labels.daysCount') },
+          { key: 'returnDate', label: t('personnel.forms.labels.returnDate'), render: formatDate },
+          { key: 'createdAt', label: t('personnel.lists.modals.fields.createdAt'), render: formatDate },
+          { key: 'updatedAt', label: t('personnel.lists.modals.fields.updatedAt'), render: formatDate },
         ]}
       />
     </div>

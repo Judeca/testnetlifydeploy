@@ -1,4 +1,5 @@
 import React, { useState, useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Eye, Edit2, Trash2 } from 'lucide-react';
 import DeleteConfirmationModal from './DeleteConfirmationModal';
 import ViewDetailsModal from './ViewDetailsModal';
@@ -36,6 +37,7 @@ interface ContractListProps {
 }
 
 const ContractList: React.FC<ContractListProps> = ({ contracts, onEdit, onDelete, onView }) => {
+  const { t } = useTranslation();
   const [filters, setFilters] = useState({
     contractType: '',
     department: '',
@@ -70,10 +72,10 @@ const ContractList: React.FC<ContractListProps> = ({ contracts, onEdit, onDelete
 
   const getContractTypeText = (type: string) => {
     switch (type) {
-      case 'PERMANENT_CONTRACT_CDI': return 'CDI';
-      case 'FIXED_TERM_CONTRACT_CDD': return 'CDD';
-      case 'INTERNSHIP': return 'Stage';
-      case 'CONSULTANT': return 'Consultant';
+      case 'PERMANENT_CONTRACT_CDI': return t('personnel.forms.options.contractTypes.PERMANENT_CONTRACT_CDI');
+      case 'FIXED_TERM_CONTRACT_CDD': return t('personnel.forms.options.contractTypes.FIXED_TERM_CONTRACT_CDD');
+      case 'INTERNSHIP': return t('personnel.forms.options.contractTypes.INTERNSHIP');
+      case 'CONSULTANT': return t('personnel.forms.options.contractTypes.CONSULTANT');
       default: return type;
     }
   };
@@ -127,11 +129,11 @@ const ContractList: React.FC<ContractListProps> = ({ contracts, onEdit, onDelete
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
-              Rechercher
+              {t('personnel.lists.filters.search')}
             </label>
             <input
               type="text"
-              placeholder="Employé, type, département..."
+              placeholder={t('personnel.lists.filters.searchPlaceholder')}
               value={filters.search}
               onChange={(e) => setFilters({ ...filters, search: e.target.value })}
               className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
@@ -139,27 +141,27 @@ const ContractList: React.FC<ContractListProps> = ({ contracts, onEdit, onDelete
           </div>
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
-              Type de contrat
+              {t('personnel.lists.filters.contractType')}
             </label>
             <select
               value={filters.contractType}
               onChange={(e) => setFilters({ ...filters, contractType: e.target.value })}
               className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
             >
-              <option value="">Tous</option>
-              <option value="PERMANENT_CONTRACT_CDI">CDI</option>
-              <option value="FIXED_TERM_CONTRACT_CDD">CDD</option>
-              <option value="INTERNSHIP">Stage</option>
-              <option value="CONSULTANT">Consultant</option>
+              <option value="">{t('personnel.lists.filters.all')}</option>
+              <option value="PERMANENT_CONTRACT_CDI">{t('personnel.forms.options.contractTypes.PERMANENT_CONTRACT_CDI')}</option>
+              <option value="FIXED_TERM_CONTRACT_CDD">{t('personnel.forms.options.contractTypes.FIXED_TERM_CONTRACT_CDD')}</option>
+              <option value="INTERNSHIP">{t('personnel.forms.options.contractTypes.INTERNSHIP')}</option>
+              <option value="CONSULTANT">{t('personnel.forms.options.contractTypes.CONSULTANT')}</option>
             </select>
           </div>
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
-              Département
+              {t('personnel.lists.filters.department')}
             </label>
             <input
               type="text"
-              placeholder="Département"
+              placeholder={t('personnel.lists.filters.department')}
               value={filters.department}
               onChange={(e) => setFilters({ ...filters, department: e.target.value })}
               className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
@@ -167,7 +169,7 @@ const ContractList: React.FC<ContractListProps> = ({ contracts, onEdit, onDelete
           </div>
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
-              Par page
+              {t('personnel.lists.filters.itemsPerPage')}
             </label>
             <select
               value={itemsPerPage}
@@ -188,7 +190,7 @@ const ContractList: React.FC<ContractListProps> = ({ contracts, onEdit, onDelete
         {/* Results count and Export */}
         <div className="mt-4 flex justify-between items-center">
           <div className="text-sm text-gray-600">
-            {filteredContracts.length} contrat(s) trouvé(s)
+            {t('personnel.lists.messages.resultsFound', { count: filteredContracts.length })}
           </div>
           {/* Export Dropdown */}
           <ExportContractDropdown contracts={filteredContracts} />
@@ -200,14 +202,14 @@ const ContractList: React.FC<ContractListProps> = ({ contracts, onEdit, onDelete
         <table className="w-full min-w-[1000px]">
           <thead className="bg-gray-50">
             <tr>
-              <th className="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Employé</th>
-              <th className="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Type</th>
-              <th className="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Département</th>
-              <th className="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Poste</th>
-              <th className="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Salaire Net</th>
-              <th className="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date Début</th>
-              <th className="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date Fin</th>
-              <th className="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+              <th className="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{t('personnel.lists.tableHeaders.employee')}</th>
+              <th className="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{t('personnel.lists.tableHeaders.contractType')}</th>
+              <th className="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{t('personnel.lists.tableHeaders.department')}</th>
+              <th className="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{t('personnel.lists.tableHeaders.post')}</th>
+              <th className="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{t('personnel.lists.tableHeaders.netSalary')}</th>
+              <th className="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{t('personnel.lists.tableHeaders.startDate')}</th>
+              <th className="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{t('personnel.lists.tableHeaders.endDate')}</th>
+              <th className="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{t('personnel.lists.tableHeaders.actions')}</th>
             </tr>
           </thead>
           <tbody className="divide-y divide-gray-200">
@@ -227,21 +229,21 @@ const ContractList: React.FC<ContractListProps> = ({ contracts, onEdit, onDelete
                     <button
                       onClick={() => handleViewClick(contract)}
                       className="p-1 text-blue-600 hover:text-blue-800 hover:bg-blue-50 rounded transition-colors"
-                      title="Voir"
+                      title={t('personnel.lists.actions.view')}
                     >
                       <Eye className="w-4 h-4" />
                     </button>
                     <button
                       onClick={() => onEdit(contract)}
                       className="p-1 text-green-600 hover:text-green-800 hover:bg-green-50 rounded transition-colors"
-                      title="Modifier"
+                      title={t('personnel.lists.actions.edit')}
                     >
                       <Edit2 className="w-4 h-4" />
                     </button>
                     <button
                       onClick={() => handleDeleteClick(contract)}
                       className="p-1 text-red-600 hover:text-red-800 hover:bg-red-50 rounded transition-colors"
-                      title="Supprimer"
+                      title={t('personnel.lists.actions.delete')}
                     >
                       <Trash2 className="w-4 h-4" />
                     </button>
@@ -262,23 +264,19 @@ const ContractList: React.FC<ContractListProps> = ({ contracts, onEdit, onDelete
               disabled={currentPage === 1}
               className="relative inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              Précédent
+              {t('personnel.lists.messages.previous')}
             </button>
             <button
               onClick={() => handlePageChange(currentPage + 1)}
               disabled={currentPage === totalPages}
               className="ml-3 relative inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              Suivant
+              {t('personnel.lists.messages.next')}
             </button>
           </div>
           <div className="hidden sm:flex-1 sm:flex sm:items-center sm:justify-between">
             <div>
-              <p className="text-sm text-gray-700">
-                Affichage de <span className="font-medium">{startIndex + 1}</span> à{' '}
-                <span className="font-medium">{Math.min(endIndex, filteredContracts.length)}</span> sur{' '}
-                <span className="font-medium">{filteredContracts.length}</span> résultats
-              </p>
+              <p className="text-sm text-gray-700" dangerouslySetInnerHTML={{ __html: t('personnel.lists.messages.showingResults', { start: startIndex + 1, end: Math.min(endIndex, filteredContracts.length), total: filteredContracts.length }) }}></p>
             </div>
             <div>
               <nav className="relative z-0 inline-flex rounded-md shadow-sm -space-x-px">
@@ -287,7 +285,7 @@ const ContractList: React.FC<ContractListProps> = ({ contracts, onEdit, onDelete
                   disabled={currentPage === 1}
                   className="relative inline-flex items-center px-2 py-2 rounded-l-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
                 >
-                  Précédent
+                  {t('personnel.lists.messages.previous')}
                 </button>
                 {[...Array(totalPages)].map((_, idx) => (
                   <button
@@ -307,7 +305,7 @@ const ContractList: React.FC<ContractListProps> = ({ contracts, onEdit, onDelete
                   disabled={currentPage === totalPages}
                   className="relative inline-flex items-center px-2 py-2 rounded-r-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
                 >
-                  Suivant
+                  {t('personnel.lists.messages.next')}
                 </button>
               </nav>
             </div>
@@ -321,30 +319,30 @@ const ContractList: React.FC<ContractListProps> = ({ contracts, onEdit, onDelete
         onClose={() => setDeleteModal({ isOpen: false, contract: null })}
         onConfirm={handleDeleteConfirm}
         itemName={deleteModal.contract ? `Contrat de ${deleteModal.contract.user?.firstName} ${deleteModal.contract.user?.lastName}` : ''}
-        itemType="le contrat"
+        itemType={t('personnel.lists.messages.contract')}
       />
 
       {/* View Modal */}
       <ViewDetailsModal
         isOpen={viewModal.isOpen}
         onClose={() => setViewModal({ isOpen: false, contract: null })}
-        title="Détails du contrat"
+        title={t('personnel.lists.messages.viewDetailsTitle', { itemType: t('personnel.lists.messages.contract') })}
         data={viewModal.contract || {}}
         fields={[
-            { key: 'contractId', label: 'ID Contrat' },
-            { key: 'user', label: 'Employé', render: (user: any) => user ? `${user.firstName} ${user.lastName}` : '-' },
-            { key: 'contractType', label: 'Type de contrat', render: (val: string) => getContractTypeText(val) },
-            { key: 'post', label: 'Poste' },
-            { key: 'department', label: 'Département' },
-            { key: 'unit', label: 'Unité' },
-            { key: 'grossSalary', label: 'Salaire brut', render: (val: number) => viewModal.contract ? formatCurrency(val, viewModal.contract.currency) : '-' },
-            { key: 'netSalary', label: 'Salaire net', render: (val: number) => viewModal.contract ? formatCurrency(val, viewModal.contract.currency) : '-' },
-            { key: 'currency', label: 'Devise' },
-            { key: 'contractFile', label: 'Fichier du contrat' },
-            { key: 'startDate', label: 'Date début', render: formatDate },
-            { key: 'endDate', label: 'Date fin', render: formatDate },
-            { key: 'createdAt', label: 'Créé le', render: formatDate },
-            { key: 'updatedAt', label: 'Mis à jour le', render: formatDate },
+            { key: 'contractId', label: t('personnel.lists.messages.id') },
+            { key: 'user', label: t('personnel.lists.tableHeaders.employee'), render: (user: any) => user ? `${user.firstName} ${user.lastName}` : '-' },
+            { key: 'contractType', label: t('personnel.lists.tableHeaders.contractType'), render: (val: string) => getContractTypeText(val) },
+            { key: 'post', label: t('personnel.lists.tableHeaders.post') },
+            { key: 'department', label: t('personnel.lists.tableHeaders.department') },
+            { key: 'unit', label: t('personnel.lists.tableHeaders.unit') },
+            { key: 'grossSalary', label: t('personnel.lists.tableHeaders.grossSalary'), render: (val: number) => viewModal.contract ? formatCurrency(val, viewModal.contract.currency) : '-' },
+            { key: 'netSalary', label: t('personnel.lists.tableHeaders.netSalary'), render: (val: number) => viewModal.contract ? formatCurrency(val, viewModal.contract.currency) : '-' },
+            { key: 'currency', label: t('personnel.lists.tableHeaders.currency') },
+            { key: 'contractFile', label: t('personnel.lists.messages.file') },
+            { key: 'startDate', label: t('personnel.lists.tableHeaders.startDate'), render: formatDate },
+            { key: 'endDate', label: t('personnel.lists.tableHeaders.endDate'), render: formatDate },
+            { key: 'createdAt', label: t('personnel.lists.messages.createdAt'), render: formatDate },
+            { key: 'updatedAt', label: t('personnel.lists.messages.updatedAt'), render: formatDate },
           ]}
         />
     </div>

@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useAuth } from '../../context/AuthContext';
 import { FileUpload } from '../../components/Personnel/FileUpload';
 
@@ -28,6 +29,7 @@ interface AbsenceFormProps {
 }
 
 export function AbsenceForm({ initialData, isEdit = false, onSubmit, onCancel }: AbsenceFormProps = {}) {
+  const { t } = useTranslation();
   const { userId: authUserId, effectiveCountryCode } = useAuth();
   const [users, setUsers] = useState<User[]>([]);
   const [formData, setFormData] = useState<AbsenceFormData>({
@@ -144,10 +146,10 @@ export function AbsenceForm({ initialData, isEdit = false, onSubmit, onCancel }:
 
       if (!res.ok) {
         const data = await res.json().catch(() => ({}));
-        throw new Error(data.error || `Échec ${isEdit ? 'de la mise à jour' : 'de la création'} de l\'absence`);
+        throw new Error(data.error || (isEdit ? t('personnel.forms.messages.errorUpdate') : t('personnel.forms.messages.errorCreate')) + ' de l\'absence');
       }
 
-      setSuccess(`Absence ${isEdit ? 'mise à jour' : 'créée'} avec succès`);
+      setSuccess(`Absence ${isEdit ? t('personnel.forms.messages.successUpdate') : t('personnel.forms.messages.successCreate')}`);
       
       // Call onSubmit callback if provided
       if (onSubmit) {
@@ -175,7 +177,7 @@ export function AbsenceForm({ initialData, isEdit = false, onSubmit, onCancel }:
         });
       }
     } catch (err: any) {
-      setError(err.message || 'Erreur inconnue');
+      setError(err.message || t('personnel.forms.messages.errorUnknown'));
     } finally {
       setLoading(false);
     }
@@ -183,13 +185,13 @@ export function AbsenceForm({ initialData, isEdit = false, onSubmit, onCancel }:
 
   return (
     <div className="bg-white p-6 rounded-lg shadow">
-      <h2 className="text-xl font-semibold mb-4">{isEdit ? 'Modifier une Absence' : 'Créer une Absence'}</h2>
+      <h2 className="text-xl font-semibold mb-4">{isEdit ? t('personnel.forms.titles.editAbsence') : t('personnel.forms.titles.createAbsence')}</h2>
       
       <form onSubmit={handleSubmit} className="space-y-4">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
-              Employé <span className="text-red-500">*</span>
+              {t('personnel.forms.labels.employee')} <span className="text-red-500">*</span>
             </label>
             <select
               name="userId"
@@ -198,7 +200,7 @@ export function AbsenceForm({ initialData, isEdit = false, onSubmit, onCancel }:
               required
               className="w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-1 focus:ring-blue-500"
             >
-              <option value={0}>Sélectionner un employé</option>
+              <option value={0}>{t('personnel.forms.placeholders.selectEmployee')}</option>
               {users.map(user => (
                 <option key={user.id} value={user.id}>
                   {user.firstName} {user.lastName} ({user.employeeNumber})
@@ -209,7 +211,7 @@ export function AbsenceForm({ initialData, isEdit = false, onSubmit, onCancel }:
 
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
-              Type d'absence <span className="text-red-500">*</span>
+              {t('personnel.forms.labels.absenceType')} <span className="text-red-500">*</span>
             </label>
             <select
               name="absenceType"
@@ -218,20 +220,20 @@ export function AbsenceForm({ initialData, isEdit = false, onSubmit, onCancel }:
               required
               className="w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-1 focus:ring-blue-500"
             >
-              <option value="">Sélectionner le type</option>
-              <option value="ILLNESS">Maladie</option>
-              <option value="ANNUAL_LEAVE">Congé annuel</option>
-              <option value="AUTHORIZED_LEAVE">Congé autorisé</option>
-              <option value="HALF_DAY">Demi-journée</option>
-              <option value="UNJUSTIFIED_LEAVE">Absence non justifiée</option>
-              <option value="MATERNITY_LEAVE">Congé de maternité</option>
+              <option value="">{t('personnel.forms.placeholders.selectType')}</option>
+              <option value="ILLNESS">{t('personnel.forms.options.absenceTypes.ILLNESS')}</option>
+              <option value="ANNUAL_LEAVE">{t('personnel.forms.options.absenceTypes.ANNUAL_LEAVE')}</option>
+              <option value="AUTHORIZED_LEAVE">{t('personnel.forms.options.absenceTypes.AUTHORIZED_LEAVE')}</option>
+              <option value="HALF_DAY">{t('personnel.forms.options.absenceTypes.HALF_DAY')}</option>
+              <option value="UNJUSTIFIED_LEAVE">{t('personnel.forms.options.absenceTypes.UNJUSTIFIED_LEAVE')}</option>
+              <option value="MATERNITY_LEAVE">{t('personnel.forms.options.absenceTypes.MATERNITY_LEAVE')}</option>
             </select>
           </div>
         </div>
 
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-1">
-            Description
+            {t('personnel.forms.labels.description')}
           </label>
           <textarea
             name="description"
@@ -239,14 +241,14 @@ export function AbsenceForm({ initialData, isEdit = false, onSubmit, onCancel }:
             onChange={handleInputChange}
             rows={3}
             className="w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-1 focus:ring-blue-500"
-            placeholder="Décrivez la raison de l'absence..."
+            placeholder={t('personnel.forms.placeholders.describeReason')}
           />
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
-              Date de début <span className="text-red-500">*</span>
+              {t('personnel.forms.labels.startDate')} <span className="text-red-500">*</span>
             </label>
             <input
               type="date"
@@ -260,7 +262,7 @@ export function AbsenceForm({ initialData, isEdit = false, onSubmit, onCancel }:
 
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
-              Date de fin <span className="text-red-500">*</span>
+              {t('personnel.forms.labels.endDate')} <span className="text-red-500">*</span>
             </label>
             <input
               type="date"
@@ -274,7 +276,7 @@ export function AbsenceForm({ initialData, isEdit = false, onSubmit, onCancel }:
 
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
-              Nombre de jours
+              {t('personnel.forms.labels.daysCount')}
             </label>
             <input
               type="number"
@@ -290,7 +292,7 @@ export function AbsenceForm({ initialData, isEdit = false, onSubmit, onCancel }:
 
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-1">
-            Date de retour
+            {t('personnel.forms.labels.returnDate')}
           </label>
           <input
             type="date"
@@ -302,7 +304,7 @@ export function AbsenceForm({ initialData, isEdit = false, onSubmit, onCancel }:
         </div>
 
         <FileUpload
-          label="Document justificatif"
+          label={t('personnel.forms.labels.supportingDocument')}
           value={formData.supportingDocument}
           onChange={(url) => setFormData(prev => ({ ...prev, supportingDocument: url || '' }))}
           accept=".pdf,.doc,.docx,.jpg,.jpeg,.png"
@@ -319,7 +321,7 @@ export function AbsenceForm({ initialData, isEdit = false, onSubmit, onCancel }:
               onClick={onCancel}
               className="px-4 py-2 border border-gray-300 rounded text-gray-700 hover:bg-gray-50"
             >
-              Annuler
+              {t('personnel.forms.buttons.cancel')}
             </button>
           ) : (
             <button
@@ -336,7 +338,7 @@ export function AbsenceForm({ initialData, isEdit = false, onSubmit, onCancel }:
               })}
               className="px-4 py-2 border border-gray-300 rounded text-gray-700 hover:bg-gray-50"
             >
-              Réinitialiser
+              {t('personnel.forms.buttons.reset')}
             </button>
           )}
           <button
@@ -344,7 +346,7 @@ export function AbsenceForm({ initialData, isEdit = false, onSubmit, onCancel }:
             disabled={loading}
             className="px-4 py-2 bg-blue-600 text-white rounded disabled:opacity-60 hover:bg-blue-700"
           >
-            {loading ? 'En cours...' : (isEdit ? 'Mettre à jour' : 'Créer l\'absence')}
+            {loading ? t('personnel.forms.buttons.loading') : (isEdit ? t('personnel.forms.buttons.updateAbsence') : t('personnel.forms.buttons.createAbsence'))}
           </button>
         </div>
       </form>

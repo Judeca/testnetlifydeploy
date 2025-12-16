@@ -1,4 +1,5 @@
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import './i18n';
 import { AppProvider } from './context/AppContext';
 import { AuthProvider } from './context/AuthContext';
 import { Layout } from './components/Layout/Layout';
@@ -16,13 +17,15 @@ import Vehicles from './pages/Vehicles';
 import { UsersCreate } from './Formscomponents/PersonnelForms/UsersCreate';
 import Equipment from './pages/Equipment';
 import Register from './pages/Register';
+import { SoftwareManagement } from './pages/Software';
+import { DocumentManagement } from './pages/Document';
+import { Organigramme } from './pages/Organigramme';
 
 import ProtectedRoute from './components/ProtectedRoute';
 import PublicRoute from './components/PublicRoute';
 import Signup from './pages/Signup';
 import Signin from './pages/Signin';
 import { RoleBasedDashboard } from './pages/RoleBasedDashboard';
-import { Home } from './pages/Home';
 
 
 
@@ -49,9 +52,9 @@ function App() {
                 </PublicRoute>
               } />
 
-              {/* Dashboard route with nested routes */}
+              {/* Dashboard route with nested routes - Accessible to all authenticated users */}
               <Route path="/dashboard" element={
-                <ProtectedRoute allowedRoles={['SUPER_ADMIN', 'ADMIN', 'DIRECTEUR_TECHNIQUE', 'DIRECTEUR_ADMINISTRATIF', 'SECRETARY', 'ACCOUNTANT', 'EMPLOYEE']}>
+                <ProtectedRoute>
                   <Layout />
                 </ProtectedRoute>
               }>
@@ -130,6 +133,24 @@ function App() {
                 <Route path="users/create" element={
                   <ProtectedRoute allowedRoles={['SUPER_ADMIN', 'ADMIN', 'DIRECTEUR_TECHNIQUE', 'DIRECTEUR_ADMINISTRATIF']}>
                     <UsersCreate />
+                  </ProtectedRoute>
+                } />
+                {/* Software - Accessible by: SUPER_ADMIN, ADMIN, DIRECTEUR_TECHNIQUE, DIRECTEUR_ADMINISTRATIF, SECRETARY, ACCOUNTANT, EMPLOYEE */}
+                <Route path="software" element={
+                  <ProtectedRoute allowedRoles={['SUPER_ADMIN', 'ADMIN', 'DIRECTEUR_TECHNIQUE', 'DIRECTEUR_ADMINISTRATIF', 'SECRETARY', 'ACCOUNTANT', 'EMPLOYEE']}>
+                    <SoftwareManagement />
+                  </ProtectedRoute>
+                } />
+                {/* Documents - Accessible by: SUPER_ADMIN, ADMIN, DIRECTEUR_TECHNIQUE, DIRECTEUR_ADMINISTRATIF, SECRETARY, ACCOUNTANT, EMPLOYEE */}
+                <Route path="documents" element={
+                  <ProtectedRoute allowedRoles={['SUPER_ADMIN', 'ADMIN', 'DIRECTEUR_TECHNIQUE', 'DIRECTEUR_ADMINISTRATIF', 'SECRETARY', 'ACCOUNTANT', 'EMPLOYEE']}>
+                    <DocumentManagement />
+                  </ProtectedRoute>
+                } />
+                {/* Organigramme - Accessible by: SUPER_ADMIN, ADMIN, DIRECTEUR_TECHNIQUE, DIRECTEUR_ADMINISTRATIF, SECRETARY, ACCOUNTANT, EMPLOYEE */}
+                <Route path="organigramme" element={
+                  <ProtectedRoute allowedRoles={['SUPER_ADMIN', 'ADMIN', 'DIRECTEUR_TECHNIQUE', 'DIRECTEUR_ADMINISTRATIF', 'SECRETARY', 'ACCOUNTANT', 'EMPLOYEE']}>
+                    <Organigramme />
                   </ProtectedRoute>
                 } />
               </Route>

@@ -2,8 +2,45 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 
-const ROLE_OPTIONS = ['SUPER_ADMIN', 'ADMIN', 'DIRECTOR', 'DIRECTEUR_TECHNIQUE', 'DIRECTEUR_ADMINISTRATIF', 'EMPLOYEE', 'SECRETARY'];
-const WORKCOUNTRY_OPTIONS = ['IVORY_COAST','GHANA','BENIN','CAMEROON','TOGO','ROMANIE','ITALIE'];
+const ROLE_OPTIONS = [
+  'SUPER_ADMIN',
+  'ADMIN',
+  'ACCOUNTANT',
+  'DIRECTOR',
+  'EMPLOYEE',
+  'HR',
+  'SECRETARY',
+  'TECHNICIAN',
+  'DIRECTEUR_TECHNIQUE',
+  'DIRECTEUR_ADMINISTRATIF',
+  'SENIOR_TECHNICIAN',
+  'ENGINEER',
+  'EXECUTIVE',
+  'INTERN',
+  'DRIVER',
+  'PRESIDENT_DIRECTEUR_GENERALE',
+  'SECRETARIAT',
+  'DIRECTION_ADMINISTRATIVE',
+  'AUDIT_ET_CONTROLE_DE_GESTION',
+  'ADMINISTRATIF_FINANCIER',
+  'RESSOURCES_HUMAINES',
+  'DIRECTION_COMMERCIALE',
+  'DEMARCHE_COMMERCIALE',
+  'AMID_DAO',
+  'DIRECTION_TECHNIQUE',
+  'PROJET_VRD',
+  'TOPOGRAPHIE',
+  'SIG',
+  'ENVIRONNEMENT_SOCIOLOGUE',
+  'BD_GENIE',
+  'PK_BIM',
+  'APP',
+  'WEB_MIA',
+  'DIRECTION_INFORMATIQUE'
+];
+
+const STRUCTURE_OPTIONS = ['SITINFRA', 'SITALIA', 'PKBIM', 'GEOTOP', 'SITInfrastructure'];
+const WORKCOUNTRY_OPTIONS = ['IVORY_COAST','GHANA','BENIN','CAMEROON','TOGO','ROMANIE','ITALIE','ITALIEPKBIM','GUINEE','BURKINAFASO','SIERRALEONE'];
 
 const Signup: React.FC = () => {
   const [form, setForm] = useState({
@@ -16,6 +53,8 @@ const Signup: React.FC = () => {
     role: 'EMPLOYEE',
     status: 'ACTIVE',
     workcountry: 'IVORY_COAST',
+    structureName: '',
+    isStructureResponsible: false,
   });
   
   const [error, setError] = useState('');
@@ -206,6 +245,38 @@ const Signup: React.FC = () => {
                 >
                   <option value="ACTIVE">ACTIVE</option>
                   <option value="INACTIVE">INACTIVE</option>
+                </select>
+              </div>
+
+              {/* Structure Name */}
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Structure
+                </label>
+                <select
+                  value={form.structureName}
+                  onChange={(e) => setForm({ ...form, structureName: e.target.value })}
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                >
+                  <option value="">Sélectionner une structure</option>
+                  {STRUCTURE_OPTIONS.map((structure) => (
+                    <option key={structure} value={structure}>{structure}</option>
+                  ))}
+                </select>
+              </div>
+
+              {/* Is Structure Responsible */}
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Responsable de structure
+                </label>
+                <select
+                  value={form.isStructureResponsible ? 'true' : 'false'}
+                  onChange={(e) => setForm({ ...form, isStructureResponsible: e.target.value === 'true' })}
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                >
+                  <option value="false">Non</option>
+                  <option value="true">Oui</option>
                 </select>
               </div>
             </div>

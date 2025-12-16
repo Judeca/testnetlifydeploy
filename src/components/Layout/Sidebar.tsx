@@ -3,68 +3,101 @@ import { Link, useLocation } from 'react-router-dom';
 import {
   LayoutDashboard, Users, Contact, Wrench, Package, 
   Briefcase, AlertTriangle, Car, FileText, 
-  Banknote, Wallet, Calculator, Bell, X
+  Banknote, Wallet, Calculator, Bell, X, Monitor, FolderOpen, Network
 } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
+import { useTranslation } from 'react-i18next';
 
-// Définition des items de menu par rôle
-const roleMenuItems: Record<string, Array<{ icon: any; label: string; path: string }>> = {
-  // Admin roles (SUPER_ADMIN, ADMIN, DIRECTEUR_TECHNIQUE, DIRECTEUR_ADMINISTRATIF) - tous les modules
-  ADMIN: [
-    { icon: LayoutDashboard, label: 'Tableau de Bord', path: '/dashboard' },
-    { icon: Users, label: 'Personnel', path: '/dashboard/personnel' },
-    { icon: Contact, label: 'Contacts', path: '/dashboard/contacts' },
-    { icon: Wrench, label: 'Équipements', path: '/dashboard/equipements' },
-    { icon: Package, label: 'Offres', path: '/dashboard/offres' },
-    { icon: Briefcase, label: 'Affaires', path: '/dashboard/affaires' },
-    { icon: AlertTriangle, label: 'Alertes Échéances', path: '/dashboard/alertes' },
-    { icon: Car, label: 'Parc Auto', path: '/dashboard/parc-auto' },
-    { icon: FileText, label: 'Factures', path: '/dashboard/factures' },
-    { icon: Banknote, label: 'Banques', path: '/dashboard/banques' },
-    { icon: Wallet, label: 'Caisses', path: '/dashboard/registres' },
-    { icon: Calculator, label: 'Impôts et Taxes', path: '/dashboard/impots' },
-  ],
-  
-  // Secretary
-  SECRETARY: [
-    { icon: LayoutDashboard, label: 'Tableau de Bord', path: '/dashboard' },
-    { icon: FileText, label: 'Factures', path: '/dashboard/factures' },
-    { icon: Wrench, label: 'Équipements', path: '/dashboard/equipements' },
-    { icon: Contact, label: 'Contacts', path: '/dashboard/contacts' },
-    { icon: Package, label: 'Offres', path: '/dashboard/offres' },
-    { icon: Briefcase, label: 'Affaires', path: '/dashboard/affaires' },
-    { icon: AlertTriangle, label: 'Alertes', path: '/dashboard/alertes' },
-    { icon: Car, label: 'Parc Auto', path: '/dashboard/parc-auto' },
-    { icon: Users, label: 'Personnel', path: '/dashboard/personnel' },
-  ],
-  
-  // Accountant
-  ACCOUNTANT: [
-    { icon: LayoutDashboard, label: 'Tableau de Bord', path: '/dashboard' },
-    { icon: Wallet, label: 'Caisses', path: '/dashboard/registres' },
-    { icon: Banknote, label: 'Banques', path: '/dashboard/banques' },
-    { icon: FileText, label: 'Factures', path: '/dashboard/factures' },
-    { icon: Car, label: 'Parc Auto', path: '/dashboard/parc-auto' },
-    { icon: AlertTriangle, label: 'Alertes', path: '/dashboard/alertes' },
-    { icon: Calculator, label: 'Impôts et Taxes', path: '/dashboard/impots' },
-    { icon: Users, label: 'Personnel', path: '/dashboard/personnel' },
-    { icon: Contact, label: 'Contacts', path: '/dashboard/contacts' },
-    { icon: Wrench, label: 'Équipements', path: '/dashboard/equipements' },
-    { icon: Package, label: 'Offres', path: '/dashboard/offres' },
-    { icon: Briefcase, label: 'Affaires', path: '/dashboard/affaires' },
-  ],
-  
-  // Employee
-  EMPLOYEE: [
-    { icon: LayoutDashboard, label: 'Tableau de Bord', path: '/dashboard' },
-    { icon: FileText, label: 'Factures', path: '/dashboard/factures' },
-    { icon: Wrench, label: 'Équipements', path: '/dashboard/equipements' },
-    { icon: Contact, label: 'Contacts', path: '/dashboard/contacts' },
-    { icon: Package, label: 'Offres', path: '/dashboard/offres' },
-    { icon: Briefcase, label: 'Affaires', path: '/dashboard/affaires' },
-    { icon: AlertTriangle, label: 'Alertes', path: '/dashboard/alertes' },
-    { icon: Car, label: 'Parc Auto', path: '/dashboard/parc-auto' },
-  ],
+// Helper function to get menu items with translations
+const getMenuItems = (t: any, role: string): Array<{ icon: any; labelKey: string; path: string }> => {
+  const adminItems = [
+    { icon: LayoutDashboard, labelKey: 'sidebar.dashboard', path: '/dashboard' },
+    { icon: Network, labelKey: 'sidebar.organigramme', path: '/dashboard/organigramme' },
+    { icon: Users, labelKey: 'sidebar.personnel', path: '/dashboard/personnel' },
+    { icon: Contact, labelKey: 'sidebar.contacts', path: '/dashboard/contacts' },
+    { icon: Wrench, labelKey: 'sidebar.equipment', path: '/dashboard/equipements' },
+    { icon: Package, labelKey: 'sidebar.offers', path: '/dashboard/offres' },
+    { icon: Briefcase, labelKey: 'sidebar.business', path: '/dashboard/affaires' },
+    { icon: AlertTriangle, labelKey: 'sidebar.alerts', path: '/dashboard/alertes' },
+    { icon: Car, labelKey: 'sidebar.vehicles', path: '/dashboard/parc-auto' },
+    { icon: FileText, labelKey: 'sidebar.invoices', path: '/dashboard/factures' },
+    { icon: Banknote, labelKey: 'sidebar.banks', path: '/dashboard/banques' },
+    { icon: Wallet, labelKey: 'sidebar.registers', path: '/dashboard/registres' },
+    { icon: Calculator, labelKey: 'sidebar.taxes', path: '/dashboard/impots' },
+    { icon: Monitor, labelKey: 'sidebar.software', path: '/dashboard/software' },
+    { icon: FolderOpen, labelKey: 'sidebar.documents', path: '/dashboard/documents' },
+  ];
+
+  const secretaryItems = [
+    { icon: LayoutDashboard, labelKey: 'sidebar.dashboard', path: '/dashboard' },
+    { icon: Network, labelKey: 'sidebar.organigramme', path: '/dashboard/organigramme' },
+    { icon: FileText, labelKey: 'sidebar.invoices', path: '/dashboard/factures' },
+    { icon: Wrench, labelKey: 'sidebar.equipment', path: '/dashboard/equipements' },
+    { icon: Contact, labelKey: 'sidebar.contacts', path: '/dashboard/contacts' },
+    { icon: Package, labelKey: 'sidebar.offers', path: '/dashboard/offres' },
+    { icon: Briefcase, labelKey: 'sidebar.business', path: '/dashboard/affaires' },
+    { icon: AlertTriangle, labelKey: 'sidebar.alertsShort', path: '/dashboard/alertes' },
+    { icon: Car, labelKey: 'sidebar.vehicles', path: '/dashboard/parc-auto' },
+    { icon: Users, labelKey: 'sidebar.personnel', path: '/dashboard/personnel' },
+    { icon: Monitor, labelKey: 'sidebar.software', path: '/dashboard/software' },
+    { icon: FolderOpen, labelKey: 'sidebar.documents', path: '/dashboard/documents' },
+  ];
+
+  const accountantItems = [
+    { icon: LayoutDashboard, labelKey: 'sidebar.dashboard', path: '/dashboard' },
+    { icon: Network, labelKey: 'sidebar.organigramme', path: '/dashboard/organigramme' },
+    { icon: Wallet, labelKey: 'sidebar.registers', path: '/dashboard/registres' },
+    { icon: Banknote, labelKey: 'sidebar.banks', path: '/dashboard/banques' },
+    { icon: FileText, labelKey: 'sidebar.invoices', path: '/dashboard/factures' },
+    { icon: Car, labelKey: 'sidebar.vehicles', path: '/dashboard/parc-auto' },
+    { icon: AlertTriangle, labelKey: 'sidebar.alertsShort', path: '/dashboard/alertes' },
+    { icon: Calculator, labelKey: 'sidebar.taxes', path: '/dashboard/impots' },
+    { icon: Users, labelKey: 'sidebar.personnel', path: '/dashboard/personnel' },
+    { icon: Contact, labelKey: 'sidebar.contacts', path: '/dashboard/contacts' },
+    { icon: Wrench, labelKey: 'sidebar.equipment', path: '/dashboard/equipements' },
+    { icon: Package, labelKey: 'sidebar.offers', path: '/dashboard/offres' },
+    { icon: Briefcase, labelKey: 'sidebar.business', path: '/dashboard/affaires' },
+    { icon: Monitor, labelKey: 'sidebar.software', path: '/dashboard/software' },
+    { icon: FolderOpen, labelKey: 'sidebar.documents', path: '/dashboard/documents' },
+  ];
+
+  const employeeItems = [
+    { icon: LayoutDashboard, labelKey: 'sidebar.dashboard', path: '/dashboard' },
+    { icon: Network, labelKey: 'sidebar.organigramme', path: '/dashboard/organigramme' },
+    { icon: FileText, labelKey: 'sidebar.invoices', path: '/dashboard/factures' },
+    { icon: Wrench, labelKey: 'sidebar.equipment', path: '/dashboard/equipements' },
+    { icon: Contact, labelKey: 'sidebar.contacts', path: '/dashboard/contacts' },
+    { icon: Package, labelKey: 'sidebar.offers', path: '/dashboard/offres' },
+    { icon: Briefcase, labelKey: 'sidebar.business', path: '/dashboard/affaires' },
+    { icon: AlertTriangle, labelKey: 'sidebar.alertsShort', path: '/dashboard/alertes' },
+    { icon: Car, labelKey: 'sidebar.vehicles', path: '/dashboard/parc-auto' },
+    { icon: Monitor, labelKey: 'sidebar.software', path: '/dashboard/software' },
+    { icon: FolderOpen, labelKey: 'sidebar.documents', path: '/dashboard/documents' },
+  ];
+
+  // Items de menu par défaut pour les rôles qui n'ont pas de menu spécifique
+  const defaultItems = [
+    { icon: LayoutDashboard, labelKey: 'sidebar.dashboard', path: '/dashboard' },
+    { icon: Network, labelKey: 'sidebar.organigramme', path: '/dashboard/organigramme' },
+    { icon: Contact, labelKey: 'sidebar.contacts', path: '/dashboard/contacts' },
+    { icon: Wrench, labelKey: 'sidebar.equipment', path: '/dashboard/equipements' },
+    { icon: Package, labelKey: 'sidebar.offers', path: '/dashboard/offres' },
+    { icon: Briefcase, labelKey: 'sidebar.business', path: '/dashboard/affaires' },
+    { icon: AlertTriangle, labelKey: 'sidebar.alertsShort', path: '/dashboard/alertes' },
+    { icon: Car, labelKey: 'sidebar.vehicles', path: '/dashboard/parc-auto' },
+    { icon: FileText, labelKey: 'sidebar.invoices', path: '/dashboard/factures' },
+    { icon: Monitor, labelKey: 'sidebar.software', path: '/dashboard/software' },
+    { icon: FolderOpen, labelKey: 'sidebar.documents', path: '/dashboard/documents' },
+  ];
+
+  if (['SUPER_ADMIN', 'ADMIN', 'DIRECTEUR_TECHNIQUE', 'DIRECTEUR_ADMINISTRATIF'].includes(role)) {
+    return adminItems;
+  }
+  if (role === 'SECRETARY') return secretaryItems;
+  if (role === 'ACCOUNTANT') return accountantItems;
+  if (role === 'EMPLOYEE') return employeeItems;
+  // Pour tous les autres rôles, retourner les items par défaut
+  return defaultItems;
 };
 
 interface SidebarProps {
@@ -88,6 +121,7 @@ interface Alert {
 export function Sidebar({ country }: SidebarProps) {
   const location = useLocation();
   const { role } = useAuth();
+  const { t } = useTranslation();
   const [logoPath, setLogoPath] = useState('https://images.pexels.com/photos/3184325/pexels-photo-3184325.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1');
   const [companyName, setCompanyName] = useState('SITINFRA');
   const [showLogo, setShowLogo] = useState(true);
@@ -97,18 +131,14 @@ export function Sidebar({ country }: SidebarProps) {
   const [showAlertsModal, setShowAlertsModal] = useState(false);
   const [loadingAlerts, setLoadingAlerts] = useState(false);
 
-  // Obtenir les items de menu selon le rôle
+  // Obtenir les items de menu selon le rôle avec traductions
   const menuItems = useMemo(() => {
     if (!role) return [];
-    
-    // Pour les rôles admin (SUPER_ADMIN, ADMIN, DIRECTEUR_TECHNIQUE, DIRECTEUR_ADMINISTRATIF)
-    if (['SUPER_ADMIN', 'ADMIN', 'DIRECTEUR_TECHNIQUE', 'DIRECTEUR_ADMINISTRATIF'].includes(role)) {
-      return roleMenuItems.ADMIN;
-    }
-    
-    // Pour les autres rôles
-    return roleMenuItems[role] || [];
-  }, [role]);
+    return getMenuItems(t, role).map(item => ({
+      ...item,
+      label: t(item.labelKey)
+    }));
+  }, [role, t]);
 
   useEffect(() => {
     // Reset defaults
@@ -286,7 +316,7 @@ export function Sidebar({ country }: SidebarProps) {
           )}
           {showCompanyName && companyName && (
             <div>
-              <h1 className="text-xl font-bold text-gray-800">{companyName}</h1>
+              <h1 className="text-xl font-bold text-gray-800">{t('sidebar.companyName')}</h1>
               <div className="flex items-center space-x-2">
                 <img
                   src={getFlagPath(country || 'cameroun')}
@@ -373,10 +403,10 @@ export function Sidebar({ country }: SidebarProps) {
               <div className="bg-gray-50 px-4 py-3 border-b border-gray-200 sm:px-6 flex items-center justify-between">
                 <div className="flex items-center space-x-3">
                   <Bell className="w-6 h-6 text-blue-600" />
-                  <h3 className="text-lg font-medium text-gray-900">Alertes et Échéances</h3>
+                  <h3 className="text-lg font-medium text-gray-900">{t('sidebar.alerts')}</h3>
                   {hasOverdueAlerts && (
                     <span className="bg-red-500 text-white px-2 py-1 rounded-full text-sm">
-                      {overdueCount} expirée{overdueCount > 1 ? 's' : ''}
+                      {t('sidebar.alertsCount', { count: overdueCount })}
                     </span>
                   )}
                 </div>
@@ -399,7 +429,7 @@ export function Sidebar({ country }: SidebarProps) {
                   ) : alerts.length === 0 ? (
                     <div className="text-center py-12">
                       <Bell className="w-12 h-12 text-gray-300 mx-auto mb-4" />
-                      <p className="text-gray-500">Aucune alerte disponible</p>
+                      <p className="text-gray-500">{t('sidebar.noAlerts')}</p>
                     </div>
                   ) : (
                     <div className="space-y-4">
@@ -408,7 +438,7 @@ export function Sidebar({ country }: SidebarProps) {
                         <div className="bg-red-50 border border-red-200 rounded-lg p-4">
                           <h4 className="text-red-800 font-semibold mb-3 flex items-center">
                             <AlertTriangle className="w-5 h-5 mr-2" />
-                            Alertes Expirées ({alerts.filter(alert => isOverdue(alert.dueDate, alert.dueTime)).length})
+                            {t('sidebar.alertsCount', { count: alerts.filter(alert => isOverdue(alert.dueDate, alert.dueTime)).length })}
                           </h4>
                           <div className="space-y-3">
                             {alerts.filter(alert => isOverdue(alert.dueDate, alert.dueTime)).map((alert) => (
@@ -438,7 +468,7 @@ export function Sidebar({ country }: SidebarProps) {
 
                       {/* All Alerts */}
                       <div>
-                        <h4 className="text-gray-800 font-semibold mb-3">Toutes les Alertes ({alerts.length})</h4>
+                        <h4 className="text-gray-800 font-semibold mb-3">{t('sidebar.alerts')} ({alerts.length})</h4>
                         <div className="space-y-3">
                           {alerts.map((alert) => (
                             <div key={alert.alertId} className={`border rounded-lg p-3 ${
@@ -486,14 +516,14 @@ export function Sidebar({ country }: SidebarProps) {
                   className="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-blue-600 text-base font-medium text-white hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 sm:ml-3 sm:w-auto sm:text-sm"
                   onClick={() => setShowAlertsModal(false)}
                 >
-                  Gérer les Alertes
+                  {t('sidebar.alerts')}
                 </Link>
                 <button
                   type="button"
                   className="mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm"
                   onClick={() => setShowAlertsModal(false)}
                 >
-                  Fermer
+                  {t('common.close')}
                 </button>
               </div>
             </div>

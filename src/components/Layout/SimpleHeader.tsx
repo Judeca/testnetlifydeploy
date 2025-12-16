@@ -1,13 +1,16 @@
 import { useState, useEffect } from 'react';
-import { User, LogOut } from 'lucide-react';
+import { User, LogOut, Globe, ChevronDown } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 
 export function SimpleHeader() {
   const { logout, role, email, firstName, lastName, effectiveCountryCode } = useAuth();
   const navigate = useNavigate();
+  const { t, i18n } = useTranslation();
   const [showUserMenu, setShowUserMenu] = useState(false);
   const [showLogoutModal, setShowLogoutModal] = useState(false);
+  const [showLanguageMenu, setShowLanguageMenu] = useState(false);
 
   const handleLogout = () => {
     logout();
@@ -19,10 +22,21 @@ export function SimpleHeader() {
     setShowLogoutModal(false);
   };
 
+  const changeLanguage = (lang: string) => {
+    i18n.changeLanguage(lang);
+    setShowLanguageMenu(false);
+  };
+
+  const toggleLanguageMenu = () => {
+    setShowLanguageMenu(!showLanguageMenu);
+    setShowUserMenu(false);
+  };
+
   // Fermer le menu si on clique ailleurs
   useEffect(() => {
     const handleClickOutside = () => {
       setShowUserMenu(false);
+      setShowLanguageMenu(false);
     };
     document.addEventListener('click', handleClickOutside);
     return () => document.removeEventListener('click', handleClickOutside);
@@ -45,7 +59,20 @@ export function SimpleHeader() {
       <header className="bg-white shadow-sm border-b border-gray-200 px-6 py-4">
         <div className="flex items-center justify-between">
           <div className="flex items-center space-x-3">
-            <h1 className="text-xl font-semibold text-gray-900">Tableau de bord</h1>
+            <div className="flex flex-col">
+              {/* Message de bienvenue */}
+              <div className="flex items-center space-x-2">
+                <span className="text-lg font-medium text-gray-700">
+                  {t('welcome')}
+                </span>
+                {firstName && (
+                  <span className="text-lg font-semibold text-blue-600">
+                    {firstName}!
+                  </span>
+                )}
+              </div>
+              <h1 className="text-xl font-semibold text-gray-900">{t('dashboard.title')}</h1>
+            </div>
             {/* Country flag for non-admin view */}
             <div className="flex items-center space-x-2">
               <img
@@ -59,6 +86,49 @@ export function SimpleHeader() {
           </div>
           
           <div className="flex items-center space-x-4">
+            {/* Sélecteur de langue */}
+            <div className="relative">
+              <button 
+                onClick={(e) => {
+                  e.stopPropagation();
+                  toggleLanguageMenu();
+                }}
+                className="flex items-center space-x-2 p-2 text-gray-500 hover:text-gray-700 hover:bg-gray-100 rounded-lg transition-colors"
+              >
+                <Globe className="w-5 h-5" />
+                <span className="text-sm font-medium">{i18n.language.toUpperCase()}</span>
+                <ChevronDown className="w-4 h-4" />
+              </button>
+              
+              {showLanguageMenu && (
+                <div className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 z-50 border border-gray-200">
+                  <button
+                    onClick={() => changeLanguage('fr')}
+                    className={`block w-full text-left px-4 py-2 text-sm hover:bg-gray-100 ${
+                      i18n.language === 'fr' ? 'bg-blue-50 text-blue-600 font-medium' : 'text-gray-700'
+                    }`}
+                  >
+                    🇫🇷 Français
+                  </button>
+                  <button
+                    onClick={() => changeLanguage('en')}
+                    className={`block w-full text-left px-4 py-2 text-sm hover:bg-gray-100 ${
+                      i18n.language === 'en' ? 'bg-blue-50 text-blue-600 font-medium' : 'text-gray-700'
+                    }`}
+                  >
+                    🇬🇧 English
+                  </button>
+                  <button
+                    onClick={() => changeLanguage('it')}
+                    className={`block w-full text-left px-4 py-2 text-sm hover:bg-gray-100 ${
+                      i18n.language === 'it' ? 'bg-blue-50 text-blue-600 font-medium' : 'text-gray-700'
+                    }`}
+                  >
+                    🇮🇹 Italiano
+                  </button>
+                </div>
+              )}
+            </div>
             {/* User menu */}
             <div className="relative flex items-center space-x-3">
               <div className="text-right">
@@ -89,7 +159,7 @@ export function SimpleHeader() {
                     className="flex items-center w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-red-50"
                   >
                     <LogOut className="w-4 h-4 mr-2" />
-                    Déconnexion
+                    {t('logout')}
                   </button>
                 </div>
               )}
@@ -105,7 +175,7 @@ export function SimpleHeader() {
               title="Déconnexion"
             >
               <LogOut className="w-5 h-5" />
-              <span className="text-sm font-medium">Déconnexion</span>
+              <span className="text-sm font-medium">{t('logout')}</span>
             </button>
           </div>
         </div>

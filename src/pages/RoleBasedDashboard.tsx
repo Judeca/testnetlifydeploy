@@ -1,5 +1,5 @@
-import React from 'react';
 import { useAuth } from '../context/AuthContext';
+import { useTranslation } from 'react-i18next';
 import { SuperAdminDashboard } from './dashboard/SuperAdminDashboard';
 import { AdminDashboard } from './dashboard/AdminDashboard';
 import { DirectorDashboard } from './dashboard/DirectorDashboard';
@@ -8,9 +8,28 @@ import { DirecteurAdministratifDashboard } from './dashboard/DirecteurAdministra
 import { EmployeeDashboard } from './dashboard/EmployeeDashboard';
 import { SecretaryDashboard } from './dashboard/SecretaryDashboard';
 import { AccountantDashboard } from './dashboard/AccountantDashboard';
+import { DefaultDashboard } from './dashboard/DefaultDashboard';
+
+// Liste des rôles qui ont un dashboard spécifique
+const ROLES_WITH_SPECIFIC_DASHBOARD = [
+  'SUPER_ADMIN',
+  'ADMIN',
+  'DIRECTOR',
+  'DIRECTEUR_TECHNIQUE',
+  'DIRECTEUR_ADMINISTRATIF',
+  'EMPLOYEE',
+  'SECRETARY',
+  'ACCOUNTANT'
+];
 
 export function RoleBasedDashboard() {
   const { role } = useAuth();
+  const { t } = useTranslation();
+
+  // Si le rôle n'a pas de dashboard spécifique, utiliser le dashboard par défaut
+  if (!role || !ROLES_WITH_SPECIFIC_DASHBOARD.includes(role)) {
+    return <DefaultDashboard />;
+  }
 
   switch (role) {
     case 'SUPER_ADMIN':
@@ -30,14 +49,7 @@ export function RoleBasedDashboard() {
     case 'ACCOUNTANT':
       return <AccountantDashboard />;
     default:
-      return (
-        <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-          <div className="text-center">
-            <h1 className="text-2xl font-bold text-gray-900 mb-2">Accès non autorisé</h1>
-            <p className="text-gray-600">Vous n'avez pas les permissions nécessaires.</p>
-          </div>
-        </div>
-      );
+      return <DefaultDashboard />;
   }
 }
 

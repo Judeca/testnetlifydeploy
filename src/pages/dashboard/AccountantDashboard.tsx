@@ -2,7 +2,7 @@ import { Link } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import { LayoutDashboard, Users, Contact, Wrench, Package, 
   Briefcase, AlertTriangle, Car, FileText, 
-  Banknote, Wallet, Calculator } from 'lucide-react';
+  Banknote, Wallet, Calculator, Monitor, FolderOpen, Network } from 'lucide-react';
 
 export function AccountantDashboard() {
   const { email, firstName, lastName } = useAuth();
@@ -37,6 +37,9 @@ export function AccountantDashboard() {
     { icon: Wrench, label: 'Équipements', path: '/dashboard/equipements', color: 'bg-purple-100 text-purple-600' },
     { icon: Package, label: 'Offres', path: '/dashboard/offres', color: 'bg-orange-100 text-orange-600' },
     { icon: Briefcase, label: 'Affaires', path: '/dashboard/affaires', color: 'bg-indigo-100 text-indigo-600' },
+    { icon: Monitor, label: 'Logiciels', path: '/dashboard/software', color: 'bg-teal-100 text-teal-600' },
+    { icon: FolderOpen, label: 'Documents', path: '/dashboard/documents', color: 'bg-violet-100 text-violet-600' },
+    { icon: Network, label: 'Organigramme', path: '/dashboard/organigramme', color: 'bg-sky-100 text-sky-600' },
   ];
 
   return (

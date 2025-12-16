@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
+import { useTranslation } from 'react-i18next';
 import { X, Eye } from 'lucide-react';
 
 interface ViewDetailsModalProps {
@@ -20,6 +21,7 @@ const ViewDetailsModal: React.FC<ViewDetailsModalProps> = ({
   data,
   fields,
 }) => {
+  const { t } = useTranslation();
   const [viewingFile, setViewingFile] = useState<{ url: string; isLocal: boolean; fileType: 'image' | 'pdf' | 'other' } | null>(null);
   const [pdfError, setPdfError] = useState(false);
   const pdfTimeoutRef = useRef<NodeJS.Timeout | null>(null);
@@ -92,7 +94,7 @@ const ViewDetailsModal: React.FC<ViewDetailsModalProps> = ({
       return render(value);
     }
     if (value === null || value === undefined) return '-';
-    if (typeof value === 'boolean') return value ? 'Oui' : 'Non';
+    if (typeof value === 'boolean') return value ? t('common.yes') : t('common.no');
     if (value instanceof Date) return value.toLocaleDateString('fr-FR');
     if (typeof value === 'string' && value.match(/^\d{4}-\d{2}-\d{2}/)) {
       return new Date(value).toLocaleDateString('fr-FR');
@@ -119,7 +121,7 @@ const ViewDetailsModal: React.FC<ViewDetailsModalProps> = ({
           className="inline-flex items-center px-3 py-1 text-sm bg-blue-600 text-white rounded hover:bg-blue-700 transition-colors"
         >
           <Eye className="w-4 h-4 mr-1" />
-          Voir
+          {t('personnel.lists.actions.view')}
         </button>
         {local && (
           <span className="text-xs text-gray-500">({url.split('/').pop()})</span>
@@ -149,7 +151,7 @@ const ViewDetailsModal: React.FC<ViewDetailsModalProps> = ({
                 <button
                   onClick={onClose}
                   className="text-gray-400 hover:text-gray-600 transition-colors"
-                  aria-label="Fermer"
+                  aria-label={t('common.close')}
                 >
                   <X className="w-6 h-6" />
                 </button>
@@ -184,7 +186,7 @@ const ViewDetailsModal: React.FC<ViewDetailsModalProps> = ({
                 className="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-blue-600 text-base font-medium text-white hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 sm:ml-3 sm:w-auto sm:text-sm"
                 onClick={onClose}
               >
-                Fermer
+                {t('common.close')}
               </button>
             </div>
           </div>
@@ -207,7 +209,7 @@ const ViewDetailsModal: React.FC<ViewDetailsModalProps> = ({
               <div className="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
                 <div className="flex items-center justify-between mb-4">
                   <h3 className="text-lg leading-6 font-medium text-gray-900">
-                    Aperçu du fichier
+                    {t('personnel.lists.modals.viewTitle')}
                   </h3>
                   <button
                     onClick={() => {
@@ -255,15 +257,15 @@ const ViewDetailsModal: React.FC<ViewDetailsModalProps> = ({
                       ) : (
                         // Fallback avec message d'erreur et lien de téléchargement
                         <div className="flex flex-col items-center justify-center p-8 text-center bg-gray-50" style={{ minHeight: '500px' }}>
-                          <p className="text-red-600 mb-2 text-lg font-semibold">Erreur de chargement du document PDF</p>
-                          <p className="text-gray-600 mb-6">Le PDF ne peut pas être affiché dans le navigateur. Veuillez le télécharger ou l'ouvrir dans un nouvel onglet.</p>
+                          <p className="text-red-600 mb-2 text-lg font-semibold">{t('personnel.forms.messages.errorUnknown')}</p>
+                          <p className="text-gray-600 mb-6">{t('personnel.forms.messages.errorUnknown')}</p>
                           <div className="flex space-x-4">
                             <a
                               href={viewingFile.url}
                               download
                               className="px-6 py-2 bg-green-600 text-white rounded hover:bg-green-700 transition-colors"
                             >
-                              Télécharger le PDF
+                              {t('common.download')}
                             </a>
                             <a
                               href={viewingFile.url}
@@ -271,7 +273,7 @@ const ViewDetailsModal: React.FC<ViewDetailsModalProps> = ({
                               rel="noopener noreferrer"
                               className="px-6 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition-colors"
                             >
-                              Ouvrir dans un nouvel onglet
+                              {t('common.openInNewTab')}
                             </a>
                           </div>
                         </div>
@@ -300,7 +302,7 @@ const ViewDetailsModal: React.FC<ViewDetailsModalProps> = ({
                       rel="noopener noreferrer"
                       className="w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 sm:ml-3 sm:w-auto sm:text-sm"
                     >
-                      Ouvrir dans un nouvel onglet
+                      {t('common.openInNewTab')}
                     </a>
                   )}
                   <button
@@ -311,7 +313,7 @@ const ViewDetailsModal: React.FC<ViewDetailsModalProps> = ({
                       setPdfError(false);
                     }}
                   >
-                    Fermer
+                    {t('common.close')}
                   </button>
                 </div>
               </div>

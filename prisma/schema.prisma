@@ -30,6 +30,33 @@ enum UserRole {
   EXECUTIVE
   INTERN
   DRIVER
+  PRESIDENT_DIRECTEUR_GENERALE
+  SECRETARIAT
+  DIRECTION_ADMINISTRATIVE
+  AUDIT_ET_CONTROLE_DE_GESTION
+  ADMINISTRATIF_FINANCIER
+  RESSOURCES_HUMAINES
+  DIRECTION_COMMERCIALE
+  DEMARCHE_COMMERCIALE
+  AMID_DAO
+  DIRECTION_TECHNIQUE
+  PROJET_VRD
+  TOPOGRAPHIE
+  SIG
+  ENVIRONNEMENT_SOCIOLOGUE
+  BD_GENIE
+  PK_BIM
+  APP
+  WEB_MIA
+  DIRECTION_INFORMATIQUE
+}
+
+enum Structure {
+  SITINFRA
+  SITALIA
+  PKBIM
+  GEOTOP
+  SITInfrastructure
 }
 
 // Nouvelles Enums fusionnées
@@ -53,6 +80,10 @@ enum Workcountry {
   TOGO
   ROMANIE
   ITALIE
+  ITALIEPKBIM
+  GUINEE
+  BURKINAFASO
+  SIERRALEONE
 }
 
 enum IdentityType {
@@ -447,15 +478,17 @@ model User {
   password       String
 
   // Détails Personnels étendus
-  dateOfBirth      DateTime
-  placeOfBirth     String
-  devise           DEVISE        @default(XAF)
-  civilityDropdown Gender
-  maritalStatus    MaritalStatus
-  nationality      String
-  identityType     IdentityType
-  identity         String // Type String pour les documents d'identité (lettres, longs numéros)
-  workcountry      Workcountry // Pays de travail (utile pour les multinationales)
+  dateOfBirth            DateTime
+  placeOfBirth           String
+  devise                 DEVISE        @default(XAF)
+  civilityDropdown       Gender
+  maritalStatus          MaritalStatus
+  nationality            String
+  identityType           IdentityType
+  identity               String // Type String pour les documents d'identité (lettres, longs numéros)
+  workcountry            Workcountry // Pays de travail (utile pour les multinationales)
+  structureName          Structure?
+  isStructureResponsible Boolean       @default(false)
 
   // Coordonnées
   address String
@@ -488,11 +521,12 @@ model User {
   alerts               Alert[]
 
   // Relations One-to-One existantes
-  accountant AccountantProfile?
-  director   DirectorProfile?
-  employee   EmployeeProfile?
-  secretary  SecretaryProfile?
-  driver     DriverProfile?
+  accountant         AccountantProfile?
+  director           DirectorProfile?
+  employee           EmployeeProfile?
+  secretary          SecretaryProfile?
+  driver             DriverProfile?
+  SoftwareAssignment SoftwareAssignment[]
 
   @@map("users")
 }
@@ -1426,4 +1460,212 @@ model OffreAMI {
   updatedAt        DateTime @updatedAt
 
   @@map("offre_amis")
+}
+
+model Software {
+  softwareId       Int                  @id @default(autoincrement())
+  name             String
+  vendor           String
+  version          String
+  type             SoftwareType
+  purchaseDate     DateTime
+  amount           Float
+  currency         DEVISE               @default(XAF)
+  licenseCount     Int
+  description      String?
+  maintenance      SoftwareMaintenance?
+  contacts         SoftwareContact[]
+  assignments      SoftwareAssignment[]
+  contracts        SoftwareContract[]
+  Inserteridentity String?
+  InserterCountry  String?
+  createdAt        DateTime             @default(now())
+  updatedAt        DateTime             @updatedAt
+
+  @@map("softwares")
+}
+
+model SoftwareMaintenance {
+  maintenanceId    Int                    @id @default(autoincrement())
+  softwareId       Int                    @unique
+  provider         String
+  startDate        DateTime
+  endDate          DateTime
+  price            Float
+  currency         DEVISE                 @default(XAF)
+  periodicity      MaintenancePeriodicity
+  maintenanceType  MaintenanceType
+  observations     String?
+  Inserteridentity String?
+  InserterCountry  String?
+  createdAt        DateTime               @default(now())
+  updatedAt        DateTime               @updatedAt
+
+  software Software @relation(fields: [softwareId], references: [softwareId])
+
+  @@map("software_maintenances")
+}
+
+model SoftwareContact {
+  contactId        Int      @id @default(autoincrement())
+  softwareId       Int
+  role             String
+  name             String?
+  phone            String?
+  email            String?
+  onlineAssistant  String?
+  notes            String?
+  Inserteridentity String?
+  InserterCountry  String?
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+
+  software Software @relation(fields: [softwareId], references: [softwareId])
+
+  @@map("software_contacts")
+}
+
+model SoftwareAssignment {
+  assignmentId     Int              @id @default(autoincrement())
+  softwareId       Int
+  userId           Int?
+  department       String?
+  assignmentDate   DateTime
+  returnDate       DateTime?
+  purpose          String?
+  notes            String?
+  status           AssignmentStatus
+  Inserteridentity String?
+  InserterCountry  String?
+  createdAt        DateTime         @default(now())
+  updatedAt        DateTime         @updatedAt
+
+  software Software @relation(fields: [softwareId], references: [softwareId])
+  user     User?    @relation(fields: [userId], references: [id])
+
+  @@map("software_assignments")
+}
+
+model SoftwareContract {
+  contractId       Int                    @id @default(autoincrement())
+  softwareId       Int
+  contractNumber   String?
+  provider         String
+  startDate        DateTime?
+  endDate          DateTime?
+  renewalDate      DateTime?
+  amount           Float?
+  currency         DEVISE                 @default(XAF)
+  contractType     SoftwareContractType
+  status           SoftwareContractStatus @default(ACTIVE)
+  description      String?
+  Inserteridentity String?
+  InserterCountry  String?
+  createdAt        DateTime               @default(now())
+  updatedAt        DateTime               @updatedAt
+
+  software Software @relation(fields: [softwareId], references: [softwareId])
+
+  @@map("software_contracts")
+}
+
+enum SoftwareType {
+  PURCHASE
+  SUBSCRIPTION
+}
+
+enum MaintenancePeriodicity {
+  MONTHLY
+  QUARTERLY
+  ANNUAL
+  ONE_TIME
+}
+
+enum MaintenanceType {
+  CORRECTIVE
+  EVOLUTIVE
+  SUPPORT
+  PREVENTIVE
+}
+
+enum SoftwareContractType {
+  LICENSE
+  MAINTENANCE
+  SUBSCRIPTION
+  SUPPORT
+}
+
+enum SoftwareContractStatus {
+  ACTIVE
+  EXPIRED
+  PENDING
+  CANCELLED
+}
+
+// Document Management Models
+model Document {
+  documentId       Int             @id @default(autoincrement())
+  version          String?
+  date             DateTime        @default(now())
+  title            String
+  createdBy        String
+  verifiedBy       String?
+  validatedBy      String?
+  fileName         String
+  fileSize         String?
+  status           DocumentStatus  @default(ACTIVE)
+  filePath         String?
+  description      String?
+  category         String?
+  entity           DocumentEntity?
+  countryCode      String?
+  projectCode      String?
+  processCode      String?
+  documentType     DocumentType?
+  documentNumber   String?
+  index            String?
+  Inserteridentity String?
+  InserterCountry  String?
+  createdAt        DateTime        @default(now())
+  updatedAt        DateTime        @updatedAt
+
+  @@map("documents")
+}
+
+enum DocumentStatus {
+  ACTIVE
+  OBSOLETE
+  DRAFT
+  ARCHIVE
+}
+
+enum DocumentEntity {
+  SIL // SITALIA
+  GEO // GEOTOP
+  SIT // SITINFRA
+  GRP // Groupe
+}
+
+enum DocumentType {
+  PROCEDURE // Procédure
+  POLICY // Politique
+  MANUAL // Manuel
+  CONTRACT // Contrat
+  REPORT // Rapport
+  CERTIFICATE // Certificat
+  LICENSE // Licence
+  PERMIT // Permis/Autorisation
+  INVOICE // Facture
+  RECEIPT // Reçu
+  STATEMENT // Relevé
+  SPECIFICATION // Spécification technique
+  DRAWING // Plan/Dessin technique
+  TECHNICAL_DOC // Document technique
+  ADMINISTRATIVE // Document administratif
+  FINANCIAL // Document financier
+  LEGAL // Document légal/juridique
+  QUALITY // Document qualité
+  SAFETY // Document sécurité
+  TRAINING // Document formation
+  OTHER // Autre
 }

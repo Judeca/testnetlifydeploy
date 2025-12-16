@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useAuth } from '../../context/AuthContext';
 import { FileUpload } from '../../components/Personnel/FileUpload';
 
@@ -31,6 +32,7 @@ interface ContractFormProps {
 }
 
 export function ContractForm({ initialData, isEdit = false, onSubmit, onCancel }: ContractFormProps = {}) {
+  const { t } = useTranslation();
   const { userId: authUserId, effectiveCountryCode } = useAuth();
   const [users, setUsers] = useState<User[]>([]);
   const [formData, setFormData] = useState<ContractFormData>({
@@ -132,10 +134,10 @@ export function ContractForm({ initialData, isEdit = false, onSubmit, onCancel }
 
       if (!res.ok) {
         const data = await res.json().catch(() => ({}));
-        throw new Error(data.error || `Échec de la ${isEdit ? 'modification' : 'création'} du contrat`);
+        throw new Error(data.error || (isEdit ? t('personnel.forms.messages.errorEdit') : t('personnel.forms.messages.errorCreate')) + ' du contrat');
       }
 
-      setSuccess(`Contrat ${isEdit ? 'modifié' : 'créé'} avec succès`);
+      setSuccess(`Contrat ${isEdit ? t('personnel.forms.messages.successEdit') : t('personnel.forms.messages.successCreate')}`);
       
       if (onSubmit) {
         await onSubmit(formData);
@@ -164,7 +166,7 @@ export function ContractForm({ initialData, isEdit = false, onSubmit, onCancel }
         });
       }
     } catch (err: any) {
-      setError(err.message || 'Erreur inconnue');
+      setError(err.message || t('personnel.forms.messages.errorUnknown'));
     } finally {
       setLoading(false);
     }
@@ -172,13 +174,13 @@ export function ContractForm({ initialData, isEdit = false, onSubmit, onCancel }
 
   return (
     <div className="bg-white p-6 rounded-lg shadow">
-      <h2 className="text-xl font-semibold mb-4">{isEdit ? 'Modifier un Contrat' : 'Créer un Contrat'}</h2>
+      <h2 className="text-xl font-semibold mb-4">{isEdit ? t('personnel.forms.titles.editContract') : t('personnel.forms.titles.createContract')}</h2>
       
       <form onSubmit={handleSubmit} className="space-y-4">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
-              Employé <span className="text-red-500">*</span>
+              {t('personnel.forms.labels.employee')} <span className="text-red-500">*</span>
             </label>
             <select
               name="userId"
@@ -187,7 +189,7 @@ export function ContractForm({ initialData, isEdit = false, onSubmit, onCancel }
               required
               className="w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-1 focus:ring-blue-500"
             >
-              <option value={0}>Sélectionner un employé</option>
+              <option value={0}>{t('personnel.forms.placeholders.selectEmployee')}</option>
               {users.map(user => (
                 <option key={user.id} value={user.id}>
                   {user.firstName} {user.lastName} ({user.employeeNumber})
@@ -198,7 +200,7 @@ export function ContractForm({ initialData, isEdit = false, onSubmit, onCancel }
 
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
-              Type de contrat <span className="text-red-500">*</span>
+              {t('personnel.forms.labels.contractType')} <span className="text-red-500">*</span>
             </label>
             <select
               name="contractType"
@@ -207,11 +209,11 @@ export function ContractForm({ initialData, isEdit = false, onSubmit, onCancel }
               required
               className="w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-1 focus:ring-blue-500"
             >
-              <option value="">Sélectionner le type</option>
-              <option value="PERMANENT_CONTRACT_CDI">CDI - Contrat à Durée Indéterminée</option>
-              <option value="FIXED_TERM_CONTRACT_CDD">CDD - Contrat à Durée Déterminée</option>
-              <option value="INTERNSHIP">Stage</option>
-              <option value="CONSULTANT">Consultant</option>
+              <option value="">{t('personnel.forms.placeholders.selectType')}</option>
+              <option value="PERMANENT_CONTRACT_CDI">{t('personnel.forms.options.contractTypes.PERMANENT_CONTRACT_CDI')}</option>
+              <option value="FIXED_TERM_CONTRACT_CDD">{t('personnel.forms.options.contractTypes.FIXED_TERM_CONTRACT_CDD')}</option>
+              <option value="INTERNSHIP">{t('personnel.forms.options.contractTypes.INTERNSHIP')}</option>
+              <option value="CONSULTANT">{t('personnel.forms.options.contractTypes.CONSULTANT')}</option>
             </select>
           </div>
         </div>
@@ -219,7 +221,7 @@ export function ContractForm({ initialData, isEdit = false, onSubmit, onCancel }
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
-              Date de début <span className="text-red-500">*</span>
+              {t('personnel.forms.labels.startDate')} <span className="text-red-500">*</span>
             </label>
             <input
               type="date"
@@ -233,7 +235,7 @@ export function ContractForm({ initialData, isEdit = false, onSubmit, onCancel }
 
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
-              Date de fin
+              {t('personnel.forms.labels.endDate')}
             </label>
             <input
               type="date"
@@ -248,7 +250,7 @@ export function ContractForm({ initialData, isEdit = false, onSubmit, onCancel }
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
-              Poste <span className="text-red-500">*</span>
+              {t('personnel.forms.labels.post')} <span className="text-red-500">*</span>
             </label>
             <input
               type="text"
@@ -257,13 +259,13 @@ export function ContractForm({ initialData, isEdit = false, onSubmit, onCancel }
               onChange={handleInputChange}
               required
               className="w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-1 focus:ring-blue-500"
-              placeholder="Ex: Développeur"
+              placeholder={t('personnel.forms.placeholders.examplePost')}
             />
           </div>
 
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
-              Département <span className="text-red-500">*</span>
+              {t('personnel.forms.labels.department')} <span className="text-red-500">*</span>
             </label>
             <input
               type="text"
@@ -272,13 +274,13 @@ export function ContractForm({ initialData, isEdit = false, onSubmit, onCancel }
               onChange={handleInputChange}
               required
               className="w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-1 focus:ring-blue-500"
-              placeholder="Ex: IT"
+              placeholder={t('personnel.forms.placeholders.exampleDepartment')}
             />
           </div>
 
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
-              Unité
+              {t('personnel.forms.labels.unit')}
             </label>
             <input
               type="text"
@@ -286,7 +288,7 @@ export function ContractForm({ initialData, isEdit = false, onSubmit, onCancel }
               value={formData.unit}
               onChange={handleInputChange}
               className="w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-1 focus:ring-blue-500"
-              placeholder="Ex: Développement"
+              placeholder={t('personnel.forms.placeholders.exampleUnit')}
             />
           </div>
         </div>
@@ -294,7 +296,7 @@ export function ContractForm({ initialData, isEdit = false, onSubmit, onCancel }
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
-              Salaire brut <span className="text-red-500">*</span>
+              {t('personnel.forms.labels.grossSalary')} <span className="text-red-500">*</span>
             </label>
             <input
               type="number"
@@ -304,13 +306,13 @@ export function ContractForm({ initialData, isEdit = false, onSubmit, onCancel }
               onChange={handleInputChange}
               required
               className="w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-1 focus:ring-blue-500"
-              placeholder="0.00"
+              placeholder={t('personnel.forms.placeholders.amountPlaceholder')}
             />
           </div>
 
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
-              Salaire net <span className="text-red-500">*</span>
+              {t('personnel.forms.labels.netSalary')} <span className="text-red-500">*</span>
             </label>
             <input
               type="number"
@@ -320,13 +322,13 @@ export function ContractForm({ initialData, isEdit = false, onSubmit, onCancel }
               onChange={handleInputChange}
               required
               className="w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-1 focus:ring-blue-500"
-              placeholder="0.00"
+              placeholder={t('personnel.forms.placeholders.amountPlaceholder')}
             />
           </div>
 
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
-              Devise <span className="text-red-500">*</span>
+              {t('personnel.forms.labels.currency')} <span className="text-red-500">*</span>
             </label>
             <select
               name="currency"
@@ -335,20 +337,20 @@ export function ContractForm({ initialData, isEdit = false, onSubmit, onCancel }
               required
               className="w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-1 focus:ring-blue-500"
             >
-              <option value="XAF">Franc CFA BEAC (XAF)</option>
-              <option value="XOF">Franc CFA UEMOA (XOF)</option>
-              <option value="EUR">Euro (EUR)</option>
-              <option value="GNF">Franc Guinéen (GNF)</option>
-              <option value="GHS">Cedi Ghanéen (GHS)</option>
-              <option value="RON">Leu Roumain (RON)</option>
-              <option value="SLE">Leone (SLE)</option>
-              <option value="USD">Dollar Américain (USD)</option>
+              <option value="XAF">{t('personnel.forms.options.currencies.XAF')}</option>
+              <option value="XOF">{t('personnel.forms.options.currencies.XOF')}</option>
+              <option value="EUR">{t('personnel.forms.options.currencies.EUR')}</option>
+              <option value="GNF">{t('personnel.forms.options.currencies.GNF')}</option>
+              <option value="GHS">{t('personnel.forms.options.currencies.GHS')}</option>
+              <option value="RON">{t('personnel.forms.options.currencies.RON')}</option>
+              <option value="SLE">{t('personnel.forms.options.currencies.SLE')}</option>
+              <option value="USD">{t('personnel.forms.options.currencies.USD')}</option>
             </select>
           </div>
         </div>
 
         <FileUpload
-          label="Fichier du contrat"
+          label={t('personnel.forms.labels.contractFile')}
           value={formData.contractFile}
           onChange={(url) => setFormData(prev => ({ ...prev, contractFile: url || '' }))}
           accept=".pdf,.doc,.docx,.jpg,.jpeg,.png"
@@ -365,7 +367,7 @@ export function ContractForm({ initialData, isEdit = false, onSubmit, onCancel }
               onClick={onCancel}
               className="px-4 py-2 border border-gray-300 rounded text-gray-700 hover:bg-gray-50"
             >
-              Annuler
+              {t('personnel.forms.buttons.cancel')}
             </button>
           ) : (
             <button
@@ -385,7 +387,7 @@ export function ContractForm({ initialData, isEdit = false, onSubmit, onCancel }
               })}
               className="px-4 py-2 border border-gray-300 rounded text-gray-700 hover:bg-gray-50"
             >
-              Réinitialiser
+              {t('personnel.forms.buttons.reset')}
             </button>
           )}
           <button
@@ -393,7 +395,7 @@ export function ContractForm({ initialData, isEdit = false, onSubmit, onCancel }
             disabled={loading}
             className="px-4 py-2 bg-blue-600 text-white rounded disabled:opacity-60 hover:bg-blue-700"
           >
-            {loading ? (isEdit ? 'Modification...' : 'Création...') : (isEdit ? 'Modifier le contrat' : 'Créer le contrat')}
+            {loading ? (isEdit ? t('personnel.forms.buttons.updating') : t('personnel.forms.buttons.creating')) : (isEdit ? t('personnel.forms.buttons.updateContract') : t('personnel.forms.buttons.createContract'))}
           </button>
         </div>
       </form>

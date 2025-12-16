@@ -1,10 +1,12 @@
 import { Link } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
+import { useTranslation } from 'react-i18next';
 import { LayoutDashboard, Contact, Wrench, Package, 
-  Briefcase, AlertTriangle, Car, FileText } from 'lucide-react';
+  Briefcase, AlertTriangle, Car, FileText, Monitor, FolderOpen, Network } from 'lucide-react';
 
 export function EmployeeDashboard() {
   const { email, firstName, lastName } = useAuth();
+  const { t } = useTranslation();
   
   const getDisplayName = () => {
     if (firstName && lastName) {
@@ -25,13 +27,16 @@ export function EmployeeDashboard() {
   const displayName = getDisplayName();
 
   const quickLinks = [
-    { icon: FileText, label: 'Factures', path: '/dashboard/factures', color: 'bg-yellow-100 text-yellow-600' },
-    { icon: Wrench, label: 'Équipements', path: '/dashboard/equipements', color: 'bg-purple-100 text-purple-600' },
-    { icon: Contact, label: 'Contacts', path: '/dashboard/contacts', color: 'bg-green-100 text-green-600' },
-    { icon: Package, label: 'Offres', path: '/dashboard/offres', color: 'bg-orange-100 text-orange-600' },
-    { icon: Briefcase, label: 'Affaires', path: '/dashboard/affaires', color: 'bg-indigo-100 text-indigo-600' },
-    { icon: AlertTriangle, label: 'Alertes', path: '/dashboard/alertes', color: 'bg-red-100 text-red-600' },
-    { icon: Car, label: 'Parc Auto', path: '/dashboard/parc-auto', color: 'bg-cyan-100 text-cyan-600' },
+    { icon: FileText, label: t('sidebar.invoices'), path: '/dashboard/factures', color: 'bg-yellow-100 text-yellow-600' },
+    { icon: Wrench, label: t('sidebar.equipment'), path: '/dashboard/equipements', color: 'bg-purple-100 text-purple-600' },
+    { icon: Contact, label: t('sidebar.contacts'), path: '/dashboard/contacts', color: 'bg-green-100 text-green-600' },
+    { icon: Package, label: t('sidebar.offers'), path: '/dashboard/offres', color: 'bg-orange-100 text-orange-600' },
+    { icon: Briefcase, label: t('sidebar.business'), path: '/dashboard/affaires', color: 'bg-indigo-100 text-indigo-600' },
+    { icon: AlertTriangle, label: t('sidebar.alertsShort'), path: '/dashboard/alertes', color: 'bg-red-100 text-red-600' },
+    { icon: Car, label: t('sidebar.vehicles'), path: '/dashboard/parc-auto', color: 'bg-cyan-100 text-cyan-600' },
+    { icon: Monitor, label: t('sidebar.software'), path: '/dashboard/software', color: 'bg-teal-100 text-teal-600' },
+    { icon: FolderOpen, label: t('sidebar.documents'), path: '/dashboard/documents', color: 'bg-violet-100 text-violet-600' },
+    { icon: Network, label: t('sidebar.organigramme'), path: '/dashboard/organigramme', color: 'bg-sky-100 text-sky-600' },
   ];
 
   return (
@@ -45,21 +50,20 @@ export function EmployeeDashboard() {
             </div>
             <div>
               <h1 className="text-3xl font-bold text-gray-900">
-                Bienvenue, {displayName} !
+                {t('dashboard.welcome')}, {displayName} !
               </h1>
               <p className="text-gray-600 mt-1">
-                Votre espace de travail
+                {t('dashboard.employee.subtitle')}
               </p>
             </div>
           </div>
           
           <div className="mt-6 p-6 bg-blue-50 rounded-lg border-l-4 border-blue-500">
             <p className="text-gray-700 leading-relaxed">
-              👋 <strong>Bienvenue dans votre espace employé !</strong>
+              👋 <strong>{t('dashboard.employee.welcomeMessage')}</strong>
             </p>
             <p className="text-gray-600 mt-2 leading-relaxed">
-              Utilisez la <strong>barre latérale (Sidebar)</strong> à gauche pour naviguer entre les différents modules. 
-              Vous pouvez accéder aux factures, équipements, contacts, offres, affaires, alertes et au parc auto.
+              {t('dashboard.employee.description')}
             </p>
           </div>
         </div>
@@ -67,7 +71,7 @@ export function EmployeeDashboard() {
         {/* Quick Links Grid */}
         <div className="mb-8">
           <h2 className="text-2xl font-semibold text-gray-900 mb-4">
-            Accès rapide aux modules
+            {t('dashboard.quickAccess')}
           </h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
             {quickLinks.map((link) => {
@@ -87,7 +91,7 @@ export function EmployeeDashboard() {
                         {link.label}
                       </p>
                       <p className="text-xs text-gray-500 mt-1">
-                        Cliquez pour accéder
+                        {t('dashboard.clickToAccess')}
                       </p>
                     </div>
                   </div>
